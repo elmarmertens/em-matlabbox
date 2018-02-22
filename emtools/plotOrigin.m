@@ -1,5 +1,5 @@
 function plotOrigin(linespec, x0, y0, linewidth)
-% function plotOrigin(linespec, x0, y0)
+% function plotOrigin(linespec, x0, y0, linewidth)
 % plots axis around origin (0,0) in current axes 
 % uses current axis limits 
 % linespec is optional argument governing linetype in the plot command
