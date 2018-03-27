@@ -175,7 +175,7 @@ if nargout > 1
     
     if nargout > 2
         
-        X0T      = Sigma00 * A(:,:,1)' * StT; % note: no mean added to X0T since it is alrady included in X0plus
+        X0T      = Sigma00 * A(:,:,1)' * StT; % note: no mean added to X0T since it is already included in X0plus
         X0draws  = X0plus + X0T;
         
         

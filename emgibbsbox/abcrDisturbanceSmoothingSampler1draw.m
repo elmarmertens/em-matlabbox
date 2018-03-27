@@ -80,7 +80,7 @@ for t = 1 : T
     
     
     % observed innovation
-    noiseplus(:,t)    = sqrtR(:,:,t) * eplus(:,t); %#ok<AGROW>
+    noiseplus(:,t)    = sqrtR(:,:,t) * eplus(:,t); 
     Yplus             = C * Xplus(:,t) + noiseplus(:,t);
     SigmaYttm1        = C * Sigmattm1(:,:,t) * C' + ...
         sqrtR(:,:,t) * sqrtR(:,:,t)';
@@ -147,7 +147,7 @@ if nargout > 1
     
     if nargout > 2
         
-        X0T      = Sigma00 * A' * StT; % note: no mean added to X0T since it is alrady included in X0plus
+        X0T      = Sigma00 * A' * StT; % note: no mean added to X0T since it is already included in X0plus
         X0draws  = X0plus + X0T;
         
         
