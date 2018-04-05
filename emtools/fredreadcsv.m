@@ -129,6 +129,14 @@ else
                             DATES   = DATES(ndx); % use beginning of quarter dates
                         case 'avg'
                             YQ      = Y + Q / 10;
+                            % set data for incomplete quarters to NaN
+                            % in priciple, should be sufficient to check for initial/final months 
+                            % but, to be safe, let's loop over the whole data vector
+                            for t = 1 : length(YQ)
+                                if sum(YQ == YQ(t)) ~= 3
+                                    VALUES(t) = NaN;
+                                end
+                            end
                             VALUES  = averageValues(VALUES, YQ);
                             ndx     = (M == 1) | (M == 4) | (M == 7) | (M == 10); % for congruence with FRED
                             DATES   = DATES(ndx);
