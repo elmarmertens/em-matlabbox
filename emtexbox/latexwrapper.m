@@ -167,8 +167,8 @@ switch lower(command)
 
       fprintf(file.id, '%s\n', '\renewcommand*{\vec}{\boldsymbol}');
 
-%       fprintf(file.id, '%s\n', '\newcommand*{\inputTEXT}[2]{\section{#2}\lstinputlisting{#1}\vspace{2\baselineskip}}');
-%       fprintf(file.id, '%s\n', '\newcommand*{\inputDIARY}[2]{\part{#2}\lstinputlisting{#1}\vspace{2\baselineskip}}');
+      fprintf(file.id, '%s\n', '\newcommand*{\inputTEXT}[2]{\section{#2}\lstinputlisting{#1}\vspace{2\baselineskip}}');
+      fprintf(file.id, '%s\n', '\newcommand*{\inputDIARY}[2]{\part{#2}\lstinputlisting{#1}\vspace{2\baselineskip}}');
 %       fprintf(file.id, '%s\n', '\newcommand*{\inputLISTING}[2]{\section{#2}\lstinputlisting{#1}\vspace{2\baselineskip}}');
 %       fprintf(file.id, '%s\n', '\newcommand*{\tttELMARmail}{\texttt{em@elmarmertens.ch}}');
 %       fprintf(file.id, '%s\n', '\newcommand*{\linkELMARmail}{mailto:em@elmarmertens.ch}');
