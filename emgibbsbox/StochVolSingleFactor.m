@@ -39,7 +39,7 @@ for n = 1 : Nsv
 end
 
 EX0     = cat(1, 0, Eh0);
-sqrtVX0 = diag(cat(1, 0, Vh0));
+sqrtVX0 = diag(cat(1, 0, sqrt(Vh0)));
 
 [X, Xshock, X0] = abcrDisturbanceSmoothingSampler1draw(A, B, C, obs, EX0, sqrtVX0, ...
     sqrtR, rndStream); 
