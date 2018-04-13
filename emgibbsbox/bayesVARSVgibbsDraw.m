@@ -175,7 +175,7 @@ end
 
 % construct regressors
 X = ones(T, k);
-for i = 1 : p;
+for i = 1 : p
    X(:, (i - 1) * N + (1 : N))   = Y((p+1 : end) - i,       :);
 end
 if nargout > 1
