@@ -21,9 +21,15 @@ end
 delta = loss1(~nanny1) - loss2(~nanny2);
 Nobs  = length(delta);
 
+if nargin < 3 || isempty(nlag)
+    nlag = floor( 4 * (Nobs / 100)^(2/9) );
+end
+
+
 reggae = nwest(delta, ones(Nobs,1), nlag);
 
 mu      = reggae.beta;
 tstat   = reggae.tstat;
 pvalue  = tdis_prb(tstat,Nobs-1);
 
+% fprintf('Doing DM test with %d NW lags\n', nlag)
