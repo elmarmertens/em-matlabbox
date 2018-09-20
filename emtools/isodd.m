@@ -1,7 +1,7 @@
 %ISODD		true for (odd) integers that are not evenly divisible by 2
 %
 %		ISODD returns TRUE for members (N) of a numeric array, which
-%		- are within the range of ±bitmax
+%		- are within the range of plusminus bitmax
 %		- are integers such that N == fix(N)
 %		- are integers not evenly divisible by 2
 %
@@ -9,7 +9,7 @@
 %		ISODD produces a not-valid flag for numbers, which are
 %		1) not integers
 %		2) smaller/larger than the maximum possible double precision
-%		   integer representation (±bitmax)
+%		   integer representation (plusminus bitmax)
 %		and does never return their parity as being odd
 %
 %		REM/MOD, on the other hand, do not complain if an input
@@ -24,7 +24,7 @@
 %
 %INPUT
 %-------------------------------------------------------------------------------
-% IVECx	:	ND arrays of ±integers of any MATALB class
+% IVECx	:	ND arrays of integers of any MATALB class
 %		by default, other data types including cell arrays
 %		of integers return FALSE
 %
