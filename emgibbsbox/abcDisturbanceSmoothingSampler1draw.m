@@ -3,9 +3,6 @@ function [Xdraws, disturbanceDraws, X0draws, noiseDraws] = ...
 % ABCDISTURBANCESMOOTHINGSAMPLER
 % ....
 
-% note: I broke backward compatibility by removing SV option, see
-% abcSVDisturbanceSmoothingSampler for this feature ...
-
 %   Coded by  Elmar Mertens, em@elmarmertens.com
 
 %% VERSION INFO
@@ -14,9 +11,6 @@ function [Xdraws, disturbanceDraws, X0draws, noiseDraws] = ...
 % $Revision : 1.00 $
 % DEVELOPED : 7.7.0.471 (R2008b)
 % FILENAME  : abcDisturbanceSmoothingSampler.m
-
-% same as abcDisturbanceSmoothingSampler except that it separates "star"
-% from "plus" this should also be capable of handling constants correctly
 
 
 %% parse inputs

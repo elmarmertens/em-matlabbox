@@ -4,7 +4,7 @@ function [Xdraws, disturbanceDraws, X0draws, noiseDraws] = abcDisturbanceSmoothi
 
 %   Coded by  Elmar Mertens, em@elmarmertens.com
 
-% yNaNndx: if empty, this funciton will check for NaN and zero out rows of
+% yNaNndx: if empty, this function will check for NaN and zero out rows of
 % C, if not empty, it will be taken as given, assuming that the
 % corresponding values of Ydata and rows of C have been zeroed out
 
@@ -14,9 +14,6 @@ function [Xdraws, disturbanceDraws, X0draws, noiseDraws] = abcDisturbanceSmoothi
 % $Revision : 1.00 $
 % DEVELOPED : 7.7.0.471 (R2008b)
 % FILENAME  : abcDisturbanceSmoothingSampler.m
-
-% same as abcDisturbanceSmoothingSampler except that it separates "star"
-% from "plus" this should also be capable of handling constants correctly
 
 
 %% parse inputs
