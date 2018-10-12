@@ -14,9 +14,6 @@ function [Xdraws, disturbanceDraws, X0draws, noiseDraws] = ...
 % DEVELOPED : 7.7.0.471 (R2008b)
 % FILENAME  : abcDisturbanceSmoothingSampler.m
 
-% same as abcDisturbanceSmoothingSampler except that it separates "star"
-% from "plus" this should also be capable of handling constants correctly
-
 
 %% parse inputs
 Nx                = size(A, 1);
