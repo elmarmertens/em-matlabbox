@@ -52,26 +52,8 @@ if landscape
    orient landscape
 end
 
-% print('-depsc', '-r300', '-loose', figurename);
-
-% saveas(gcf, figurename, 'fig');
-%saveas(gcf, figurename, 'epsc');
 if doJPG
     print('-djpeg', '-r500', figurename);
 else
     print('-depsc', '-r300', '-loose', figurename);
 end
-
-% filetypes = getpref('embox', 'wrapcf');
-% if filetypes.eps
-%     %    saveas(gcf, figurename, 'epsc');
-%     print('-depsc', '-r300', figurename);
-% end
-% if filetypes.fig
-%    saveas(gcf, figurename, 'fig');
-% end
-% if filetypes.jpg
-%     %    saveas(gcf, figurename, 'jpeg');
-%    print('-djpeg', '-r500', figurename);
-% end
-% 
