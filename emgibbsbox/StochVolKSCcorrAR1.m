@@ -72,7 +72,8 @@ end
 
 sqrtVh0 = diag(sqrt(Vh0));
 
-Vhtilde  = dlyap(A(1:Nsv,1:Nsv), hVCV);
+% Vhtilde  = dlyap(A(1:Nsv,1:Nsv), hVCV);
+Vhtilde  = dlyapdoubling(A(1:Nsv,1:Nsv), hVCV); % you can use the previous line when Matlab's control toolbox is available
 x0       = [zeros(Nsv, 1); Eh0];
 sqrtVx0  = [chol(Vhtilde)', zerosNsv; zerosNsv sqrtVh0];
 
