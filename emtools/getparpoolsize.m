@@ -7,7 +7,8 @@ try
     % To open these preferences run "preferences('Parallel Computing Toolbox')" from the Matlab command line.
     % If preferences for automatic pool creation are disabled, "gcp" will not attempt to create a new pool
 catch poolME
-    warning(poolME.identifier, 'There was a problem obtaining a pool of parallel workers; tryxing to work without one.\n The error message was:\t %s', ...
+    % one typical cause of problems could be limited availability of licenses
+    warning(poolME.identifier, 'There was a problem obtaining a pool of parallel workers; trying to work without one.\n The error message was:\t %s', ...
         poolME.message)
     p = gcp('nocreate'); % If no pool can be created, do not create new one.
 end
