@@ -1,7 +1,7 @@
-function [h, hanni] = plotCI(y, tails, x, varargin)
+function [h, hanni] = plotCI(y, tails, x, ybase, varargin)
 % function plotCI(y,tails,x, yLinespec)
 % plots series y against x plus confidence intervals
-%   (e.g.: y is IRF and x are the lags) 
+%   (e.g.: y is IRF and x are the lags)
 % confidence intervals are given in tails
 % - each column of tails is supposed to contain fractiles of bootstraped distribution
 % - tail can contain several fractiles, e.g. [2.5; 97.5; 50; 95; 16; 84];
@@ -15,7 +15,11 @@ function [h, hanni] = plotCI(y, tails, x, varargin)
 
 [T, N] = size(tails);
 if nargin < 3
-	x = 1 : T;
+    x = 1 : T;
+end
+
+if nargin < 4
+    ybase = [];
 end
 
 if isempty(varargin)
@@ -23,21 +27,23 @@ if isempty(varargin)
 else
     yLinespec = varargin;
 end
-y = y(:);
-x = x(:);
-if length(y) ~= T || length(x) ~= T
-	error('inconsistent input dimensions')
+if ~isempty(y)
+    y = y(:);
+    x = x(:);
+    if length(y) ~= T || length(x) ~= T
+        error('inconsistent input dimensions')
+    end
 end
 
 if N == 1
-	tails = [y - 2 * tails; y + 2 * tails];
+    tails = [y - 2 * tails; y + 2 * tails];
 end
 
 if isodd(N) % if last fractile is, say, mean/median
-	single = tails(:,end);
-	tails  = tails(:,1:end-1);
+    single = tails(:,end);
+    tails  = tails(:,1:end-1);
 end
-	
+
 tails = sort(tails, 2); % note: this is just a crude swap of columns. it relies on tails being sortable
 
 % if size(unique(i, 'rows'), 1) > 1
@@ -49,42 +55,53 @@ p = plot(x, [y tails]);
 YLIM = ylim;
 delete(p);
 
+if isempty(ybase)
+    ybase = 0.9 * min(YLIM);
+else
+    ybase = min(ybase, min(YLIM));
+end
 % denan
-nanny = ~any(isnan([y tails]), 2);
-y     = y(nanny);
+if ~isempty(y)
+    nanny = ~any(isnan([y tails]), 2);
+    y     = y(nanny);
+else
+    nanny = ~any(isnan(tails), 2);
+end
 tails = tails(nanny,:);
 x     = x(nanny);
 
 hold on
 
-hanni = area(x, [tails(:,1) diff(tails, 1, 2)], min(YLIM), 'EdgeColor', 'none');
+hanni = area(x, [tails(:,1) diff(tails, 1, 2)], ybase, 'EdgeColor', 'none');
 
-set(hanni(1), 'facecolor', ones(1,3));
+set(hanni(1), 'facecolor', [1 1 1]);
 
-switch (length(hanni) - 1) 
-   case 3
-      areacolors = [.8 .4 .8];
-   case 7
-      areacolors = [.8 .6 .4 .2 .4 .6 .8];
-   case 5
-      areacolors = [.8 .6 .4 .6 .8];
-      % areacolors = [.75 .5 0 .5 .75];
-   case 1
-      areacolors = .8;
-   otherwise
-      error('unprepared for this number of tails ...')
+switch (length(hanni) - 1)
+    case 3
+        areacolors = [.8 .4 .8];
+    case 7
+        areacolors = [.8 .6 .4 .2 .4 .6 .8];
+    case 5
+        areacolors = [.8 .6 .4 .6 .8];
+        % areacolors = [.75 .5 0 .5 .75];
+    case 1
+        areacolors = .8;
+    otherwise
+        error('unprepared for this number of tails ...')
 end
 
 for n = 2 : length(hanni)
-   set(hanni(n), 'facecolor', repmat(areacolors(n - 1),1,3));
+    set(hanni(n), 'facecolor', repmat(areacolors(n - 1),1,3));
 end
 
 if isodd(N)
-	plot(x,single, 'w-', 'MarkerSize', 3)
+    plot(x,single, 'w-', 'MarkerSize', 3)
 end
 
-xhanni = plot(x, y, yLinespec{:});
-set(gca,'Layer','top')
+if ~isempty(y)
+    xhanni = plot(x, y, yLinespec{:});
+    set(gca,'Layer','top')
+end
 
 if nargout > 0
     h = xhanni;

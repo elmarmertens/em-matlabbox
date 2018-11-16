@@ -30,7 +30,9 @@ end
 
 filename = strcat(filename, '.csv');
 
-if ~isempty(wrap) 
+if isempty(wrap) 
+    return
+else
     if isstruct(wrap) && isfield(wrap, 'dir')
         filename = fullfile(wrap.dir, filename);
     else % assuming it is a string ....
