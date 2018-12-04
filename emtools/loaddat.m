@@ -11,7 +11,8 @@ function data = loaddat(filename)
 % FILENAME  : loaddat.m 
 
 if exist(filename, 'file')
-    data = importdata(filename);
+    % data = importdata(filename);
+    data = load(filename, 'ascii');
 else
     data = [];
 end
