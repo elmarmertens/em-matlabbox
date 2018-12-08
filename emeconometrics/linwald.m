@@ -1,4 +1,4 @@
-function [fstat, fprb, chi2stat, chi2prb] = linwald(resultu, R, r, EViewsflag)
+function [fstat, fprb, chi2stat, chi2prb] = linwald(resultu, R, r, EViewsflag, printflag)
 % PURPOSE: computes Wald F-test for two regressions
 %---------------------------------------------------
 % USAGE: [fstat, fprb, chi2stat, chi2prb] = linwald(resultu, R, r, EViewsflag)
@@ -34,25 +34,30 @@ function [fstat, fprb, chi2stat, chi2prb] = linwald(resultu, R, r, EViewsflag)
 % Study Center Gerzensee
 % email: elmar.mertens@szgerzensee.ch
 
-printflag = 0;
-if nargout == 0
-    printflag = 1;
-end
-
+narginchk(1,5)
 switch nargin
     case 1
         EViewsflag = 0;
         R = [];
         r = [];
+        printflag = [];
     case 2
         EViewsflag = 0;
         r = [];
+        printflag = [];
     case 3
         EViewsflag = 0;
+        printflag = [];
     case 4
+        printflag = [];
         %do nothing, all ok. I do not check validity
-    otherwise
-        error('Wrong # of arguments to linwald')
+end
+
+if isempty(printflag)
+    printflag = 0;
+end
+if nargout == 0 % override any settings if otherwise no output
+    printflag = 1;
 end
 
 if isempty(R)
