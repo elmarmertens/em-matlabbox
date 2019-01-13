@@ -20,6 +20,12 @@ if nargin < 6
    doJPG = false;
 end
 
+if ~isempty(figurename)
+    % replace any "." by "-" in figurename, otherwise, print will not append
+    % the appropriate file name extension
+    figurename = strrep(figurename, '.', '-');
+end
+
 if ~isempty(captionname)
    set(gcf, 'name', captionname)
 elseif ~isempty(figurename)
