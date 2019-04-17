@@ -1,4 +1,4 @@
-function [mu, tstat, pvalue] = dmtest(loss1, loss2, nlag)
+function [mu, tstat, pvalue, se] = dmtest(loss1, loss2, nlag)
 % DMTEST ... 
 %  
 %   ... 
@@ -20,5 +20,6 @@ reggae = nwest(delta, ones(Nobs,1), nlag);
 
 mu      = reggae.beta;
 tstat   = reggae.tstat;
+se      = sqrt(reggae.Vbeta);
 pvalue  = tdis_prb(tstat,Nobs-1);
 
