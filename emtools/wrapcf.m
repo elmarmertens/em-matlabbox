@@ -36,7 +36,7 @@ if isempty(wrap) % do nothing, except changing the name of the figure as above
     return
 end
 
-set(gcf, 'Renderer', 'painters') % to fix date axis bug
+% set(gcf, 'Renderer', 'painters') % to fix date axis bug
 
 if nargin > 1 && ~isempty(wrap)
    if (wrap.id ~= 0)
@@ -61,5 +61,7 @@ end
 if doJPG
     print('-djpeg', '-r500', figurename);
 else
-    print('-depsc', '-r300', '-loose', figurename);
+        print('-depsc', '-r300', '-loose', figurename);
+    %     orient landscape
+    %     print('-dpdf', '-r300', '-fillpage', figurename);
 end

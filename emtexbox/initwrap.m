@@ -9,7 +9,7 @@ if true || isunix % && ~isdesktop
         wrap.title  = sprintf('\\titlecaveat{Dummy wrapper}');
         wrap.name   = 'foo';
     else
-        wrap.title   = sprintf('\\titlecaveat{%s}', latexstr(titlename));
+        wrap.title   = sprintf('\\titlecaveat{%s}', latexstr(strrep(titlename, '_', ' ')));
         [jim, titlename] = fileparts(titlename);
         wrap.name    = titlename;
     end
