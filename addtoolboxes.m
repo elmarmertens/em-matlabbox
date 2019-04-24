@@ -1,8 +1,8 @@
 %% load toolboxes
 path(pathdef)
 
-addpath toolbox/emtools/
-addpath toolbox/emtexbox/
-addpath toolbox/emgibbsbox/
-addpath toolbox/emeconometrics/
-addpath toolbox/emstatespace/
+addpath matlabtoolbox/emtools/
+addpath matlabtoolbox/emtexbox/
+addpath matlabtoolbox/emgibbsbox/
+addpath matlabtoolbox/emeconometrics/
+addpath matlabtoolbox/emstatespace/
