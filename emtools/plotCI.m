@@ -56,7 +56,7 @@ YLIM = ylim;
 delete(p);
 
 if isempty(ybase)
-    ybase = 0.9 * min(YLIM);
+    ybase = min(YLIM);
 else
     ybase = min(ybase, min(YLIM));
 end
