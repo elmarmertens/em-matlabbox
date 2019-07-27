@@ -1,6 +1,7 @@
 *.*
 .*
 !*.m
+!*.mat
 !*.txt
 !*.mat
 !.gitignore
