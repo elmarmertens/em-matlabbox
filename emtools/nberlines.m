@@ -45,7 +45,7 @@ end
 
 xlim([dates(1) dates(end)])
 ylim(YLim)
-datetick('x', 10, 'keeplimits')
+datetick('x', 10, 'keeplimits', 'keepticks')
 
 % uistack(hanni, 'bottom')
 % set(gca, 'layer', 'top')

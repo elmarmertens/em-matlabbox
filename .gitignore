@@ -1,5 +1,8 @@
 *.*
+.*
 !*.m
 !*.mat
 !*.txt
+!*.mat
 !.gitignore
+!.gitattributes

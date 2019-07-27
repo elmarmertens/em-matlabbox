@@ -1,7 +1,7 @@
-function [h, hanni] = plotCIybasealtcolor(y,tails,x, ybase, varargin)
+function [h, hanni] = plotCIbuba(y,tails,x, ybase, varargin)
 % function plotCI(y,tails,x, yLinespec)
 % plots series y against x plus confidence intervals
-%   (e.g.: y is IRF and x are the lags) 
+%   (e.g.: y is IRF and x are the lags)
 % confidence intervals are given in tails
 % - each column of tails is supposed to contain fractiles of bootstraped distribution
 % - tail can contain several fractiles, e.g. [2.5; 97.5; 50; 95; 16; 84];
@@ -15,7 +15,11 @@ function [h, hanni] = plotCIybasealtcolor(y,tails,x, ybase, varargin)
 
 [T, N] = size(tails);
 if nargin < 3
-	x = 1 : T;
+    x = 1 : T;
+end
+
+if nargin < 4
+    ybase = [];
 end
 
 if isempty(varargin)
@@ -32,14 +36,14 @@ if ~isempty(y)
 end
 
 if N == 1
-	tails = [y - 2 * tails; y + 2 * tails];
+    tails = [y - 2 * tails; y + 2 * tails];
 end
 
 if isodd(N) % if last fractile is, say, mean/median
-	single = tails(:,end);
-	tails  = tails(:,1:end-1);
+    single = tails(:,end);
+    tails  = tails(:,1:end-1);
 end
-	
+
 tails = sort(tails, 2); % note: this is just a crude swap of columns. it relies on tails being sortable
 
 % if size(unique(i, 'rows'), 1) > 1
@@ -70,7 +74,8 @@ hold on
 
 hanni = area(x, [tails(:,1) diff(tails, 1, 2)], ybase, 'EdgeColor', 'none');
 
-basecolor = [1 0 0];
+basecolor = [0,98,161] / 255; % buba blue
+
 set(hanni(1), 'facecolor', [1 1 1]);
 
 switch (length(hanni) - 1) 
@@ -82,7 +87,7 @@ switch (length(hanni) - 1)
       areacolors = [.8 .6 .4 .6 .8];
       % areacolors = [.75 .5 0 .5 .75];
    case 1
-      areacolors = .8;
+      areacolors = 1;
    otherwise
       error('unprepared for this number of tails ...')
 end
@@ -92,7 +97,7 @@ for n = 2 : length(hanni)
 end
 
 if isodd(N)
-	plot(x,single, 'w-', 'MarkerSize', 3)
+    plot(x,single, 'w-', 'MarkerSize', 3)
 end
 
 if ~isempty(y)

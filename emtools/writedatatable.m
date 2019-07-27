@@ -30,7 +30,9 @@ end
 
 filename = strcat(filename, '.csv');
 
-if ~isempty(wrap) 
+if isempty(wrap) 
+    return
+else
     if isstruct(wrap) && isfield(wrap, 'dir')
         filename = fullfile(wrap.dir, filename);
     else % assuming it is a string ....
@@ -39,18 +41,18 @@ if ~isempty(wrap)
 end
 
 fid = fopen(filename, 'wt');
-fprintf(fid, '%s ', 'dates/labels');
+fprintf(fid, '%15s', 'dates/labels');
 fprintf(fid, ',%30s', datalabels{:});
 fprintf(fid, '\n');
 
 for n = 1 : length(dates)
     if iscell(dates)
-        fprintf(fid, '%s', dates{n});
+        fprintf(fid, '%15s', dates{n});
     else
         if isempty(datefmt)
-            fprintf(fid, '%d', dates(n));
+            fprintf(fid, '%15d', dates(n));
         else
-            fprintf(fid, '%s', datestr(dates(n), datefmt));
+            fprintf(fid, '%15s', datestr(dates(n), datefmt));
         end
     end
     fprintf(fid, ',%30.16e', data(n,:));

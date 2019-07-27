@@ -1,10 +1,10 @@
 function wrap = diary2wrap(diaryname, wrap, includeFlag)
+% function wrap = diary2wrap(diaryname, wrap, includeFlag)
 %--------------------------------------------------------------
 % Starts recording diary listing and makes entry in wrap.
 % Note: Need to call "diary off" separately, in order to terminate diary!
 %       If necesseary, this happens automatically when calling latexwrapper(wrap, 'compile')
 %--------------------------------------------------------------
-% function wrap=diary2wrap(diaryname, wrap, includeFlag)
 % or function diary2wrap(wrap, diaryname, includeFlag)
 % mandatory is only wrap
 
@@ -12,7 +12,7 @@ function wrap = diary2wrap(diaryname, wrap, includeFlag)
 
 % todo: this switches off standard diary w/o further reactivation
 
-error(nargchk(1,3,nargin))
+narginchk(1,3)
 
 if nargin < 2
    wrap      = diaryname;
@@ -36,12 +36,7 @@ if nargin < 3
 end
 
 if isempty(diaryname)
-%    callfile = mfilenamecaller;
-%    if strcmpi(callfile, 'initwrap.m')
-%       callfile=mfilenamecaller(4);
-%    end
-%    diaryname   = sprintf('screen%s%s.log', pid, callfile);
-   [joe, jack] = fileparts(tempname);
+   [~, jack] = fileparts(tempname);
    diaryname   = sprintf('screen%s.log', jack);
 end
 

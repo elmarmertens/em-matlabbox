@@ -1,4 +1,4 @@
-function [h, hanni] = plotCIybase(y, tails, x, ybase, varargin)
+function [h, hanni] = plotCIaltcolor(y,tails,x, ybase, varargin)
 % function plotCI(y,tails,x, yLinespec)
 % plots series y against x plus confidence intervals
 %   (e.g.: y is IRF and x are the lags)
@@ -16,6 +16,10 @@ function [h, hanni] = plotCIybase(y, tails, x, ybase, varargin)
 [T, N] = size(tails);
 if nargin < 3
     x = 1 : T;
+end
+
+if nargin < 4
+    ybase = [];
 end
 
 if isempty(varargin)
@@ -70,24 +74,25 @@ hold on
 
 hanni = area(x, [tails(:,1) diff(tails, 1, 2)], ybase, 'EdgeColor', 'none');
 
-set(hanni(1), 'facecolor', ones(1,3));
+basecolor = [1 0 0];
+set(hanni(1), 'facecolor', [1 1 1]);
 
-switch (length(hanni) - 1)
-    case 3
-        areacolors = [.8 .4 .8];
-    case 7
-        areacolors = [.8 .6 .4 .2 .4 .6 .8];
-    case 5
-        areacolors = [.8 .6 .4 .6 .8];
-        % areacolors = [.75 .5 0 .5 .75];
-    case 1
-        areacolors = .8;
-    otherwise
-        error('unprepared for this number of tails ...')
+switch (length(hanni) - 1) 
+   case 3
+      areacolors = [.95 .6 .95];
+   case 7
+      areacolors = [.8 .6 .4 .2 .4 .6 .8];
+   case 5
+      areacolors = [.8 .6 .4 .6 .8];
+      % areacolors = [.75 .5 0 .5 .75];
+   case 1
+      areacolors = .8;
+   otherwise
+      error('unprepared for this number of tails ...')
 end
 
 for n = 2 : length(hanni)
-    set(hanni(n), 'facecolor', repmat(areacolors(n - 1),1,3));
+   set(hanni(n), 'facecolor', areacolors(n - 1) * basecolor);
 end
 
 if isodd(N)

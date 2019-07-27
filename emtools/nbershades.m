@@ -36,6 +36,7 @@ hanni(1) = bar(NBER.dates, min(YLim) * 1.1 * RECESSION, 1, 'EdgeColor', shading 
 hanni(2) = bar(NBER.dates, max(YLim) * 1.1 * RECESSION, 1, 'EdgeColor', shading * [1 1 1], 'FaceColor', shading *[1 1 1]);
 
 xlim([dates(1) dates(end)])
+plot(xlim, [0 0], 'k-')
 ylim(YLim)
 if isempty(tickvec)
     datetick('x', 10, 'keeplimits')
