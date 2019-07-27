@@ -23,7 +23,7 @@ if nargin < 4
 end
 
 if isempty(varargin)
-    yLinespec = {'k-', 'Linewidth', 2};
+    yLinespec = {'r-', 'Linewidth', 2};
 else
     yLinespec = varargin;
 end
