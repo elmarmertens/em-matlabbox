@@ -1,4 +1,4 @@
-function xgrid = plotpriorposteriordraws(posteriordraws, priordraws, x, farbe, newfigflag, muflag)
+function [xgrid, hpost, hprior] = plotpriorposteriordraws(posteriordraws, priordraws, x, farbe, newfigflag, muflag)
 % PLOTPRIORPOSTERIORDRAWS ...
 %
 % plotpriorposteriordraws(posteriordraws, priordraws, x, farbe, newfigflag, muflag)
@@ -58,21 +58,31 @@ end
 
 hold on
 
-plot(posteriorx, posteriorpdf, '-', 'linewidth', 2, 'color', farbe)
+hpost = plot(posteriorx, posteriorpdf, '-', 'linewidth', 3, 'color', farbe);
 if ~isempty(priordraws)
-    plot(priorx, priorpdf, '--', 'linewidth', 2, 'color', farbe)
+    hprior = plot(priorx, priorpdf, '--', 'linewidth', 3, 'color', farbe);
 end
 
 if muflag
+    
+    % get prior and posterior mean
+    posteriormean = mean(posteriordraws);
+    if islogical(muflag) % specific valu is provided
+        priormean = muflag;
+    else
+        priormean = mean(priordraws);
+    end
+    
+    % reset YLIM
     YLIM = ylim;
     if ~newfigflag
         YLIM(2) = max(YLIM(2), choppy(1.1 * max(posteriorpdf),2));
         YLIM(1) = 0;
     end
     
-    plotvertline(mean(posteriordraws), YLIM, '-', 'linewidth', 1, 'color', farbe);
+    plotvertline(posteriormean, YLIM, '-', 'linewidth', 2, 'color', farbe);
     if ~isempty(priordraws)
-        plotvertline(mean(priordraws), YLIM, '--', 'linewidth', 1, 'color', farbe);
+        plotvertline(priormean, YLIM, '--', 'linewidth', 2, 'color', farbe);
     end
 end
 
