@@ -29,7 +29,7 @@ if nargin < 9
     sqrtSigma = [];
 end
 
-if nargin < 10
+if nargin < 10 || isempty(rndStream)
     rndStream = getDefaultStream;
 end
 
