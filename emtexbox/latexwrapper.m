@@ -1,5 +1,5 @@
 function outfile = latexwrapper(file, command, varargin)
-% function filestruct = latextablewrap(file, command, varargin)
+% function filestruct = latexwrapper(file, command, varargin)
 % commands: start/stop/ add [type] [filename]
 
 %   Coded by  Elmar Mertens, em@elmarmertens.com
@@ -236,6 +236,7 @@ switch lower(command)
             if length(varargin) > 3
                comment2add = varargin{4};
             end
+            copyfile(file2add, file.dir)
             switch lower(type2add)
                case {'tab', 'table'}
                   lcom = 'inputTAB';
