@@ -10,7 +10,7 @@ if nargin < 1
     force = false;
 end
 
-if force || (usejava('desktop')   && (ispc || ismac))
+if usejava('desktop') || force  % && (ispc || ismac))
    
    openFigures=findobj(allchild(0),'flat','Visible','on');
 
