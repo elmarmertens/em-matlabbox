@@ -236,7 +236,7 @@ switch lower(command)
             if length(varargin) > 3
                comment2add = varargin{4};
             end
-            copyfile(file2add, file.dir)
+            % copyfile(file2add, file.dir)
             switch lower(type2add)
                case {'tab', 'table'}
                   lcom = 'inputTAB';
