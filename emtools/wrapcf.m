@@ -61,7 +61,7 @@ end
 if doJPG
     print('-djpeg', '-r500', figurename);
 else
-        print('-depsc', '-r300', '-loose', figurename);
+    print('-depsc', '-r300', '-loose', figurename);
     %     orient landscape
     %     print('-dpdf', '-r300', '-fillpage', figurename);
 end
