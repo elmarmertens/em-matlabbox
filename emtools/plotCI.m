@@ -50,7 +50,7 @@ tails = sort(tails, 2); % note: this is just a crude swap of columns. it relies 
 % 	error('tails sort not simply swapping columns')
 % end
 
-cla % CHECKME: really never needed?
+% cla % CHECKME: really never needed?
 p = plot(x, [y tails]);
 YLIM = ylim;
 delete(p);
