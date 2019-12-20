@@ -1,4 +1,4 @@
-function wrapcf(figurename, wrap, captionname, figurecomment, landscape, doJPG)
+function wrapthisfigure(this, figurename, wrap, captionname, figurecomment, landscape, doJPG)
 %--------------------------------------------------------------
 % Prints the current figure to file 'figurename' as fig, eps, jpg and pdf.
 % inserts into wrap
@@ -7,16 +7,16 @@ function wrapcf(figurename, wrap, captionname, figurecomment, landscape, doJPG)
 
 %   Coded by  Elmar Mertens, em@elmarmertens.com
 
-if nargin < 3
+if nargin < 4
    captionname = [];
 end
-if nargin < 4
+if nargin < 5
    figurecomment = [];
 end
-if nargin < 5
+if nargin < 6
    landscape = false;
 end
-if nargin < 6
+if nargin < 7
    doJPG = false;
 end
 
@@ -27,9 +27,9 @@ if ~isempty(figurename)
 end
 
 if ~isempty(captionname)
-   set(gcf, 'name', captionname)
+   set(this, 'name', captionname)
 elseif ~isempty(figurename)
-   set(gcf, 'name', figurename)
+   set(this, 'name', figurename)
 end
 
 if isempty(wrap) % do nothing, except changing the name of the figure as above
@@ -55,15 +55,15 @@ end
 
 
 if landscape
-   orient landscape
+   orient(this, 'landscape')
 end
 
 drawnow
 
 if doJPG
-    print('-djpeg', '-r500', figurename);
+    print(this, '-djpeg', '-r500', figurename);
 else
-    print('-depsc', '-r300', '-loose', figurename);
+    print(this, '-depsc', '-r300', '-loose', figurename);
     %     orient landscape
     %     print('-dpdf', '-r300', '-fillpage', figurename);
 end
