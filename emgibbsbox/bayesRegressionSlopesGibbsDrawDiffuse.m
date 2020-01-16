@@ -17,9 +17,9 @@ function [bdraw, resid, b, V] = bayesRegressionSlopesGibbsDrawDiffuse(y, X, h, N
 if nargin < 4 || isempty(Ndraws)
    Ndraws = 1;
 end
-% if nargin < 5 || isempty(rndStream)
-%    rndStream = RandStream.getDefaultStream;
-% end
+if nargin < 5 || isempty(rndStream)
+    rndStream = getDefaultStream;
+end
 
 %% Some prelim transformations
 [T, K]      = size(X); %#ok<ASGLU>

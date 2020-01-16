@@ -18,7 +18,7 @@ if nargin < 6 || isempty(Ndraws)
    Ndraws = 1;
 end
 if nargin < 7 || isempty(rndStream)
-   rndStream = RandStream.getDefaultStream;
+   rndStream = getDefaultStream;
 end
 
 %% Some prelim transformations
