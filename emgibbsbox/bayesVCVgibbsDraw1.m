@@ -27,7 +27,7 @@ function [iwishDraws, SigmaT, dof, cholSigmaT] = bayesVCVgibbsDraw1(Sigma0T, dof
 
 %% parse inputs
 if nargin < 4 || isempty(rndStream)
-    rndStream = RandStream.getDefaultStream;
+    rndStream = getDefaultStream;
 end
 if nargin < 5
     diagFlag = false;

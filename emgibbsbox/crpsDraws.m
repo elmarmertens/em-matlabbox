@@ -1,7 +1,7 @@
 function crps = crpsDraws(y, Xdraws)
 % CRPSDRAWS ...
 %
-% implements Krueger at el efficient formula, for others see crpsDraws3
+% implements Krueger at el efficient formula
 %   ...
 
 %% VERSION INFO

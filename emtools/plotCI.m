@@ -23,7 +23,7 @@ if nargin < 4
 end
 
 if isempty(varargin)
-    yLinespec = {'k-', 'Linewidth', 2};
+    yLinespec = {'k-', 'Linewidth', 3};
 else
     yLinespec = varargin;
 end
@@ -50,13 +50,13 @@ tails = sort(tails, 2); % note: this is just a crude swap of columns. it relies 
 % 	error('tails sort not simply swapping columns')
 % end
 
-cla % CHECKME: really never needed?
+% cla % CHECKME: really never needed?
 p = plot(x, [y tails]);
 YLIM = ylim;
 delete(p);
 
 if isempty(ybase)
-    ybase = 0.9 * min(YLIM);
+    ybase = min(YLIM);
 else
     ybase = min(ybase, min(YLIM));
 end

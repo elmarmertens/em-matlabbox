@@ -30,7 +30,7 @@ if nargin < 4 || isempty(Ndraw)
    Ndraw = 1;
 end
 if nargin < 5 || isempty(rndStream)
-    rndStream = RandStream.getDefaultStream;
+    rndStream = getDefaultStream;
 end
 if nargin < 6
     diagFlag = false;

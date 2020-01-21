@@ -1,7 +1,9 @@
 *.*
 .*
 !*.m
+!*.mat
 !*.txt
 !*.mat
 !.gitignore
 !.gitattributes
+/localtemp.m
