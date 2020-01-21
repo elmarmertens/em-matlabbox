@@ -7,24 +7,24 @@ function fh = newfigure(name)
 %
 %   Coded by  Elmar Mertens, em@elmarmertens.com
 
-figure
+this = figure;
 clf reset
 if nargin < 1
    m = mfilenamecaller;
    if ~isempty(m)
-      set(gcf, 'name', m)
+      set(this, 'name', m)
    end
 else
-   set(gcf, 'name', name)
+   set(this, 'name', name)
 end
 
 if nargout > 0
-    fh = gcf;
+    fh = this;
 end
 
 
 h = rotate3d;
 set(h, 'rotatestyle', 'box');
-set(gcf, 'defaultLegendAutoUpdate','off')
+set(this, 'defaultLegendAutoUpdate','off')
 
 % set(gcf, 'Renderer', 'painters')
