@@ -26,44 +26,44 @@ if ~isempty(figurename)
     figurename = strrep(figurename, '.', '-');
 end
 
+drawnow;
+thisfig = gcf;
+
 if ~isempty(captionname)
-   set(gcf, 'name', captionname)
+    set(thisfig, 'name', captionname)
 elseif ~isempty(figurename)
-   set(gcf, 'name', figurename)
+    set(thisfig, 'name', figurename)
 end
 
-if isempty(wrap) % do nothing, except changing the name of the figure as above
-    return
-end
-
-% set(gcf, 'Renderer', 'painters') % to fix date axis bug
-
-if nargin > 1 && ~isempty(wrap)
-   if (wrap.id ~= 0)
-      if landscape
-         latexwrapper(wrap, 'add', 'figure', figurename, captionname, figurecomment);
-      else
-         latexwrapper(wrap, 'add', 'sidewaysfigure', figurename, captionname, figurecomment);
-      end
-   else
-      warning('em:msg', 'Cannot append figure to latexwrapper since wrap file is closed (fid=0)')
-   end
-   if isfield(wrap, 'dir')
-      figurename = fullfile(wrap.dir, figurename);
-   end
-end
-
-
-if landscape
-   orient landscape
-end
-
-drawnow
-
-if doJPG
-    print('-djpeg', '-r500', figurename);
-else
-    print('-depsc', '-r300', '-loose', figurename);
-    %     orient landscape
-    %     print('-dpdf', '-r300', '-fillpage', figurename);
+if ~isempty(wrap) % do nothing, except changing the name of the figure as above
+    
+    % set(thisfig, 'Renderer', 'painters') % to fix date axis bug
+    
+    if nargin > 1 && ~isempty(wrap)
+        if (wrap.id ~= 0)
+            if landscape
+                latexwrapper(wrap, 'add', 'figure', figurename, captionname, figurecomment);
+            else
+                latexwrapper(wrap, 'add', 'sidewaysfigure', figurename, captionname, figurecomment);
+            end
+        else
+            warning('em:msg', 'Cannot append figure to latexwrapper since wrap file is closed (fid=0)')
+        end
+        if isfield(wrap, 'dir')
+            figurename = fullfile(wrap.dir, figurename);
+        end
+    end
+    
+    
+    if landscape
+        orient landscape
+    end
+    
+    if doJPG
+        print(thisfig, '-djpeg', '-r500', figurename);
+    else
+        print(thisfig, '-depsc', '-r300', '-loose', figurename);
+        %     orient landscape
+        %     print('-dpdf', '-r300', '-fillpage', figurename);
+    end
 end
