@@ -1,7 +1,7 @@
-function [xgrid, hpost, hprior] = plotpriorposteriordraws(posteriordraws, priordraws, x, farbe, newfigflag, muflag)
+function [xgrid, hpost, hprior] = plotpriorposteriordraws(posteriordraws, priordraws, x, farbe, muflag)
 % PLOTPRIORPOSTERIORDRAWS ...
 %
-% plotpriorposteriordraws(posteriordraws, priordraws, x, farbe, newfigflag, muflag)
+% plotpriorposteriordraws(posteriordraws, priordraws, x, farbe, muflag)
 %   ...
 
 %% VERSION INFO
@@ -23,11 +23,7 @@ if nargin < 4 || isempty(farbe)
     farbe = [0 0 1]; % blue
 end
 
-if nargin < 5 || isempty(newfigflag)
-    newfigflag = true;
-end
-
-if nargin < 6 || isempty(muflag)
+if nargin < 5 || isempty(muflag)
     muflag = true;
 end
 
@@ -52,10 +48,6 @@ if ~isempty(priordraws)
     [priorpdf, priorx] = ksdensity(priordraws, x);
 end
 
-if newfigflag
-    figure
-end
-
 hold on
 
 hpost = plot(posteriorx, posteriorpdf, '-', 'linewidth', 3, 'color', farbe);
@@ -75,10 +67,8 @@ if muflag
     
     % reset YLIM
     YLIM = ylim;
-    if ~newfigflag
-        YLIM(2) = max(YLIM(2), choppy(1.1 * max(posteriorpdf),2));
-        YLIM(1) = 0;
-    end
+    YLIM(2) = max(YLIM(2), choppy(1.1 * max(posteriorpdf),2));
+    YLIM(1) = 0;
     
     plotvertline(posteriormean, YLIM, '-', 'linewidth', 2, 'color', farbe);
     if ~isempty(priordraws)
