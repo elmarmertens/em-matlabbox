@@ -4,7 +4,7 @@ function x = choppy(x, d)
 % difference with chop: chop retains d first *significant* (non-zero) digits
 % default: d = 12
 %
-% Alternartive usages: 1) d is positive integer
+% Alternative usages: 1) d is positive integer
 %                      2) when d < 1 (but positive), it will be interpreted
 %                      like a tolerance, say 1e-10, i.e. x will be cut to
 %                      the same amount of digits as d
