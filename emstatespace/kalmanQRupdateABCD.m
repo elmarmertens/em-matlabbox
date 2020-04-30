@@ -5,6 +5,11 @@ Ny      = size(C,1);
 
 M = zeros(Ny + Nx, Nx + Nw);
 
+% if Nx + Nw < Ny + Nx
+%     error('QR requires rectangular matrix with more rows than cols') 
+%     % recall that QR is applied to M'
+% end
+
 M(1:Ny, 1:Nx)           = C * sqrtSigmaLag;
 M(1:Ny, Nx+(1:Nw))      = D;
 M(Ny+(1:Nx), 1:Nx)      = A * sqrtSigmaLag;
