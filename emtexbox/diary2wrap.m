@@ -10,8 +10,6 @@ function wrap = diary2wrap(diaryname, wrap, includeFlag)
 
 %   Coded by  Elmar Mertens, em@elmarmertens.com
 
-% todo: this switches off standard diary w/o further reactivation
-
 narginchk(1,3)
 
 if nargin < 2

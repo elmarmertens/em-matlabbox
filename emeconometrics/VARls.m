@@ -113,7 +113,7 @@ results.X               = X;
 results.Y               = Y;
 results.Yhat            = Yhat;
 results.XXi             = XXi;
-results.data = Y; % TODO: prune this redundancy
+results.data            = Y; % note, this line is redundant
 results.Y0              = Y0;
 
 results.Omega     = Omega;

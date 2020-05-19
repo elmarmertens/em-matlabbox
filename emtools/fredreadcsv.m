@@ -75,29 +75,6 @@ VALUES  = foo.data;
 % NAME    = fredid;
 
 
-% while ~strcmp(S, 'DATE') && ~strcmp(R, 'VALUE')
-%     PARSE = fgetl(fid);
-%     [S, R] = strtok(PARSE); % % minor TODO: read out FRED titles & ID
-%     R = strtrim(R);
-%     if strcmpi(S, 'Frequency:')
-%         SourceFrequency = lower(R);
-%     end
-% end
-% 
-% PARSE  = textscan(fid, '%4n%2n%2n %[1234567890.-]', 'delimiter', '-');
-% % old call of textscan below (the new call allows for empty values, which can happen with daily data)
-% % PARSE  = textscan(fid, '%4n%2n%2n %f', 'delimiter', '-');
-
-
-% VALUES = NaN * ones(size(PARSE{4}));
-% for t = 1 : length(PARSE{4})
-%     tmp = str2double(PARSE{4}{t});
-%     if ~isempty(tmp)
-%         VALUES(t) = tmp;
-%     end
-% end
-
-
 
 % DATES  = datenum([PARSE{1} PARSE{2} PARSE{3}]);
 [Y, M, D] = datevec(DATES); %#ok<ASGLU>
@@ -187,7 +164,7 @@ else
                             end
                             ndx(tau) = true;
                             
-                            while ~isempty(tau);
+                            while ~isempty(tau)
                                 if nextmonth  < 12
                                     nextmonth = nextmonth + 1;
                                 else

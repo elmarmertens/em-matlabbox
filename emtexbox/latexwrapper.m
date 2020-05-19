@@ -4,8 +4,6 @@ function outfile = latexwrapper(file, command, varargin)
 
 %   Coded by  Elmar Mertens, em@elmarmertens.com
 
-% TODO: replace calls to !start with winopen
-
 narginchk(0, 2 + length(varargin));
 
 if nargin < 1

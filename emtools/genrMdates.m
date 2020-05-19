@@ -3,11 +3,10 @@ function d = genrMdates(startYear, endYear, day)
 % default: day = last day of the month
 % function d = genrMdates(startYear, endYear, day)
 %
-% Todo: extend to arbitrary months
 
 %   Coded by  Elmar Mertens, em@elmarmertens.com
 
-error(nargchk(2,3,nargin))
+narginchk(2,3)
 if nargin < 3
     day = [];
 elseif day > 28
