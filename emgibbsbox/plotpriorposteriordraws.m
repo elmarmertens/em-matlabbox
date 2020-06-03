@@ -40,7 +40,8 @@ end
 % end
 
 if isempty(x)
-    minmax = [min(posteriordraws) max(posteriordraws)];
+    alldraws = cat(1, posteriordraws, priordraws);
+    minmax = [min(alldraws) max(alldraws)];
     x = minmax(1) : (minmax(2) - minmax(1)) / 100 : minmax(2);
 end
 [posteriorpdf, posteriorx] = ksdensity(posteriordraws, x);
