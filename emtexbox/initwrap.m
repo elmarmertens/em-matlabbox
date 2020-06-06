@@ -9,7 +9,12 @@ if true || isunix % && ~isdesktop
         wrap.title  = sprintf('\\titlecaveat{Dummy wrapper}');
         wrap.name   = 'foo';
     else
-        wrap.title   = sprintf('\\titlecaveat{%s}', latexstr(strrep(titlename, '_', ' ')));
+        latextitle = strrep(titlename, '_', ' ');
+        wrap.title   = sprintf('\\titlecaveat{%s}', latextitle);
+        
+        % remove any LaTeX line breaks included in titlename
+        titlename = strrep(titlename, '\\', '');
+        
         [jim, titlename] = fileparts(titlename);
         wrap.name    = titlename;
     end
