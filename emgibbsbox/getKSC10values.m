@@ -1,18 +1,16 @@
-function [KSC, KSCt] = getKSC10values(T, Nsv)
-% GETKSCVALUES returns coefficients from Kim, Shephard and Chibs normal-mixture approximation of a chi2 variable
-% KSC = getKSCvalues returns a structure with elements mean, vol, and pdf
-% [KSC, KSCt] = getKSCvalues(T, Nsv) returns in addition, the structure KSCt, with the same fieldnames as KSC
-% The fields of KSCt are "blown up" to dimension T x Nsv x 7 
+function [KSC, KSCt, logy2offset] = getKSC10values(T, Nsv)
+% GETKSC10VALUES returns coefficients from Omori, Chib, Shephard, Nakajima 10-point extension
+% to the original 7-point mixture of Kim, Shephard and Chib to approximate a chi2 variable
+%
+% USAGE: [KSC, KSCt, logy2offset] = getKSC10values(T, Nsv) returns in addition, the structure KSCt, with the same fieldnames as KSC
+%
+% where KSC returns a structure with elements mean, vol, var, pdf, and cdf
+% KSCt returns are corresponding structure but with fields "blown up" to dimension T x Nsv x 10
+% and logy2offset is the offset c used to compute log(y^2 + c)
+%
 
 %   Coded by  Elmar Mertens, em@elmarmertens.com
 
-
-%% VERSION INFO 
-% AUTHOR    : Elmar Mertens 
-% $DATE     : 28-Aug-2009 11:29:39 $ 
-% $Revision : 1.00 $ 
-% DEVELOPED : 7.7.0.471 (R2008b) 
-% FILENAME  : getKSCvalues.m 
 
 if nargin < 2
     Nsv = 1;
@@ -31,3 +29,5 @@ if nargout > 1
         KSCt.(fn{f}) = repmat(permute(KSC.(fn{f}), [1 3 2]), [Nsv, T, 1]);
     end
 end
+
+logy2offset = 0.0001; % see OMN page 436, this is the offset c used to compute log(y^2 + c)
