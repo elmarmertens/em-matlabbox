@@ -34,19 +34,21 @@ end
 
 %% draw mixture states
 % zdraws are standardized draws for each component of the normal mixture 
-% zdraws is thus Nsv x T x 7 
-zdraws      = bsxfun(@minus, logy2 - h, KSCt.mean) ./ KSCt.vol;
+% zdraws is thus Nsv x T x Nmixtures
+% zdraws      = bsxfun(@minus, logy2 - h, KSCt.mean) ./ KSCt.vol;
+zdraws      = (logy2 - h - KSCt.mean) ./ KSCt.vol;
 
 % construct CDF
 % factor of sqrt(2 * pi) can be ommitted for kernel
-
 pdfKernel           = KSCt.pdf ./ KSCt.vol .* exp(-.5 * zdraws.^2); 
 cdf                 = cumsum(pdfKernel, 3);                % integrate
-cdf(:,:,1:end-1)    = bsxfun(@rdivide, cdf(:,:,1:end-1), cdf(:,:, end)); 
+% cdf(:,:,1:end-1)    = bsxfun(@rdivide, cdf(:,:,1:end-1), cdf(:,:, end)); 
+cdf(:,:,1:end-1)    = cdf(:,:,1:end-1) ./ cdf(:,:, end); % using automatic expansion 
 cdf(:,:,end)        = 1;    % normalize
 
 % draw states
-kai2States  = sum(bsxfun(@gt, rand(rndStream, Nsv, T), cdf), 3) + 1;
+% kai2States  = sum(bsxfun(@gt, rand(rndStream, Nsv, T), cdf), 3) + 1;
+kai2States  = sum(rand(rndStream, Nsv, T) > cdf, 3) + 1;
 
 %% KSC State Space
 obs = logy2 - KSC.mean(kai2States);

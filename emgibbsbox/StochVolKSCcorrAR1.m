@@ -30,30 +30,21 @@ end
 
 %% draw mixture states
 % zdraws are standardized draws for each component of the normal mixture 
-% zdraws is thus Nsv x T x 7 
-zdraws      = bsxfun(@minus, logy2 - h, KSCt.mean) ./ KSCt.vol;
+% zdraws is thus Nsv x T x Nmixtures
+% zdraws      = bsxfun(@minus, logy2 - h, KSCt.mean) ./ KSCt.vol;
+zdraws      = (logy2 - h - KSCt.mean) ./ KSCt.vol;
 
 % construct CDF
 % factor of sqrt(2 * pi) can be ommitted for kernel
 pdfKernel           = KSCt.pdf ./ KSCt.vol .* exp(-.5 * zdraws.^2); 
 cdf                 = cumsum(pdfKernel, 3);                % integrate
-cdf(:,:,1:end-1)    = bsxfun(@rdivide, cdf(:,:,1:end-1), cdf(:,:, end)); 
-% switch size(cdf, 3) 
-%    case 7
-%       cdf(:,:,1:end-1)    = cdf(:,:,1:end-1) ./ cdf(:,:, [7 7 7 7 7 7]);   % normalize
-%    case 2
-%       cdf(:,:,1)    = cdf(:,:,1) ./ cdf(:,:,2);   % normalize
-%    otherwise
-%       error('KSC error: currently, only 7 or 2 components implemented')
-% end
+% cdf(:,:,1:end-1)    = bsxfun(@rdivide, cdf(:,:,1:end-1), cdf(:,:, end)); 
+cdf(:,:,1:end-1)    = cdf(:,:,1:end-1) ./ cdf(:,:, end); % using automatic expansion 
 cdf(:,:,end)        = 1;    % normalize
 
-% bsxfun appears to be pretty slow
-% check       = bsxfun(@rdivide, cdf, cdf(:,:,end));  % normalize
-% checkdiff(check, cdf);
-
 % draw states
-kai2States  = sum(bsxfun(@gt, rand(rndStream, Nsv, T), cdf), 3) + 1;
+% kai2States  = sum(bsxfun(@gt, rand(rndStream, Nsv, T), cdf), 3) + 1;
+kai2States  = sum(rand(rndStream, Nsv, T) > cdf, 3) + 1;
 obs         = logy2 - KSC.mean(kai2States);
 
 %% AR1 parameters for SV (fixed)
