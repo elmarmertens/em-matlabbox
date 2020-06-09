@@ -29,4 +29,4 @@ if nargout > 1
     end
 end
 
-logy2offset = 0.001; % see OMN page 436, this is the offset c used to compute log(y^2 + c)
+logy2offset = 0.001; 
