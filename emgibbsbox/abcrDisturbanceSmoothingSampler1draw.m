@@ -3,16 +3,9 @@ function [Xdraws, disturbanceDraws, X0draws, noiseDraws] = ...
 % ABCDISTURBANCESMOOTHINGSAMPLER
 % ....
 
-% accepts only 2D: ABC; only sqrtR can be 3D 
+% accepts only 2D inputs ABC; only sqrtR can be 3D 
 
 %   Coded by  Elmar Mertens, em@elmarmertens.com
-
-%% VERSION INFO
-% AUTHOR    : Elmar Mertens
-% $DATE     : 08-Aug-2009 17:58:16 $
-% $Revision : 1.00 $
-% DEVELOPED : 7.7.0.471 (R2008b)
-% FILENAME  : abcDisturbanceSmoothingSampler.m
 
 
 %% parse inputs
@@ -20,18 +13,8 @@ Nx                = size(A, 1);
 [Ny, T]           = size(Ydata);
 Nw                = size(B,2);
 
-% if nargin < 8
-%     sqrtR = [];
-% end
-
-% if nargin < 9
-%     rndStream = getDefaultStream;
-% end
 
 %% init Variables and allocate memory
-% if ~isempty(sqrtR) && ismatrix(sqrtR)
-%     sqrtR = repmat(sqrtR, [1 1 T]);
-% end
 
 I                 = eye(Nx);
 Iy                = eye(Ny);
@@ -52,7 +35,6 @@ X0plus = X00 + cholSigma00 * randn(rndStream, Nx, 1);
 %% Forward Loop: Kalman Forecasts
 [Sigma00, Sigmatt] = deal(cholSigma00 * cholSigma00');
 Xtt     = zeros(Nx,1); % use zeros, since projection on difference between Y and Yplus
-% BSigmaB = zeros(Nx, Nx, T);
 
 disturbanceplus  = zeros(Nx, T);
 noiseplus        = zeros(Ny, T);
@@ -72,9 +54,7 @@ for t = 1 : T
     
     % priors
     Sigmattm1(:,:,t)        = A * Sigmatt * A' + BSigmaB;
-    Xttm1(:,t)              = A * Xtt;
-    
-    
+    Xttm1(:,t)              = A * Xtt;    
     
     % observed innovation
     noiseplus(:,t)    = sqrtR(:,:,t) * eplus(:,t); 
@@ -85,7 +65,6 @@ for t = 1 : T
    
     Ytilde(:,t) = Ydata(:,t)  - Yplus  - C * Xttm1(:,t);
     
-    % Block Inverse of Y-VCV, accounting for missing obs (with zero VCV)
     invSigmaYttm1(:,:,t) = Iy / SigmaYttm1;
 
     % Kalman Gain
