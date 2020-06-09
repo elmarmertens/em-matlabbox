@@ -1,43 +1,19 @@
 function [h, h0, SV, outlierlog2Draws, outlierProb, outlierScaleDraws] = StochVolOutlierKSC(logy2, h, hInno, Eh0, Vh0, outlierlog2Draws, outlierProb, outlieralpha, outlierbeta, outlierStates, KSC, KSCt, Nsv, T, rndStream)
-% StochVolKSC performs a Gibbs updating step on a SV model and it works over 
-% Nsv independent SV residuals
+% StochVolOutlierKSC combines KSC Gibbs Sampling for SV with outlier model of Stock-Watson (2016, REStat)
 %
 % Uses Kim, Shephard and Chib normal mixtures
 %
-% USAGE: [h, kai2States] =  StochVolKSC1(logy2, kai2States, hInno, Eh0, Vh0, 
-%                           KSC, KSCt, Nsv, T, rndStream)
+% USAGE: [h, h0, SV, outlierlog2Draws, outlierProb, outlierScaleDraws] = ...
+%      StochVolOutlierKSC(logy2, h, hInno, Eh0, Vh0, ...
+%      outlierlog2Draws, outlierProb, outlieralpha, outlierbeta, outlierStates, ...
+%      KSC, KSCt, Nsv, T, rndStream)
 %
-% where h are the log-SV's and sigma is the *variance* in the innovations of h
 %
-% The function performs the folowing two Gibbs steps
-%   1)  drawing h given sigma 
-%       This step works both for RW in log-vol or AR1. 
-%       When assuming an AR1 with non-zero mean, log2y must be demeaned before 
-%       handing it over to StochVolKSC 
-%       (AR1 persistence wil be encoded in A)    
-%
-%   2)  when priors Sigma_eta0T, etaDof0 are provided (non-empty), 
-%       the second step draws sigma given the new draws of h 
-%
-% Further Notes:
-% - The code assumes that the first Nsv states in ABC are the log-variances, 
-%   the rest are the normal-mixture approximations of the chi2
-% - h00(Nsv:end) is irrelevant since A(Nsv:end,Nsv:end) = 0
-% - logy2 and kai2States are Nsv x T matrices
-% - Input arguments KSC and KSCt can be generated with 
-%   [KSC, KSCt] = getKSCvalues(T, Nsv);
-%
-% See also abcDisturbanceSmoothingSampler, getKSCvalues
+% See also getKSCvalues
 
 %   Coded by  Elmar Mertens, em@elmarmertens.com
 
 
-%% VERSION INFO
-% AUTHOR    : Elmar Mertens
-% $DATE     : 28-Aug-2009 12:07:01 $
-% $Revision : 1.00 $
-% DEVELOPED : 7.7.0.471 (R2008b)
-% FILENAME  : StochVolKSC.m.m
 
 if Nsv > 1
     error('Code supports only Nsv = 1 at this point')

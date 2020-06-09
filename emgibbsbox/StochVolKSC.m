@@ -1,4 +1,4 @@
-function [h, h0, kai2States] = StochVolKSC1corrigendum(logy2, h, hInno, Eh0, Vh0, KSC, KSCt, Nsv, T, rndStream)
+function [h, h0, kai2States] = StochVolKSC(logy2, h, hInno, Eh0, Vh0, KSC, KSCt, Nsv, T, rndStream)
 % StochVolKSC performs a Gibbs updating step on a SV model and it works over 
 % Nsv independent SV residuals
 %
@@ -9,25 +9,9 @@ function [h, h0, kai2States] = StochVolKSC1corrigendum(logy2, h, hInno, Eh0, Vh0
 %
 % where h are the log-SV's and sigma is the *variance* in the innovations of h
 %
-% The function performs the folowing two Gibbs steps
-%   1)  drawing h given sigma 
-%       This step works both for RW in log-vol or AR1. 
-%       When assuming an AR1 with non-zero mean, log2y must be demeaned before 
-%       handing it over to StochVolKSC 
-%       (AR1 persistence wil be encoded in A)    
+% assumes scalar SV process, see StochVolKSCcorr for multivariate case
 %
-%   2)  when priors Sigma_eta0T, etaDof0 are provided (non-empty), 
-%       the second step draws sigma given the new draws of h 
-%
-% Further Notes:
-% - The code assumes that the first Nsv states in ABC are the log-variances, 
-%   the rest are the normal-mixture approximations of the chi2
-% - h00(Nsv:end) is irrelevant since A(Nsv:end,Nsv:end) = 0
-% - logy2 and kai2States are Nsv x T matrices
-% - Input arguments KSC and KSCt can be generated with 
-%   [KSC, KSCt] = getKSCvalues(T, Nsv);
-%
-% See also abcDisturbanceSmoothingSampler, getKSCvalues
+% See also smoothingsamplerRWnoise, getKSCvalues, StochVolKSCcorr
 
 %   Coded by  Elmar Mertens, em@elmarmertens.com
 
