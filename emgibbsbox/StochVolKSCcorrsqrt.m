@@ -8,7 +8,7 @@ function [h, h0, hshock, kai2States] = StochVolKSCcorrsqrt(logy2, h, hVCVsqrt, E
 %
 % multivariate case with correlated shocks and RW dynamics
 %
-% See also abcrDisturbanceSmoothingSampler1draw, getKSCvalues
+% See also abcrDisturbanceSmoothingSampler1draw, getKSC7values, getKSC10values
 
 %   Coded by  Elmar Mertens, em@elmarmertens.com
 

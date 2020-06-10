@@ -8,7 +8,7 @@ function [h, h0, hshock, kai2States] = StochVolKSCcorr(logy2, h, hVCV, Eh0, Vh0,
 %
 % multivariate case with correlated shocks and RW dynamics
 %
-% See also abcrDisturbanceSmoothingSampler1draw, getKSCvalues
+% See also vectorRWsmoothingsampler1draw, getKSC7values, getKSC10values
 
 %   Coded by  Elmar Mertens, em@elmarmertens.com
 
@@ -49,18 +49,21 @@ kai2States  = sum(rand(rndStream, Nsv, T) > cdf, 3) + 1;
 obs         = logy2 - KSC.mean(kai2States);
 
 %% KSC State Space
-A     = eye(Nsv);
-B     = chol(hVCV)';
-C     = eye(Nsv);
 sqrtR = zeros(Nsv,Nsv,T);
 for n = 1 : Nsv
     sqrtR(n,n,:) = KSC.vol(kai2States(n,:));
 end
 
-sqrtVh0 = diag(sqrt(Vh0));
+sqrtVh0 = chol(Vh0)';
 
-[h, hshock, h0] = abcrDisturbanceSmoothingSampler1draw(A, B, C, obs, Eh0, sqrtVh0, ...
-    sqrtR, rndStream); 
+[h, hshock, h0] = vectorRWsmoothingsampler1draw(obs, chol(hVCV)', sqrtR, Eh0, sqrtVh0, rndStream);
+
+% A     = eye(Nsv);
+% B     = chol(hVCV)';
+% C     = eye(Nsv);
+% [h, hshock, h0] = abcrDisturbanceSmoothingSampler1draw(A, B, C, obs, Eh0, sqrtVh0, ...
+%     sqrtR, rndStream); 
+
 
 
 

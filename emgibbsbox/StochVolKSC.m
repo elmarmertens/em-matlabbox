@@ -4,14 +4,13 @@ function [h, h0, kai2States] = StochVolKSC(logy2, h, hInno, Eh0, Vh0, KSC, KSCt,
 %
 % Uses Kim, Shephard and Chib normal mixtures
 %
-% USAGE: [h, kai2States] =  StochVolKSC1(logy2, kai2States, hInno, Eh0, Vh0, 
-%                           KSC, KSCt, Nsv, T, rndStream)
+% USAGE: [h, kai2States] =  StochVolKSC(logy2, h, hInno, Eh0, Vh0, KSC, KSCt, Nsv, T, rndStream)
 %
-% where h are the log-SV's and sigma is the *variance* in the innovations of h
+% where h are the log-SV's and hInno is the *volatility* in the innovations of h
 %
 % assumes scalar SV process, see StochVolKSCcorr for multivariate case
 %
-% See also smoothingsamplerRWnoise, getKSCvalues, StochVolKSCcorr
+% See also smoothingsamplerRWnoise, StochVolKSCcorr, getKSC7values, getKSC10values
 
 %   Coded by  Elmar Mertens, em@elmarmertens.com
 
@@ -58,4 +57,5 @@ for n = 1 : Nsv
        Eh0(n),Vh0(n),rndStream);
 end
 
+% alt code: call vectorRWsmoothingsampler1draw
 
