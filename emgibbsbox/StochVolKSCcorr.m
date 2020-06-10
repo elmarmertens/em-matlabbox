@@ -12,14 +12,6 @@ function [h, h0, hshock, kai2States] = StochVolKSCcorr(logy2, h, hVCV, Eh0, Vh0,
 
 %   Coded by  Elmar Mertens, em@elmarmertens.com
 
-
-%% VERSION INFO
-% AUTHOR    : Elmar Mertens
-% $DATE     : 28-Aug-2009 12:07:01 $
-% $Revision : 1.00 $
-% DEVELOPED : 7.7.0.471 (R2008b)
-% FILENAME  : StochVolKSC.m.m
-
 if isscalar(Eh0)
     Eh0 = repmat(Eh0, Nsv, 1);
 end

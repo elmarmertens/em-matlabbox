@@ -8,17 +8,10 @@ function [h, h0, hshock, kai2States] = StochVolKSCcorrsqrt(logy2, h, hVCVsqrt, E
 %
 % multivariate case with correlated shocks and RW dynamics
 %
-% See also abcrDisturbanceSmoothingSampler1draw, getKSC7values, getKSC10values
+% See also vectorRWsmoothingsampler1draw, getKSC7values, getKSC10values
 
 %   Coded by  Elmar Mertens, em@elmarmertens.com
 
-
-%% VERSION INFO
-% AUTHOR    : Elmar Mertens
-% $DATE     : 28-Aug-2009 12:07:01 $
-% $Revision : 1.00 $
-% DEVELOPED : 7.7.0.471 (R2008b)
-% FILENAME  : StochVolKSC.m.m
 
 if isscalar(Eh0)
     Eh0 = repmat(Eh0, Nsv, 1);

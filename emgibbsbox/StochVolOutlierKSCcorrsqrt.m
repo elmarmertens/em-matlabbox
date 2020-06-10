@@ -1,12 +1,11 @@
-function [h, h0, SV, outlierlog2Draws, outlierProb, outlierScaleDraws] = StochVolOutlierKSC(logy2, h, hInno, Eh0, Vh0, outlierlog2Draws, outlierProb, outlieralpha, outlierbeta, outlierStates, KSC, KSCt, Nsv, T, rndStream)
+function [h, h0, hshock, SV, outlierlog2Draws, outlierProb, outlierScaleDraws] = StochVolOutlierKSCcorrsqrt(logy2, h, hVCVsqrt, Eh0, sqrtVh0, outlierlog2Draws, outlierProb, outlieralpha, outlierbeta, outlierStates, KSC, KSCt, Nsv, T, rndStream)
 % StochVolOutlierKSC combines KSC Gibbs Sampling for SV with outlier model of Stock-Watson (2016, REStat)
 %
 % Uses Kim, Shephard and Chib normal mixtures
 %
-% USAGE: [h, h0, SV, outlierlog2Draws, outlierProb, outlierScaleDraws] = ...
-%      StochVolOutlierKSC(logy2, h, hInno, Eh0, Vh0, ...
-%      outlierlog2Draws, outlierProb, outlieralpha, outlierbeta, outlierStates, ...
-%      KSC, KSCt, Nsv, T, rndStream)
+% USAGE : [h, h0, hshock, SV, outlierlog2Draws, outlierProb, outlierScaleDraws] = StochVolOutlierKSCcorrsqrt(logy2, h, hVCVsqrt, Eh0, sqrtVh0, outlierlog2Draws, ...
+%         outlierProb, outlieralpha, outlierbeta, outlierStates, KSC, KSCt, ...
+%         Nsv, T, rndStream)
 %
 %
 % See also getKSC7values, getKSC10values
@@ -17,8 +16,8 @@ function [h, h0, SV, outlierlog2Draws, outlierProb, outlierScaleDraws] = StochVo
 if isscalar(Eh0)
     Eh0 = repmat(Eh0, Nsv, 1);
 end
-if isscalar(Vh0)
-    Vh0 = repmat(Vh0, Nsv, 1);
+if isscalar(sqrtVh0)
+    sqrtVh0 = sqrtVh0 * eye(Nsv);
 end
 
 %% draw mixture states
@@ -41,13 +40,15 @@ kai2States  = sum(rand(rndStream, Nsv, T) > cdf, 3) + 1;
 obs         = logy2 - KSC.mean(kai2States) - outlierlog2Draws;
 
 %% KSC State Space
-h = NaN(Nsv,T);
-h0 = NaN(Nsv,1);
-
+sqrtR = zeros(Nsv,Nsv,T);
 for n = 1 : Nsv
-    [h(n,:), h0(n)] = smoothingsamplerRWnoise(obs(n,:),hInno(n)^2,KSC.var(kai2States(n,:)),...
-        Eh0(n),Vh0(n),rndStream);
+    sqrtR(n,n,:) = KSC.vol(kai2States(n,:));
 end
+
+% note: for larger systems, smoothing sampler turns out to be more
+% efficient than Carter-Kohn
+[h, hshock, h0] = vectorRWsmoothingsampler1draw(obs, hVCVsqrt, sqrtR, Eh0, sqrtVh0, rndStream);
+
 
 %% outlier PDF
 % outlierPdf is Nsurvey times T  times Nstates
