@@ -40,7 +40,7 @@ end
 % end
 
 if isempty(x)
-    alldraws = cat(1, posteriordraws, priordraws);
+    alldraws = cat(1, posteriordraws(:), priordraws(:));
     minmax = [min(alldraws) max(alldraws)];
     x = minmax(1) : (minmax(2) - minmax(1)) / 100 : minmax(2);
 end
