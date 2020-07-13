@@ -74,6 +74,10 @@ hold on
 
 hanni = area(x, [tails(:,1) diff(tails, 1, 2)], ybase, 'EdgeColor', 'none');
 
+for h = 1 : length(hanni)
+    hanni(h).ShowBaseLine = false;
+end
+
 set(hanni(1), 'facecolor', [1 1 1]);
 
 switch (length(hanni) - 1)
