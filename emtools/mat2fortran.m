@@ -3,7 +3,7 @@ function mat2fortran(filename, x)
 %  
 % Usage: mat2fortran(filename, x)
 % 
-% See also vec2fortran, logical2fortran
+% See also int2fortran, logical2fortran
 
 %% VERSION INFO 
 % AUTHOR    : Elmar Mertens 
