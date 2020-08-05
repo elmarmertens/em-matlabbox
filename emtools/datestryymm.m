@@ -13,4 +13,4 @@ function s = datestryymm(d)
 
 
 
-s = sprintf('%s:%s', datestr(d, 'yyyy'), datestr(d, 'mm'));
+s = sprintf('%s:M%s', datestr(d, 'yyyy'), datestr(d, 'mm'));
