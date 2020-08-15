@@ -1,4 +1,4 @@
-function wrapthisfigure(this, figurename, wrap, captionname, figurecomment, landscape, doJPG)
+function wrapthisfigure(this, figurename, wrap, captionname, figurecomment, landscape, doJPG, noWrap)
 %--------------------------------------------------------------
 % Prints the current figure to file 'figurename' as fig, eps, jpg and pdf.
 % inserts into wrap
@@ -18,6 +18,9 @@ if nargin < 6
 end
 if nargin < 7
    doJPG = false;
+end
+if nargin < 8
+   noWrap = false;
 end
 
 if ~isempty(figurename)
@@ -39,15 +42,17 @@ end
 % set(gcf, 'Renderer', 'painters') % to fix date axis bug
 
 if nargin > 1 && ~isempty(wrap)
-   if (wrap.id ~= 0)
-      if landscape
-         latexwrapper(wrap, 'add', 'figure', figurename, captionname, figurecomment);
-      else
-         latexwrapper(wrap, 'add', 'sidewaysfigure', figurename, captionname, figurecomment);
-      end
-   else
-      warning('em:msg', 'Cannot append figure to latexwrapper since wrap file is closed (fid=0)')
-   end
+    if ~noWrap
+        if (wrap.id ~= 0)
+            if landscape
+                latexwrapper(wrap, 'add', 'figure', figurename, captionname, figurecomment);
+            else
+                latexwrapper(wrap, 'add', 'sidewaysfigure', figurename, captionname, figurecomment);
+            end
+        else
+            warning('em:msg', 'Cannot append figure to latexwrapper since wrap file is closed (fid=0)')
+        end
+    end
    if isfield(wrap, 'dir')
       figurename = fullfile(wrap.dir, figurename);
    end
