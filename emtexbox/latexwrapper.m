@@ -140,7 +140,7 @@ switch lower(command)
       fprintf(file.id, '%s\n', '\newcommand*{\inputFIG}[3]{');
       fprintf(file.id, '%s\n', '  \begin{figure}[t]');
       fprintf(file.id, '%s\n', '  \caption{#2}');
-      fprintf(file.id, '%s\n', '  \includegraphics[width=\textwidth]{#1}');
+      fprintf(file.id, '%s\n', '  \includegraphics[width=0.95\textwidth]{#1}');
       fprintf(file.id, '%s\n', '  \begin{footnotesize} #3 \end{footnotesize}');
       fprintf(file.id, '%s\n', '  \begin{center} \texttt{File: #1} \end{center}');
       fprintf(file.id, '%s\n', '  \end{figure}');
@@ -149,7 +149,7 @@ switch lower(command)
       fprintf(file.id, '%s\n', '\newcommand*{\inputSIDEFIG}[3]{');
       fprintf(file.id, '%s\n', '  \begin{sidewaysfigure}[t]');
       %       fprintf(file.id, '%s\n', '  \caption{#2}');
-      fprintf(file.id, '%s\n', '  \centering\includegraphics[width=.75\textheight]{#1}');
+      fprintf(file.id, '%s\n', '  \centering\includegraphics[width=.95\textwidth]{#1}');
       fprintf(file.id, '%s\n', '  \\ \noindent');
       fprintf(file.id, '%s\n', '  \begin{footnotesize} #3 \end{footnotesize}');
       % fprintf(file.id, '%s\n', '  \begin{center} \caption{#2} -- \texttt{File: #1} \end{center}');
