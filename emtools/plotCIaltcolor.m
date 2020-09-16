@@ -50,13 +50,13 @@ tails = sort(tails, 2); % note: this is just a crude swap of columns. it relies 
 % 	error('tails sort not simply swapping columns')
 % end
 
-cla % CHECKME: really never needed?
+% cla % CHECKME: really never needed?
 p = plot(x, [y tails]);
 YLIM = ylim;
 delete(p);
 
 if isempty(ybase)
-    ybase = 0.9 * min(YLIM);
+    ybase = min(YLIM);
 else
     ybase = min(ybase, min(YLIM));
 end
@@ -75,6 +75,10 @@ hold on
 hanni = area(x, [tails(:,1) diff(tails, 1, 2)], ybase, 'EdgeColor', 'none');
 
 basecolor = [1 0 0];
+for h = 1 : length(hanni)
+    hanni(h).ShowBaseLine = false;
+end
+
 set(hanni(1), 'facecolor', [1 1 1]);
 
 switch (length(hanni) - 1) 
