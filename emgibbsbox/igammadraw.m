@@ -6,7 +6,7 @@ function [igams, gams] = igammadraw(sigmaT, dof, Ndraw, rndStream)
 % output is length(sigmaT) x Ndraw
 % 
 % NOTE: THIS IS RATHER A UNIVARIATE INVERSE WISHART (and does not follow the notation for the inverse gamma)
-% the proper maping from the univaraite-inverse Wishart to the igamma would
+% the proper mapping from the univariate-inverse Wishart to the igamma would
 % be alpha = dof /2 and beta = sigmaT / 2
 % See also: iwishdraw
 
@@ -64,7 +64,7 @@ else
     z  = randn(rndStream, N, Ndraw, dof);
     
     %% construct inverse-gammas
-    zz       = squeeze(sum(z.^2,3));
+    zz       = sum(z.^2,3);
     igams    = bsxfun(@rdivide, sigmaT, zz);
     
     %% invert to gammas (if output is required)
