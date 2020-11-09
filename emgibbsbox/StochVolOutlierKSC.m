@@ -9,7 +9,7 @@ function [h, h0, SV, outlierlog2Draws, outlierProb, outlierScaleDraws] = StochVo
 %      KSC, KSCt, Nsv, T, rndStream)
 %
 %
-% See also getKSC7values, getKSC10values
+% See also getKSC7values, getKSC10values, StochVolOutlierKSCcorrsqrt
 
 %   Coded by  Elmar Mertens, em@elmarmertens.com
 

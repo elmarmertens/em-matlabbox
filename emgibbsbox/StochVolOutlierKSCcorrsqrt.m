@@ -2,7 +2,7 @@ function [h, h0, hshock, SV, outlierlog2Draws, outlierProb, outlierScaleDraws] =
     StochVolOutlierKSCcorrsqrt(logy2, h, hVCVsqrt, Eh0, sqrtVh0, ...
     outlierlog2Draws, outlierProb, outlieralpha, outlierbeta, outlierStates, ...
     KSC, KSCt, Nsv, T, rndStream)
-% StochVolOutlierKSC combines KSC Gibbs Sampling for SV with outlier model of Stock-Watson (2016, REStat)
+% StochVolOutlierKSCcorrsqrt combines KSC Gibbs Sampling for SV with outlier model of Stock-Watson (2016, REStat)
 %
 % Uses Kim, Shephard and Chib normal mixtures
 %
@@ -11,7 +11,7 @@ function [h, h0, hshock, SV, outlierlog2Draws, outlierProb, outlierScaleDraws] =
 %         Nsv, T, rndStream)
 %
 %
-% See also getKSC7values, getKSC10values
+% See also getKSC7values, getKSC10values, StochVolOutlierKSC
 
 %   Coded by  Elmar Mertens, em@elmarmertens.com
 
