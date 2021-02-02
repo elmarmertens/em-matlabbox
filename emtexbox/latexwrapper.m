@@ -93,6 +93,21 @@ switch lower(command)
       fprintf(file.id, '%s\n', '\usepackage[latin1]{inputenc}');
       fprintf(file.id, '%s\n', '\usepackage{listings}');
       fprintf(file.id, '%s\n', '\usepackage{a4wide}');
+      fprintf(file.id, '%s\n', '\usepackage{beamerarticle}');
+      
+      fprintf(file.id, '%s\n', '% DCOL COLORS');
+      fprintf(file.id, '%s\n', '\makeatletter');
+      fprintf(file.id, '%s\n', '\def\DC@endright{$\hfil\egroup\@dcolcolor\box\z@\box\tw@\dcolreset}');
+      fprintf(file.id, '%s\n', '\def\dcolcolor#1{\gdef\@dcolcolor{\color{#1}}}');
+      fprintf(file.id, '%s\n', '\def\dcolreset{\dcolcolor{black}}');
+      fprintf(file.id, '%s\n', '\dcolcolor{black}');
+      fprintf(file.id, '%s\n', '\makeatother');
+      fprintf(file.id, '%s\n', '\definecolor{darkblue}{rgb}{0,0,.6}');
+      fprintf(file.id, '%s\n', '\definecolor{darkgreen}{rgb}{0,.6,0}');
+      fprintf(file.id, '%s\n', '\definecolor{darkred}{rgb}{.6,0,0}');
+      fprintf(file.id, '%s\n', '\definecolor{darkgray}{gray}{.3}');
+      
+      
       fprintf(file.id, '%s\n', '\newcommand*{\titlecaveat}[1]{\texttt{-----------------------------\\ #1 \\-----------------------------}}');
       fprintf(file.id, '%s\n', '\newcounter{XYZs}');
       fprintf(file.id, '%s\n', '\newcommand*{\XYZ}[1][XYZ]{\fbox{\texttt{\textbf{#1}}}\xspace\addtocounter{XYZs}{1}}');
