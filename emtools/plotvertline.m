@@ -18,7 +18,12 @@ if nargin < 2 || isempty(ylims)
 end
 
 hold on
-hans = plot(repmat(x, 1, 2), ylims, varargin{:});
+
+x = x(:);
+hans = NaN(length(x), 1);
+for n = 1 : length(x)
+    hans(n) = plot(repmat(x(n), 1, 2), ylims, varargin{:});
+end
 ylim(ylims)
 if nargout > 0
     h = hans;
