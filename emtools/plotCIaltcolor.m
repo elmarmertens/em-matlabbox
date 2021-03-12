@@ -1,5 +1,5 @@
-function [h, hanni] = plotCIaltcolor(y,tails,x, ybase, varargin)
-% function plotCI(y,tails,x, yLinespec)
+function [h, hanni] = plotCI(y, tails, x, ybase, varargin)
+% function [h, hanni] = plotCI(y, tails, x, ybase, varargin)
 % plots series y against x plus confidence intervals
 %   (e.g.: y is IRF and x are the lags)
 % confidence intervals are given in tails
@@ -74,7 +74,8 @@ hold on
 
 hanni = area(x, [tails(:,1) diff(tails, 1, 2)], ybase, 'EdgeColor', 'none');
 
-basecolor = [1 0 0];
+% basecolor = [0 0 1];
+basecolor = [0.5843    0.8157    0.9882];
 for h = 1 : length(hanni)
     hanni(h).ShowBaseLine = false;
 end
@@ -90,7 +91,7 @@ switch (length(hanni) - 1)
       areacolors = [.8 .6 .4 .6 .8];
       % areacolors = [.75 .5 0 .5 .75];
    case 1
-      areacolors = .8;
+      areacolors = 1;
    otherwise
       error('unprepared for this number of tails ...')
 end
