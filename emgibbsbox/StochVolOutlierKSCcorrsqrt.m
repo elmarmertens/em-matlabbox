@@ -40,9 +40,10 @@ cdf(:,:,end)        = 1;    % normalize
 % draw states
 % kai2States  = sum(bsxfun(@gt, rand(rndStream, Nsv, T), cdf), 3) + 1;
 kai2States  = sum(rand(rndStream, Nsv, T) > cdf, 3) + 1;
-obs         = logy2 - KSC.mean(kai2States) - outlierlog2Draws;
+
 
 %% KSC State Space
+obs         = logy2 - KSC.mean(kai2States) - outlierlog2Draws;
 sqrtR = zeros(Nsv,Nsv,T);
 for n = 1 : Nsv
     sqrtR(n,n,:) = KSC.vol(kai2States(n,:));
@@ -63,7 +64,7 @@ edraws      = bsxfun(@minus, logy2 - h - KSC.mean(kai2States), permute(outlierSt
 zdraws      = bsxfun(@rdivide, edraws, KSC.vol(kai2States));
 
 % pdfKernel   = exp(-.5 * zdraws.^2);  
-% division by KSC.vol is unnecessarty for this kernel, since same vol would apply across outlierStates
+% division by KSC.vol is unnecessary for this kernel, since same vol would apply across outlierStates
 
 pdfKernel   = outlierPdf .* exp(-.5 * zdraws.^2);
 
