@@ -7,7 +7,7 @@ function plotOrigin(linespec, x0, y0, linewidth)
 
 %   Coded by  Elmar Mertens, em@elmarmertens.com
 
-error(nargchk(0,4,nargin))
+narginchk(0,4)
 if nargin < 1 || isempty(linespec)
     linespec = 'k:';
 end

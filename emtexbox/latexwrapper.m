@@ -93,6 +93,21 @@ switch lower(command)
       fprintf(file.id, '%s\n', '\usepackage[latin1]{inputenc}');
       fprintf(file.id, '%s\n', '\usepackage{listings}');
       fprintf(file.id, '%s\n', '\usepackage{a4wide}');
+      fprintf(file.id, '%s\n', '\usepackage{beamerarticle}');
+      
+      fprintf(file.id, '%s\n', '% DCOL COLORS');
+      fprintf(file.id, '%s\n', '\makeatletter');
+      fprintf(file.id, '%s\n', '\def\DC@endright{$\hfil\egroup\@dcolcolor\box\z@\box\tw@\dcolreset}');
+      fprintf(file.id, '%s\n', '\def\dcolcolor#1{\gdef\@dcolcolor{\color{#1}}}');
+      fprintf(file.id, '%s\n', '\def\dcolreset{\dcolcolor{black}}');
+      fprintf(file.id, '%s\n', '\dcolcolor{black}');
+      fprintf(file.id, '%s\n', '\makeatother');
+      fprintf(file.id, '%s\n', '\definecolor{darkblue}{rgb}{0,0,.6}');
+      fprintf(file.id, '%s\n', '\definecolor{darkgreen}{rgb}{0,.6,0}');
+      fprintf(file.id, '%s\n', '\definecolor{darkred}{rgb}{.6,0,0}');
+      fprintf(file.id, '%s\n', '\definecolor{darkgray}{gray}{.3}');
+      
+      
       fprintf(file.id, '%s\n', '\newcommand*{\titlecaveat}[1]{\texttt{-----------------------------\\ #1 \\-----------------------------}}');
       fprintf(file.id, '%s\n', '\newcounter{XYZs}');
       fprintf(file.id, '%s\n', '\newcommand*{\XYZ}[1][XYZ]{\fbox{\texttt{\textbf{#1}}}\xspace\addtocounter{XYZs}{1}}');
@@ -140,7 +155,7 @@ switch lower(command)
       fprintf(file.id, '%s\n', '\newcommand*{\inputFIG}[3]{');
       fprintf(file.id, '%s\n', '  \begin{figure}[t]');
       fprintf(file.id, '%s\n', '  \caption{#2}');
-      fprintf(file.id, '%s\n', '  \includegraphics[width=\textwidth]{#1}');
+      fprintf(file.id, '%s\n', '  \includegraphics[width=0.95\textwidth]{#1}');
       fprintf(file.id, '%s\n', '  \begin{footnotesize} #3 \end{footnotesize}');
       fprintf(file.id, '%s\n', '  \begin{center} \texttt{File: #1} \end{center}');
       fprintf(file.id, '%s\n', '  \end{figure}');
@@ -149,7 +164,7 @@ switch lower(command)
       fprintf(file.id, '%s\n', '\newcommand*{\inputSIDEFIG}[3]{');
       fprintf(file.id, '%s\n', '  \begin{sidewaysfigure}[t]');
       %       fprintf(file.id, '%s\n', '  \caption{#2}');
-      fprintf(file.id, '%s\n', '  \centering\includegraphics[width=.75\textheight]{#1}');
+      fprintf(file.id, '%s\n', '  \centering\includegraphics[width=.95\textwidth]{#1}');
       fprintf(file.id, '%s\n', '  \\ \noindent');
       fprintf(file.id, '%s\n', '  \begin{footnotesize} #3 \end{footnotesize}');
       % fprintf(file.id, '%s\n', '  \begin{center} \caption{#2} -- \texttt{File: #1} \end{center}');
