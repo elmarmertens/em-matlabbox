@@ -1,5 +1,5 @@
 function s = datestryymm(d)
-% DATESTRYYMM returns date number as string in format yyyy:mm 
+% DATESTRYYMM returns date number as string in format yyyy:Mmm 
 %  
 % USAGE: s = datestryymm(d)
 %   ... 
