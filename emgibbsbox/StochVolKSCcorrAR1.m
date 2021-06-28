@@ -1,23 +1,14 @@
 function [h, hbar, hresid, htilde, kai2States] = StochVolKSCcorrAR1(logy2, h, rho, hVCV, Eh0, Vh0, KSC, KSCt, Nsv, T, rndStream)
-% StochVolKSC performs a Gibbs updating step on a SV model and it works over 
-% Nsv independent SV residuals
+% StochVolKSCcorrAR1 performs a Gibbs updating step on a SV model with AR1
+% dynamics and correlated shocks
 %
 % Uses Kim, Shephard and Chib normal mixtures
 %
-% USAGE: [h, kai2States] =  StochVolKSCabc(logy2, kai2States, hInno, Eh0, Vh0, 
-%                           KSC, KSCt, Nsv, T, rndStream)
 %
-% See also abcDisturbanceSmoothingSampler, getKSCvalues
+% See also abcDisturbanceSmoothingSampler1draw, vectorRWsmoothingsampler1draw, getKSC7values, getKSC10values
 
 %   Coded by  Elmar Mertens, em@elmarmertens.com
 
-
-%% VERSION INFO
-% AUTHOR    : Elmar Mertens
-% $DATE     : 28-Aug-2009 12:07:01 $
-% $Revision : 1.00 $
-% DEVELOPED : 7.7.0.471 (R2008b)
-% FILENAME  : StochVolKSC.m.m
 
 if isscalar(Eh0)
     Eh0 = repmat(Eh0, Nsv, 1);
@@ -63,13 +54,9 @@ end
 
 sqrtVh0 = diag(sqrt(Vh0));
 
-% Vhtilde  = dlyap(A(1:Nsv,1:Nsv), hVCV);
-Vhtilde  = dlyapdoubling(A(1:Nsv,1:Nsv), hVCV); % you can use the previous line when Matlab's control toolbox is available
-x0       = [zeros(Nsv, 1); Eh0];
-sqrtVx0  = [chol(Vhtilde)', zerosNsv; zerosNsv sqrtVh0];
-
-% [h, hshock, h0] = abcDisturbanceSmoothingSampler(A, B, C, obs, Eh0, sqrtVh0, 1, ...
-%     sqrtR, [], rndStream); %#ok<ASGLU>
+sqrtVhtilde  = zeros(Nsv); % Note: need fixed prior, not depended on estimated rhos (alt: use prior rho)
+x0           = [zeros(Nsv, 1); Eh0];
+sqrtVx0      = [sqrtVhtilde, zerosNsv; zerosNsv sqrtVh0];
 [H, Hshock, H0] = abcDisturbanceSmoothingSampler1draw(A, B, C, obs, x0, sqrtVx0, ...
     sqrtR, rndStream); 
 
@@ -77,5 +64,3 @@ h      = H(1:Nsv,:) + H(Nsv+1:end,:); % C * H
 hbar   = H0(Nsv+1:end);
 htilde = cat(2, H0(1:Nsv,:), H(1:Nsv,:));
 hresid = Hshock(1:Nsv,:);
-
-
