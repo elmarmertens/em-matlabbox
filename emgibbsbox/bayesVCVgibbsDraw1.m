@@ -1,6 +1,6 @@
 function [iwishDraws, SigmaT, dof, cholSigmaT] = bayesVCVgibbsDraw1(Sigma0T, dof0, resid, rndStream, diagFlag)
 % BAYESVARRESIDVCV iwishDraws variance-covariance matrix
-% [iwishDraws, SigmaT, dof, cholSigmaT, wishDraws, icholSigmaT] = bayesVCVgibbsDraw(Sigma0T, dof0, resid, Ndraw, rndStream, diagFlag)
+% [iwishDraws, SigmaT, dof, cholSigmaT] = bayesVCVgibbsDraw1(Sigma0T, dof0, resid, rndStream, diagFlag)
 % Prior is (Sigma0T, dof0) invWishart and posterior is (SigmaT, dof) invWishart
 % Recall: Mean of inverse Wishart is SigmaT / (dof - N - 1)
 % dof = dof0 + T
