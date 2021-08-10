@@ -1,4 +1,4 @@
-function Xdraws = stateABnanDraw(A, B, ndxY, Ydata, yNaNndx, X0, sqrtSigma, rndStream)
+function Xdraws = stateABnanDraw1(A, B, ndxY, Ydata, yNaNndx, X0, sqrtSigma, rndStream)
 % STATEABCDRAW
 % ....
 % supposes X0 is deterministically given
