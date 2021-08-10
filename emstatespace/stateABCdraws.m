@@ -95,9 +95,9 @@ end
 
 %% Backward Loop: Disturbance Smoother
 XplustT(:,:,T)  = Xplustt;
-XtT(:,T)        = Xtt;
+XtT(:,:,T)      = Xtt;
 
-StT             = C(:,:,T)' * (invSigmaYttm1(:,:,T) * Ytilde(:,T));
+StT             = C(:,:,T)' * (invSigmaYttm1(:,:,T) * Ytilde(:,:,T));
 SplustT         = C(:,:,T)' * (invSigmaYttm1(:,:,T) * Yplustilde(:,:,T));
 
 
