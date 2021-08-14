@@ -1,4 +1,4 @@
-function Xdraws = stateABnanDraw(A, B, ndxY, Ydata, yNaNndx, X0, sqrtSigma, Ndraws, rndStream)
+function Xdraws = stateABnanDraws(A, B, ndxY, Ydata, yNaNndx, X0, sqrtSigma, Ndraws, rndStream)
 % STATEABCDRAW
 % ....
 % supposes X0 is deterministically given
@@ -106,13 +106,11 @@ end
 %% Backward Loop: Disturbance Smoother
 
 t = T;
-
 XplustT(:,:,t)  = Xplustt;
 XtT(:,:,t)      = Xtt;
-
-thisC     = CC(yDataNdx(:,t),:);
-StT       = thisC' * (invSigmaYttm1(yDataNdx(:,t),yDataNdx(:,t),t) * Ytilde(yDataNdx(:,t),:,t));
-SplustT   = thisC' * (invSigmaYttm1(yDataNdx(:,t),yDataNdx(:,t),t) * Yplustilde(yDataNdx(:,t),:,t));
+thisC           = CC(yDataNdx(:,t),:);
+StT             = thisC' * (invSigmaYttm1(yDataNdx(:,t),yDataNdx(:,t),t) * Ytilde(yDataNdx(:,t),:,t));
+SplustT         = thisC' * (invSigmaYttm1(yDataNdx(:,t),yDataNdx(:,t),t) * Yplustilde(yDataNdx(:,t),:,t));
 
 
 for t = (T-1) : -1 : 1
