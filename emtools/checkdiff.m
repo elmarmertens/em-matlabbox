@@ -55,8 +55,8 @@ end
 
 if flag && (nargout == 0 || ~isempty(msg))
    if isempty(msg)
-      warning('em:checkdiff', 'mae(%s,%s)=%e', alabel, blabel, delta)
+      warning('em:checkdiff', 'mae(%s,%s)=%e', alabel, blabel, full(delta))
    else
-      warning('em:checkdiff', '%s -- mae=%e', msg, delta)
+      warning('em:checkdiff', '%s -- mae=%e', msg, full(delta))
    end
 end
