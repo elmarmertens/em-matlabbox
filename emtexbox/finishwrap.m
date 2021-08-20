@@ -3,7 +3,11 @@ if exist('wrap', 'var') && ~isempty(wrap)
     toc
     fprintf('\n');
     
-    wrap = latexwrapper(wrap, 'compileDVI2PDF');
+    if ispc
+        wrap = latexwrapper(wrap, 'close');
+    else
+        wrap = latexwrapper(wrap, 'compileDVI2PDF');
+    end
     % if compilation fails on your system, simply replace the line above with the following:
     % wrap = latexwrapper(wrap, 'close');
     

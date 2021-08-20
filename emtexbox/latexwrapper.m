@@ -93,6 +93,7 @@ switch lower(command)
       fprintf(file.id, '%s\n', '\usepackage[latin1]{inputenc}');
       fprintf(file.id, '%s\n', '\usepackage{listings}');
       fprintf(file.id, '%s\n', '\usepackage{a4wide}');
+      fprintf(file.id, '%s\n', '\usepackage[table]{xcolor}');
       fprintf(file.id, '%s\n', '\usepackage{beamerarticle}');
       
       fprintf(file.id, '%s\n', '% DCOL COLORS');
