@@ -1,4 +1,5 @@
-function [h, h0, hshock, kai2States] = StochVolKSCcorrsqrt(logy2, h, hVCVsqrt, Eh0, sqrtVh0, KSC, KSCt, Nsv, T, rndStream)
+function [h, h0, hshock, kai2States] = ...
+    StochVolKSCcorrsqrt(logy2, h, hVCVsqrt, Eh0, sqrtVh0, KSC, KSCt, Nsv, T, rndStream)
 % StochVolKSC performs a Gibbs updating step on a SV model and it works over 
 % Nsv independent SV residuals
 %
@@ -20,8 +21,6 @@ if isscalar(sqrtVh0)
     sqrtVh0 = sqrtVh0 * eye(Nsv);
 end
 
-%% CORRIGENDUM CHANGES ORDER OF GIBBS STEPS!
-
 %% draw mixture states
 % zdraws are standardized draws for each component of the normal mixture 
 % zdraws is thus Nsv x T x Nmixtures
@@ -39,9 +38,10 @@ cdf(:,:,end)        = 1;    % normalize
 % draw states
 % kai2States  = sum(bsxfun(@gt, rand(rndStream, Nsv, T), cdf), 3) + 1;
 kai2States  = sum(rand(rndStream, Nsv, T) > cdf, 3) + 1;
-obs         = logy2 - KSC.mean(kai2States);
+
 
 %% KSC State Space
+obs         = logy2 - KSC.mean(kai2States);
 sqrtR = zeros(Nsv,Nsv,T);
 for n = 1 : Nsv
     sqrtR(n,n,:) = KSC.vol(kai2States(n,:));
