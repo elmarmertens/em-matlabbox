@@ -60,7 +60,7 @@ if muflag
     
     % get prior and posterior mean
     posteriormean = mean(posteriordraws);
-    if islogical(muflag) % specific valu is provided
+    if ~islogical(muflag) % specific value is provided
         priormean = muflag;
     else
         priormean = mean(priordraws);
