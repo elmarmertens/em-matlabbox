@@ -10,7 +10,7 @@ catch poolME
     % one typical cause of problems could be limited availability of licenses
     warning(poolME.identifier, 'There was a problem obtaining a pool of parallel workers; trying to work without one.\n The error message was:\t %s', ...
         poolME.message)
-    p = gcp('nocreate'); % If no pool can be created, do not create new one.
+    p = []; % gcp('nocreate'); % If no pool can be created, do not create new one.
 end
  
 if isempty(p)
