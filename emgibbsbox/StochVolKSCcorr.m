@@ -16,10 +16,17 @@ if isscalar(Eh0)
     Eh0 = repmat(Eh0, Nsv, 1);
 end
 if isscalar(Vh0)
-    Vh0 = repmat(Vh0, Nsv, 1);
+    sqrtVh0 = sqrt(Vh0) * speye(Nsv);
+end
+if isvector(Vh0)
+    sqrtVh0 = sparse(diag(sqrt(Vh0))); % better to define as speye in
+                                     % callin function, this is just a backstop
+elseif ~issparse(sqrtVh0)
+    Vh0 = sparse(Vh0); % better to define as sparse in
+                               % calling function, this is just a backstop
+   sqrtVh0 = chol(Vh0, 'lower');
 end
 
-%% CORRIGENDUM CHANGES ORDER OF GIBBS STEPS!
 
 %% draw mixture states
 % zdraws are standardized draws for each component of the normal mixture 
@@ -38,23 +45,28 @@ cdf(:,:,end)        = 1;    % normalize
 % draw states
 % kai2States  = sum(bsxfun(@gt, rand(rndStream, Nsv, T), cdf), 3) + 1;
 kai2States  = sum(rand(rndStream, Nsv, T) > cdf, 3) + 1;
-obs         = logy2 - KSC.mean(kai2States);
+
 
 %% KSC State Space
-sqrtR = zeros(Nsv,Nsv,T);
-for n = 1 : Nsv
-    sqrtR(n,n,:) = KSC.vol(kai2States(n,:));
-end
+obs         = logy2 - KSC.mean(kai2States);
+ 
+% sqrtR = zeros(Nsv,Nsv,T);
+% for n = 1 : Nsv
+%     sqrtR(n,n,:) = KSC.vol(kai2States(n,:));
+% end
+% 
+% sqrtVh0 = chol(Vh0)';
+% 
+% [h, hshock, h0] = vectorRWsmoothingsampler1draw(obs, chol(hVCV)', sqrtR, Eh0, sqrtVh0, rndStream);
 
-sqrtVh0 = chol(Vh0)';
-
-[h, hshock, h0] = vectorRWsmoothingsampler1draw(obs, chol(hVCV)', sqrtR, Eh0, sqrtVh0, rndStream);
-
-% A     = eye(Nsv);
-% B     = chol(hVCV)';
-% C     = eye(Nsv);
-% [h, hshock, h0] = abcrDisturbanceSmoothingSampler1draw(A, B, C, obs, Eh0, sqrtVh0, ...
-%     sqrtR, rndStream); 
+% precision based sampler
+vecobs         = obs(:);
+noisevol       = KSC.vol(kai2States(:));
+hVCVsqrt       = chol(hVCV, 'lower');
+[h, hhat]      = rwnoisePrecisionBasedSampler(vecobs, Nsv, T, hVCVsqrt, noisevol, Eh0, sqrtVh0, 1, rndStream);
+        
+h0     = hhat(:,1) + hVCVsqrt * randn(rndStream,Nsv,1); % backward simulation
+hshock = diff([h0, h], [], 2);
 
 
 

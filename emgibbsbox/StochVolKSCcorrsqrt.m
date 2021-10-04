@@ -13,13 +13,20 @@ function [h, h0, hshock, kai2States] = ...
 
 %   Coded by  Elmar Mertens, em@elmarmertens.com
 
-
 if isscalar(Eh0)
     Eh0 = repmat(Eh0, Nsv, 1);
 end
 if isscalar(sqrtVh0)
-    sqrtVh0 = sqrtVh0 * eye(Nsv);
+    sqrtVh0 = sqrtVh0 * speye(Nsv);
 end
+if isvector(sqrtVh0)
+    sqrtVh0 = sparse(diag(sqrtVh0)); % better to define as speye in
+                                     % callin function, this is just a backstop
+elseif ~issparse(sqrtVh0)
+    sqrtVh0 = sparse(sqrtVh0); % better to define as sparse in
+                               % calling function, this is just a backstop
+end
+
 
 %% draw mixture states
 % zdraws are standardized draws for each component of the normal mixture 
