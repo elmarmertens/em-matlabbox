@@ -21,10 +21,10 @@ end
 if isvector(Vh0)
     sqrtVh0 = sparse(diag(sqrt(Vh0))); % better to define as speye in
                                      % callin function, this is just a backstop
-elseif ~issparse(sqrtVh0)
+elseif ~issparse(Vh0)
     Vh0 = sparse(Vh0); % better to define as sparse in
                                % calling function, this is just a backstop
-   sqrtVh0 = chol(Vh0, 'lower');
+    sqrtVh0 = chol(Vh0, 'lower');
 end
 
 
