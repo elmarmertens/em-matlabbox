@@ -17,7 +17,7 @@ if isscalar(Eh0)
     Eh0 = repmat(Eh0, Nsv, 1);
 end
 if isscalar(sqrtVh0)
-    sqrtVh0 = sqrtVh0 * eye(Nsv);
+    sqrtVh0 = sqrtVh0 * speye(Nsv);
 end
 if isvector(sqrtVh0)
     sqrtVh0 = sparse(diag(sqrtVh0)); % better to define as speye in
