@@ -18,8 +18,17 @@ if isscalar(Eh0)
     Eh0 = repmat(Eh0, Nsv, 1);
 end
 if isscalar(Vh0)
-    Vh0 = repmat(Vh0, Nsv, 1);
+    sqrtVh0 = sqrt(Vh0) * speye(Nsv);
 end
+if isvector(Vh0)
+    sqrtVh0 = sparse(diag(sqrt(Vh0))); % better to define as speye in
+                                     % callin function, this is just a backstop
+elseif ~issparse(Vh0)
+    Vh0 = sparse(Vh0); % better to define as sparse in
+                               % calling function, this is just a backstop
+    sqrtVh0 = chol(Vh0, 'lower');
+end
+
 
 %% draw mixture states
 % zdraws are standardized draws for each component of the normal mixture 
@@ -38,34 +47,38 @@ cdf(:,:,end)        = 1;    % normalize
 % draw states
 % kai2States  = sum(bsxfun(@gt, rand(rndStream, Nsv, T), cdf), 3) + 1;
 kai2States  = sum(rand(rndStream, Nsv, T) > cdf, 3) + 1;
-obs         = logy2 - KSC.mean(kai2States) - outlierlog2Draws;
+
 
 %% KSC State Space
-h = NaN(Nsv,T);
-h0 = NaN(Nsv,1);
+obs         = logy2 - KSC.mean(kai2States) - outlierlog2Draws;
 
-for n = 1 : Nsv
-    [h(n,:), h0(n)] = smoothingsamplerRWnoise(obs(n,:),hInno(n)^2,KSC.var(kai2States(n,:)),...
-        Eh0(n),Vh0(n),rndStream);
-end
+% precision based sampler
+vecobs         = obs(:);
+noisevol       = KSC.vol(kai2States(:));
+hVCVsqrt       = sparse(diag(hInno));
+[h, hhat]      = rwnoisePrecisionBasedSampler(vecobs, Nsv, T, hVCVsqrt, noisevol, Eh0, sqrtVh0, 1, rndStream);
+        
+h0     = hhat(:,1) + hVCVsqrt * randn(rndStream,Nsv,1); % backward simulation
+% hshock = diff([h0, h], [], 2);
+
+
+% h = NaN(Nsv,T);
+% h0 = NaN(Nsv,1);
+% 
+% for n = 1 : Nsv
+%     [h(n,:), h0(n)] = smoothingsamplerRWnoise(obs(n,:),hInno(n)^2,KSC.var(kai2States(n,:)),...
+%         Eh0(n),Vh0(n),rndStream);
+% end
 
 %% outlier PDF
 % outlierPdf is Nsurvey times T  times Nstates
 % outlierPdf2 = cat(3, repmat(1 - outlierProb, 1, T), bsxfun(@times, outlierProb, repmat(1 / outlierNgrid, 1, T, outlierNgrid)));
 outlierPdf  = cat(3, repmat(1 - outlierProb, 1, T), repmat(outlierProb / outlierStates.Ngrid, 1, T, outlierStates.Ngrid));
-% checkdiff(outlierPdf, outlierPdf2);
-% keyboard
 
 %% outlier states
 edraws      = bsxfun(@minus, logy2 - h - KSC.mean(kai2States), permute(outlierStates.log2values, [1 3 2]));
 zdraws      = bsxfun(@rdivide, edraws, KSC.vol(kai2States));
 
-% pdfKernel   = exp(-.5 * zdraws.^2);  
-% division by KSC.vol is unnecessarty for this kernel, since same vol would apply across outlierStates
-% pdfKernel   = bsxfun(@rdivide, pdfKernel, KSC.vol(kai2States));
-
-% check: bsxfun needed?
-% pdfKernel   = bsxfun(@times, outlierPdf, pdfKernel);
 pdfKernel   = outlierPdf .* exp(-.5 * zdraws.^2);
 
 cdf                 = cumsum(pdfKernel, 3);                % integrate
