@@ -9,7 +9,7 @@ function [h, h0, hshock, kai2States] = ...
 %
 % multivariate case with correlated shocks and RW dynamics
 %
-% See also vectorRWsmoothingsampler1draw, getKSC7values, getKSC10values
+% See also rwnoisePrecisionBasedSampler, getKSC7values, getKSC10values
 
 %   Coded by  Elmar Mertens, em@elmarmertens.com
 
