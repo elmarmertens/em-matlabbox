@@ -11,17 +11,24 @@ function [h, h0, hshock, SV, outlierlog2Draws, outlierProb, outlierScaleDraws] =
 %         Nsv, T, rndStream)
 %
 %
-% See also getKSC7values, getKSC10values, StochVolOutlierKSC
+% See also rwnoisePrecisionBasedSampler, getKSC7values, getKSC10values
 
 %   Coded by  Elmar Mertens, em@elmarmertens.com
-
 
 if isscalar(Eh0)
     Eh0 = repmat(Eh0, Nsv, 1);
 end
 if isscalar(sqrtVh0)
-    sqrtVh0 = sqrtVh0 * eye(Nsv);
+    sqrtVh0 = sqrtVh0 * speye(Nsv);
 end
+if isvector(sqrtVh0)
+    sqrtVh0 = sparse(diag(sqrtVh0)); % better to define as speye in
+                                     % callin function, this is just a backstop
+elseif ~issparse(sqrtVh0)
+    sqrtVh0 = sparse(sqrtVh0); % better to define as sparse in
+                               % calling function, this is just a backstop
+end
+
 
 %% draw mixture states
 % zdraws are standardized draws for each component of the normal mixture 
@@ -44,14 +51,23 @@ kai2States  = sum(rand(rndStream, Nsv, T) > cdf, 3) + 1;
 
 %% KSC State Space
 obs         = logy2 - KSC.mean(kai2States) - outlierlog2Draws;
-sqrtR = zeros(Nsv,Nsv,T);
-for n = 1 : Nsv
-    sqrtR(n,n,:) = KSC.vol(kai2States(n,:));
-end
 
-% note: for larger systems, smoothing sampler turns out to be more
-% efficient than Carter-Kohn
-[h, hshock, h0] = vectorRWsmoothingsampler1draw(obs, hVCVsqrt, sqrtR, Eh0, sqrtVh0, rndStream);
+% precision based sampler
+vecobs         = obs(:);
+noisevol       = KSC.vol(kai2States(:));
+[h, hhat]      = rwnoisePrecisionBasedSampler(vecobs, Nsv, T, hVCVsqrt, noisevol, Eh0, sqrtVh0, 1, rndStream);
+        
+h0     = hhat(:,1) + hVCVsqrt * randn(rndStream,Nsv,1); % backward simulation
+hshock = diff([h0, h], [], 2);
+
+% sqrtR = zeros(Nsv,Nsv,T);
+% for n = 1 : Nsv
+%     sqrtR(n,n,:) = KSC.vol(kai2States(n,:));
+% end
+% 
+% % note: for larger systems, smoothing sampler turns out to be more
+% % efficient than Carter-Kohn
+% [h, hshock, h0] = vectorRWsmoothingsampler1draw(obs, hVCVsqrt, sqrtR, Eh0, sqrtVh0, rndStream);
 
 
 %% outlier PDF
@@ -62,9 +78,6 @@ outlierPdf  = cat(3, repmat(1 - outlierProb, 1, T), repmat(outlierProb / outlier
 %% outlier states
 edraws      = bsxfun(@minus, logy2 - h - KSC.mean(kai2States), permute(outlierStates.log2values, [1 3 2]));
 zdraws      = bsxfun(@rdivide, edraws, KSC.vol(kai2States));
-
-% pdfKernel   = exp(-.5 * zdraws.^2);  
-% division by KSC.vol is unnecessary for this kernel, since same vol would apply across outlierStates
 
 pdfKernel   = outlierPdf .* exp(-.5 * zdraws.^2);
 
@@ -82,13 +95,15 @@ outlierScaleDraws = outlierStates.values(ndx);
 Noutlier    = sum(ndx > 1, 2);
 alpha       = outlieralpha + Noutlier;
 beta        = outlierbeta + (T - Noutlier);
-for n = 1 : Nsv
-    outlierProb(n) = betadraw(alpha(n), beta(n), 1, rndStream);
+% for n = 1 : Nsv
+%     outlierProb(n) = betadraw(alpha(n), beta(n), 1, rndStream);
     % re matlab's betarnd:
-    % - does not seem to support randomStreams
-    % - seems to be slower
-    % outlierProb(n) = betarnd(alpha(n), beta(n), 1);
-end
+    % - does not seem to support randomStreams (but compatible with parfor
+    % according to documentation
+    % - appears to be faster now (was different in earlier versions)
+% end
+
+outlierProb = betarnd(alpha, beta);
 
 %% construct SV
 SV = exp((h + outlierlog2Draws) / 2);
