@@ -79,9 +79,6 @@ outlierPdf  = cat(3, repmat(1 - outlierProb, 1, T), repmat(outlierProb / outlier
 edraws      = bsxfun(@minus, logy2 - h - KSC.mean(kai2States), permute(outlierStates.log2values, [1 3 2]));
 zdraws      = bsxfun(@rdivide, edraws, KSC.vol(kai2States));
 
-% pdfKernel   = exp(-.5 * zdraws.^2);  
-% division by KSC.vol is unnecessary for this kernel, since same vol would apply across outlierStates
-
 pdfKernel   = outlierPdf .* exp(-.5 * zdraws.^2);
 
 cdf                 = cumsum(pdfKernel, 3);                % integrate
@@ -98,13 +95,15 @@ outlierScaleDraws = outlierStates.values(ndx);
 Noutlier    = sum(ndx > 1, 2);
 alpha       = outlieralpha + Noutlier;
 beta        = outlierbeta + (T - Noutlier);
-for n = 1 : Nsv
-    outlierProb(n) = betadraw(alpha(n), beta(n), 1, rndStream);
+% for n = 1 : Nsv
+%     outlierProb(n) = betadraw(alpha(n), beta(n), 1, rndStream);
     % re matlab's betarnd:
-    % - does not seem to support randomStreams
-    % - seems to be slower
-    % outlierProb(n) = betarnd(alpha(n), beta(n), 1);
-end
+    % - does not seem to support randomStreams (but compatible with parfor
+    % according to documentation
+    % - appears to be faster now (was different in earlier versions)
+% end
+
+outlierProb = betarnd(alpha, beta);
 
 %% construct SV
 SV = exp((h + outlierlog2Draws) / 2);

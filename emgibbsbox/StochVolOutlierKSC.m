@@ -95,13 +95,13 @@ outlierScaleDraws = outlierStates.values(ndx);
 Noutlier    = sum(ndx > 1, 2);
 alpha       = outlieralpha + Noutlier;
 beta        = outlierbeta + (T - Noutlier);
-for n = 1 : Nsv
-    outlierProb(n) = betadraw(alpha(n), beta(n), 1, rndStream);
+% for n = 1 : Nsv
+%     outlierProb(n) = betadraw(alpha(n), beta(n), 1, rndStream);
     % re matlab's betarnd:
-    % - does not seem to support randomStreams
-    % - seems to be slower
-    % outlierProb(n) = betarnd(alpha(n), beta(n), 1);
-end
+    % - does not seem to support randomStreams (but compatible with parfor
+    % according to documentation
+    % - appears to be faster now (was different in earlier versions)
+% end
 
 %% construct SV
 SV = exp((h + outlierlog2Draws) / 2);
