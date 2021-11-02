@@ -3,7 +3,7 @@ function wrapthisfigure(this, figurename, wrap, captionname, figurecomment, land
 % Prints the current figure to file 'figurename' as fig, eps, jpg and pdf.
 % inserts into wrap
 %--------------------------------------------------------------
-% function wrapthisfigure(this, figurename, wrap, captionname, figurecomment, landscape)
+% function wrapthisfigure(this, figurename, wrap, captionname, figurecomment, landscape, doJPG, noWrap)
 
 %   Coded by  Elmar Mertens, em@elmarmertens.com
 
