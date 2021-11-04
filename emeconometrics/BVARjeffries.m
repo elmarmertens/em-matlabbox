@@ -1,9 +1,13 @@
-function [PAI, sqrtXX, sqrtSSR, dof, R2] = BVARjeffries(Y,X)
-% BVARJEFF performs BVAR estimation with jeffries prior (and assuming use of dummy obs)
+function [PAIhat, sqrtXX, sqrtSSR, dof, R2] = BVARjeffries(Y,X)
+% BVARJEFF performs BVAR estimation with jeffries prior (or of dummy obs within Y and X)
 % 
 % usage: [PAI, sqrtXX, sqrtSSR, dof, R2] = BVARjeffries(Y,X)
 %
-%  See also: VARls
+% Posterior is (PAI, SIGMA) sim MNIW (PAIhat, inv(X'X), Shat, dof)
+% with X'X = sqrtXX * sqrtXX'
+% and Shat = sqrtSSR * sqrtSSR' / (T - K) where K=size(X,2)
+%
+%  See also: VARls, dummyobs4BVAR, BVARdraws
 
 % get dimensions
 [T, K] = size(X);
@@ -19,7 +23,7 @@ sqrtXX    = RR(1:K,1:K);
 sqrtYX    = RR(K+(1:N),1:K);
 sqrtSSR   = RR(K+(1:N),K+(1:N));
 
-PAI = (sqrtYX / sqrtXX)';
+PAIhat = (sqrtYX / sqrtXX)';
 % PAI = (sqrtYX * sqrtInvXX)';
 
 dof = T - K;
