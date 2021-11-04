@@ -1,7 +1,9 @@
 function [PAI, sqrtXX, sqrtSSR, dof, R2] = BVARjeffries(Y,X)
-% BVARJEFF ... 
-%  
-%   ... 
+% BVARJEFF performs BVAR estimation with jeffries prior (and assuming use of dummy obs)
+% 
+% usage: [PAI, sqrtXX, sqrtSSR, dof, R2] = BVARjeffries(Y,X)
+%
+%  See also: VARls
 
 % get dimensions
 [T, K] = size(X);
