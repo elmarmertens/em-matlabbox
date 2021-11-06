@@ -38,10 +38,10 @@ dof = T - K;
 if nargout > 4
     logdetS  = 2 * sum(log(abs(diag(sqrtSSR))));
     logdetXX = 2 * sum(log(abs(diag(sqrtXX))));
-    postllf = - N * T / 2 * log(2 * pi) -dof/2 * logdetS - N/2 * logdetXX + N * dof /2 + sum(gammaln((dof + 1 - 1:N) / 2));
+    postllf   = - N * T / 2 * log(2 * pi) -dof/2 * logdetS - N/2 * logdetXX + N * dof /2 + sum(gammaln((dof + 1 - 1:N) / 2));
 
-    checkdiff(logdetS, log(det(sqrtSSR * sqrtSSR')));
-    checkdiff(logdetXX, log(det(X' * X)));
+    %     checkdiff(logdetS, log(det(sqrtSSR * sqrtSSR')));
+    %     checkdiff(logdetXX, log(det(X' * X)));
 end
 % report R2
 if nargout > 5
