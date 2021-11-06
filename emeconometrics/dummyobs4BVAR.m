@@ -73,9 +73,15 @@ if dof0 > 0
         error('IW prior must have at least Ny dof')
     end
     thisYstar         = zeros(dof0, Ny);
-    thisYstar(1:Ny,:) = sqrtSIGMA0 * dof0; % note: equivalent to stacking sqrtSIGMA0 dof0/Ny times, can also handle cases where dof0 is not a multiple of Ny
-    Ystar = cat(1, Ystar, thisYstar);
-    Xstar = cat(1, Xstar, zeros(Ny * dof0, Nx));
+    thisYstar(1:Ny,:) = sqrtSIGMA0 * dof0; 
+    % note: 
+    % - the above is numerically equivalent to stacking sqrtSIGMA0 dof0 / Ny times, 
+    % - but can also handle cases where dof0 is not a multiple of Ny
+    % - with dof0>=Ny there are potentially rows padded with zeros at bottom of thisYstar (needed to compute correct dof = Tstar-k)
+    
+    
+    Ystar             = cat(1, Ystar, thisYstar);
+    Xstar             = cat(1, Xstar, zeros(dof0, Nx));
 end
 
 
@@ -95,8 +101,13 @@ Ystar = cat(1, Ystar, thisYstar);
 Xstar = cat(1, Xstar, thisXstar);
 
 % intercept prior
-constXstar           = zeros(1,Nx);
-constXstar(ndxExo) = lambda0; % as in CCM
+if lambda0 > 0
+    Nexo               = length(ndxExo);
+    constXstar         = zeros(Nexo,Nx);
+    for n = 1 : Nexo
+        constXstar(n,ndxExo(n)) = lambda0;
+    end
 
-Ystar = cat(1, Ystar, zeros(1,Ny));
-Xstar = cat(1, Xstar, constXstar);
+    Ystar = cat(1, Ystar, zeros(Nexo,Ny));
+    Xstar = cat(1, Xstar, constXstar);
+end
