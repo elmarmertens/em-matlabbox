@@ -23,13 +23,21 @@ end
 cholSIGMAdraws = iwishcholdraw(sqrtSSR, dof, Ndraws, rndStream); 
 
 PAIdraws   = NaN(K,N,Ndraws);
-vecPAI     = PAIhat(:);
+% vecPAI     = PAIhat(:);
 invsqrtXX  = eye(K) / sqrtXX;
 
-zdraws     = randn(rndStream, N * K, Ndraws);
+% zdraws     = randn(rndStream, N * K, Ndraws);
+% for n = 1 : Ndraws
+%     sqrtOMEGApai    = kron(cholSIGMAdraws(:,:,n), invsqrtXX'); % note: not lower triangular due to transpose on invsqrtXX
+%     thisPAI         = vecPAI + sqrtOMEGApai * zdraws(:,n);
+%     PAIdraws(:,:,n) = reshape(thisPAI, K, N);
+% end
 
+zdraws     = randn(rndStream, K, N, Ndraws);
 for n = 1 : Ndraws
-    sqrtOMEGApai    = kron(cholSIGMAdraws(:,:,n), invsqrtXX'); % note: not lower triangular due to transpose on invsqrtXX
-    thisPAI         = vecPAI + sqrtOMEGApai * zdraws(:,n);
-    PAIdraws(:,:,n) = reshape(thisPAI, K, N);
+    % sqrtOMEGApai    = kron(cholSIGMAdraws(:,:,n), invsqrtXX'); % note: not lower triangular due to transpose on invsqrtXX
+    thisdraw        = invsqrtXX' * zdraws(:,:,n) * cholSIGMAdraws(:,:,n)';
+    % thisPAI         = vecPAI + thisdraw(:);
+    PAIdraws(:,:,n) = PAIhat + thisdraw;
 end
+

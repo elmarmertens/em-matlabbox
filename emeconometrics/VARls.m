@@ -1,7 +1,7 @@
 function results = VARls(Y, p, dfFlag, quickFlag)
-% Efficient Computation of VARE -- demeaning variables first
+% Efficient Computation of VAR -- demeaning variables first
 %---------------------------------------------------
-% USAGE:    results = VARlsdev(y, p, dfFlag, quickFlag))
+% USAGE:    results = VARls(y, p, dfFlag, quickFlag))
 % where:    y       = an (T x N) matrix of y-vectors
 %           p       = the lag length
 %---------------------------------------------------
@@ -36,13 +36,13 @@ k = N * p + 1;
 % construct regressors
 if ~quickFlag
    [X, results.CompanionState] = deal(ones(T, k));
-   for i = 1 : p;
+   for i = 1 : p
       results.CompanionState(:, (i - 1) * N + (1 : N))   = Y((p+1 : end) - i + 1,   :);
       X(:, (i - 1) * N + (1 : N))                        = Y((p+1 : end) - i,       :);
    end
 else
    X = ones(T, k);
-   for i = 1 : p;
+   for i = 1 : p
       X(:, (i - 1) * N + (1 : N))               = Y((p+1 : end) - i,       :);
    end
 end
@@ -66,8 +66,8 @@ end
 
 if quickFlag
    XXidev   = XXdev \ eye(k - 1); % for small data (ca 100) faster by factor 2-3.5 than qr, for ca 1000 factor 1.5-2, see JPL manual. Accuracy is worse  for ill-conditioned problems though
-else
-   [tmp r]  = qr(Xdev,0);
+else 
+   [~, r]   = qr(Xdev,0);
    XXidev   = (r'*r) \ eye(k - 1);
 end
 
