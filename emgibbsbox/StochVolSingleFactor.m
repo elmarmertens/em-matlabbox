@@ -28,7 +28,7 @@ cdf(:,:,end)        = 1;    % normalize
 kai2States  = sum(bsxfun(@gt, rand(rndStream, Nsv, T), cdf), 3) + 1;
 obs         = logy2 - KSC.mean(kai2States);
 
-%% Singla-Factor State Space
+%% Single-Factor State Space
 A      = eye(Nsv+1);
 B      = zeros(Nsv+1,1);
 B(1,1) = sqrt(lambdavar);

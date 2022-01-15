@@ -29,8 +29,8 @@ Ytilde                      = zeros(Ny, T);
 %% generate plus data
 
 wplus   = randn(rndStream, Nw, T);
-eplus            = randn(rndStream, Ny, T);
-X0plus = X00 + cholSigma00 * randn(rndStream, Nx, 1); 
+eplus   = randn(rndStream, Ny, T);
+X0plus  = X00 + cholSigma00 * randn(rndStream, Nx, 1); 
 
 %% Forward Loop: Kalman Forecasts
 [Sigma00, Sigmatt] = deal(cholSigma00 * cholSigma00');
