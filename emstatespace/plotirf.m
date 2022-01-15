@@ -74,7 +74,7 @@ for r = 1 : ny
           colors = Colors4Plots;
           colors = colors(2:end);
           for n = 1 : size(irf2,4)
-              plot(timeAxis', squeeze(irf2(r, c, :,n)), '-', 'color', colors{n}, 'LineWidth', 2);
+              plot(timeAxis', squeeze(irf2(r, c, :,n)), '-.', 'color', colors{n}, 'LineWidth', 2);
               grid on
           end
       end
