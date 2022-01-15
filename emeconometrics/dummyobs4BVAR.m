@@ -34,8 +34,8 @@ else
     lambda2 = lambda(3);
 end
 
-if nargin < 5 || isempty(ndxExo)
-    ndxExo = Nx;
+if nargin < 5 
+    ndxExo = [];
 end
 
 if nargin < 6 || isempty(priorMean)
@@ -58,7 +58,11 @@ if islogical(ndxExo)
     ndxExo = find(ndxExo);
 end
 
-ndxLags = ~ismember(1 : Nx, ndxExo);
+if isempty(ndxExo)
+    ndxLags = 1 : Nx;
+else
+    ndxLags = ~ismember(1 : Nx, ndxExo);
+end
 
 %% construct dummy obs for Bayesian prior
 
