@@ -1,5 +1,6 @@
 function [Xdraws, disturbanceDraws, X0draws, noiseDraws] = ...
-    abcDisturbanceSmoothingSampler1draw(A, B, C, Ydata, X00, cholSigma00, sqrtR, rndStream)
+    abcDisturbanceSmoothingSampler1draw(A, B, C, Ydata, X00, cholSigma00, ...
+	sqrtR, rndStream)
 % ABCDISTURBANCESMOOTHINGSAMPLER
 % ....
 
@@ -178,6 +179,3 @@ if nargout > 1
         end
     end
 end
-
-
-       
