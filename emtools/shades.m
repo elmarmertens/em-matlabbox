@@ -1,4 +1,4 @@
-function shades(dates, shades, shadedates, YLim, shadecolor)
+function hanni = shades(dates, shades, shadedates, YLim, shadecolor)
 % function shades(xdates, series, seriesdates, YLim, shadecolor)
 % plots shades onto graph
 
