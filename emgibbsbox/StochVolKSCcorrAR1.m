@@ -53,7 +53,7 @@ sqrtVh0 = diag(sqrt(Vh0));
 sqrtVhtilde  = zeros(Nsv); % Note: need fixed prior, not depended on estimated rhos (alt: use prior rho)
 x0           = [zeros(Nsv, 1); Eh0];
 sqrtVx0      = [sqrtVhtilde, zerosNsv; zerosNsv sqrtVh0];
-[H, Hshock, H0] = abcDisturbanceSmoothingSampler1draw(A, B, C, obs, x0, sqrtVx0, ...
+[H, Hshock, H0] = a2b2c2DisturbanceSmoothingSampler1draw(A, B, C, obs, x0, sqrtVx0, ...
     sqrtR, rndStream); 
 
 h      = H(1:Nsv,:) + H(Nsv+1:end,:); % C * H
