@@ -1,10 +1,10 @@
-function [Xdraw, Xhat, P] = rwnoisePrecisionBasedSampler(Y, Ny, T, volRW, volNOISE, X0, sqrtV0, Ndraws, rndStream)
+function [Xdraw, Xhat, P] = rwnoisePrecisionBasedSampler(Y, Ny, T, volSTATE, volNOISE, X0, sqrtV0, Ndraws, rndStream)
 % abcdPrecisionBasedSampler computes smoothed kalman states using the stacked approach of 
 % Chan and Jeliazkov
 %  
 %   ... 
 
-% assumes volRW is Nx x 1 vector, and volNOISE is (Ny x T) x 1 vectors (i.e. no correlation within X and Y)
+% assumes volSTATE is Nx x 1 vector, and volNOISE is (Ny x T) x 1 vectors (i.e. no correlation within X and Y)
 
 
 if nargin < 9
@@ -32,9 +32,9 @@ AA  = sparse(rowndx, colndx, values);
 CC  = speye(NyT, NyT);
 
 
-% sqrtSIGMA = sparse(1:NxT, 1:NxT, [sqrtV0(:)', repmat(volRW(:)', 1, T-1)]);
+% sqrtSIGMA = sparse(1:NxT, 1:NxT, [sqrtV0(:)', repmat(volSTATE(:)', 1, T-1)]);
 ITm1        = speye(T-1);
-sqrtSIGMA   = blkdiag(sqrtV0,  kron(ITm1, volRW));
+sqrtSIGMA   = blkdiag(sqrtV0,  kron(ITm1, volSTATE));
 
 sqrtOMEGA   = sparse(1:NyT, 1:NyT, volNOISE);
 

@@ -1,16 +1,12 @@
 function [Xdraws, disturbanceDraws, X0draws, noiseDraws] = ...
-    a2b2c2DisturbanceSmoothingSampler1draw(A, B, C, Ydata, X00, cholSigma00, sqrtR, rndStream)
+    a2b2c2DisturbanceSmoothingSampler1draw(A, B, C, Ydata, X00, cholSigma00, ...
+	sqrtR, rndStream)
 % ABCDISTURBANCESMOOTHINGSAMPLER
 % ....
 
-%   Coded by  Elmar Mertens, em@elmarmertens.com
+% accepts only 2D inputs ABC; only sqrtR can be 3D 
 
-%% VERSION INFO
-% AUTHOR    : Elmar Mertens
-% $DATE     : 08-Aug-2009 17:58:16 $
-% $Revision : 1.00 $
-% DEVELOPED : 7.7.0.471 (R2008b)
-% FILENAME  : abcDisturbanceSmoothingSampler.m
+%   Coded by  Elmar Mertens, em@elmarmertens.com
 
 
 %% parse inputs
@@ -32,16 +28,6 @@ if ~isempty(sqrtR) && ismatrix(sqrtR)
 end
 
 
-% if ismatrix(A)
-%     A = repmat(A, [1 1 T]);
-% end
-% if ismatrix(B)
-%     B = repmat(B, [1 1 T]);
-% end
-% if ismatrix(C)
-%     C = repmat(C, [1 1 T]);
-%     % warning('em:msg', 'C should be three dimensional when there are missing data')
-% end
 
 I                 = eye(Nx);
 Iy                = eye(Ny);
@@ -65,7 +51,6 @@ X0plus = X00 + cholSigma00 * randn(rndStream, Nx, 1);
 %% Forward Loop: Kalman Forecasts
 [Sigma00, Sigmatt] = deal(cholSigma00 * cholSigma00');
 Xtt     = zeros(Nx,1); % use zeros, since projection on difference between Y and Yplus
-% BSigmaB = zeros(Nx, Nx, T);
 
 disturbanceplus  = zeros(Nx, T);
 if isempty(sqrtR)
@@ -80,8 +65,6 @@ for t = 1 : T
     
     % "plus" States and priors
     disturbanceplus(:,t)  = B * wplus(:,t);
-    %     BSigmaB(:,:,t)        = B(:,:,t) * B(:,:,t)';
-
     
     if t == 1
         Xplus(:,t) = A * X0plus + disturbanceplus(:,t);

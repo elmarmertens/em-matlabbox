@@ -17,8 +17,6 @@ if isscalar(Vh0)
     Vh0 = repmat(Vh0, Nsv, 1);
 end
 
-%% CORRIGENDUM CHANGES ORDER OF GIBBS STEPS!
-
 %% draw mixture states
 % zdraws are standardized draws for each component of the normal mixture 
 % zdraws is thus Nsv x T x Nmixtures
@@ -36,12 +34,10 @@ cdf(:,:,end)        = 1;    % normalize
 % draw states
 % kai2States  = sum(bsxfun(@gt, rand(rndStream, Nsv, T), cdf), 3) + 1;
 kai2States  = sum(rand(rndStream, Nsv, T) > cdf, 3) + 1;
-obs         = logy2 - KSC.mean(kai2States);
 
-%% AR1 parameters for SV (fixed)
-% rho = repmat(0.99, Nsv, 1);
 
 %% KSC State Space
+obs       = logy2 - KSC.mean(kai2States);
 zerosNsv  = zeros(Nsv);
 Insv      = eye(Nsv);
 A     = [diag(rho) zerosNsv; zerosNsv Insv];
@@ -57,7 +53,7 @@ sqrtVh0 = diag(sqrt(Vh0));
 sqrtVhtilde  = zeros(Nsv); % Note: need fixed prior, not depended on estimated rhos (alt: use prior rho)
 x0           = [zeros(Nsv, 1); Eh0];
 sqrtVx0      = [sqrtVhtilde, zerosNsv; zerosNsv sqrtVh0];
-[H, Hshock, H0] = abcDisturbanceSmoothingSampler1draw(A, B, C, obs, x0, sqrtVx0, ...
+[H, Hshock, H0] = a2b2c2DisturbanceSmoothingSampler1draw(A, B, C, obs, x0, sqrtVx0, ...
     sqrtR, rndStream); 
 
 h      = H(1:Nsv,:) + H(Nsv+1:end,:); % C * H

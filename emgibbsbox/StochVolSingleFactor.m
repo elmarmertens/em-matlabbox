@@ -41,7 +41,7 @@ end
 EX0     = cat(1, 0, Eh0);
 sqrtVX0 = diag(cat(1, 0, sqrt(Vh0)));
 
-[X, Xshock, X0] = abcrDisturbanceSmoothingSampler1draw(A, B, C, obs, EX0, sqrtVX0, ...
+[X, Xshock, X0] = a2b2c2DisturbanceSmoothingSampler1draw(A, B, C, obs, EX0, sqrtVX0, ...
     sqrtR, rndStream); 
 
 lambda      = X(1,:);
