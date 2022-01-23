@@ -1,5 +1,6 @@
 function [Xdraw, Xshock, Xhat, P] = commonAR1noisePrecisionBasedSampler(Y, Ny, T, rhoSTATE, volSTATE, volNOISE, Ndraws, rndStream)
-% abcdPrecisionBasedSampler computes smoothed kalman states using the stacked approach of 
+% precisionBasedSampler for common AR1 state (plus noise)
+% computes smoothed kalman states using the stacked approach of Chan and Jeliazkov
 % Chan and Jeliazkov
 %  
 %   ... 

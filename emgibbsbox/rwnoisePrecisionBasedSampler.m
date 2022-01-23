@@ -1,6 +1,6 @@
 function [Xdraw, Xhat, P] = rwnoisePrecisionBasedSampler(Y, Ny, T, volSTATE, volNOISE, X0, sqrtV0, Ndraws, rndStream)
-% abcdPrecisionBasedSampler computes smoothed kalman states using the stacked approach of 
-% Chan and Jeliazkov
+% precisionBasedSampler for vector of RW states plus nose
+% computes smoothed kalman states using the stacked approach of Chan and Jeliazkov
 %  
 %   ... 
 
