@@ -56,9 +56,9 @@ obs         = logy2 - KSC.mean(kai2States) - outlierlog2Draws;
 vecobs         = obs(:);
 noisevol       = KSC.vol(kai2States(:));
 hVCVsqrt       = sparse(diag(hInno));
-[h, hhat]      = rwnoisePrecisionBasedSampler(vecobs, Nsv, T, hVCVsqrt, noisevol, Eh0, sqrtVh0, 1, rndStream);
+[h, ~, h0]     = rwnoisePrecisionBasedSampler(vecobs, Nsv, T, hVCVsqrt, noisevol, Eh0, sqrtVh0, 1, rndStream);
         
-h0     = hhat(:,1) + hVCVsqrt * randn(rndStream,Nsv,1); % backward simulation
+% h0     = hhat(:,1) + hVCVsqrt * randn(rndStream,Nsv,1); % backward simulation
 % hshock = diff([h0, h], [], 2);
 
 

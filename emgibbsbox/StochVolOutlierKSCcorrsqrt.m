@@ -53,21 +53,9 @@ kai2States  = sum(rand(rndStream, Nsv, T) > cdf, 3) + 1;
 obs         = logy2 - KSC.mean(kai2States) - outlierlog2Draws;
 
 % precision based sampler
-vecobs         = obs(:);
-noisevol       = KSC.vol(kai2States(:));
-[h, hhat]      = rwnoisePrecisionBasedSampler(vecobs, Nsv, T, hVCVsqrt, noisevol, Eh0, sqrtVh0, 1, rndStream);
-        
-h0     = hhat(:,1) + hVCVsqrt * randn(rndStream,Nsv,1); % backward simulation
-hshock = diff([h0, h], [], 2);
-
-% sqrtR = zeros(Nsv,Nsv,T);
-% for n = 1 : Nsv
-%     sqrtR(n,n,:) = KSC.vol(kai2States(n,:));
-% end
-% 
-% % note: for larger systems, smoothing sampler turns out to be more
-% % efficient than Carter-Kohn
-% [h, hshock, h0] = vectorRWsmoothingsampler1draw(obs, hVCVsqrt, sqrtR, Eh0, sqrtVh0, rndStream);
+vecobs            = obs(:);
+noisevol          = KSC.vol(kai2States(:));
+[h, hshock, h0]   = rwnoisePrecisionBasedSampler(vecobs, Nsv, T, hVCVsqrt, noisevol, Eh0, sqrtVh0, 1, rndStream);
 
 
 %% outlier PDF

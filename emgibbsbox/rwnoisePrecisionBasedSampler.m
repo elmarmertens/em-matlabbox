@@ -1,11 +1,15 @@
-function [Xdraw, Xhat, P] = rwnoisePrecisionBasedSampler(Y, Ny, T, volSTATE, volNOISE, X0, sqrtV0, Ndraws, rndStream)
-% precisionBasedSampler for vector of RW states plus nose
+function [Xdraw, shockDraw,  X0draw, Xhat, X0hat, P] = rwnoisePrecisionBasedSampler(Y, Ny, T, volSTATE, volNOISE, X0, sqrtV0, Ndraws, rndStream)
+% precisionBasedSampler for RW + noise vector
 % computes smoothed kalman states using the stacked approach of Chan and Jeliazkov
+%
+% same as AR1noisePrecisionBasedSampler with rho=1
 %  
 %   ... 
+% see also AR1noisePrecisionBasedSampler
 
 % assumes volSTATE is Nx x 1 vector, and volNOISE is (Ny x T) x 1 vectors (i.e. no correlation within X and Y)
 
+% Stacks X0 onto X
 
 if nargin < 9
     Ndraws = 1;
@@ -18,25 +22,23 @@ end
 Y        = Y(:);
 NyT      = Ny * T;
 Nx       = Ny;
-NxT      = Nx * T; % obsolete but for better readability
-NxTm1    = Nx * (T - 1); % obsolete but for better readability
+NxT      = Nx * T; 
+NxTp1    = Nx * (T + 1); 
 
 %% construct stacked system
-XX0 = sparse(1:Nx, 1, X0, Nx * T, 1);
+XX0 = sparse(1:Nx, 1, X0, NxTp1, 1);
 
-rowndx = [1 : NxT, Nx + 1 : NxT];
-colndx = [1 : NxT, 1 : NxTm1];
-values = [ones(1,NxT), -ones(1, NxTm1)];
-AA  = sparse(rowndx, colndx, values);
+rowndx = [1 : NxTp1, Nx + (1 : NxT)];
+colndx = [1 : NxTp1, 1 : NxT];
+values = [ones(1,NxTp1), -ones(1, NxT)];
+AA     = sparse(rowndx, colndx, values);
 
-CC  = speye(NyT, NyT);
+CC     = cat(2, sparse(NyT, Nx), speye(NyT, NxT));
 
+IT          = speye(T);
+sqrtSIGMA   = blkdiag(sqrtV0,  kron(IT, volSTATE));
 
-% sqrtSIGMA = sparse(1:NxT, 1:NxT, [sqrtV0(:)', repmat(volSTATE(:)', 1, T-1)]);
-ITm1        = speye(T-1);
-sqrtSIGMA   = blkdiag(sqrtV0,  kron(ITm1, volSTATE));
-
-sqrtOMEGA   = sparse(1:NyT, 1:NyT, volNOISE);
+sqrtOMEGA   = sparse(1:NyT, 1:NyT, volNOISE(:)');
 
 %% set up  stacked system
 
@@ -62,12 +64,20 @@ end
 
 sqrtPXhat   = sqrtP \ (AAtilde' * XX0tilde + CCtilde' * Ytilde); 
 
-Zdraw        = randn(rndStream, Nx * T, Ndraws);
+Zdraw        = randn(rndStream, NxTp1, Ndraws);
 Xdraw        = (sqrtP') \ (sqrtPXhat + Zdraw);
-Xdraw        = reshape(Xdraw, Nx, T, Ndraws);
 
 if nargout > 1
+    shockDraw = AA * Xdraw - XX0;
+    shockDraw = reshape(shockDraw(Nx+1:end), Nx, T, Ndraws);
+end
+
+X0draw       = Xdraw(1:Nx); % nargout > 2
+Xdraw        = reshape(Xdraw(Nx+1:end), Nx, T, Ndraws);
+
+if nargout > 3
     Xhat        = (sqrtP') \ sqrtPXhat;
-    Xhat        = reshape(Xhat, Nx, T);
+    X0hat       = Xhat(1:Nx);
+    Xhat        = reshape(Xhat(Nx+1:end), Nx, T, Ndraws);
 end
 

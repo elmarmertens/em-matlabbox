@@ -18,17 +18,15 @@ end
 %% read parameters
 Y        = Y(:);
 NyT      = Ny * T;
-Nx       = 1; % todo: hardcode
-NxT      = Nx * T; % obsolete but for better readability
-NxTm1    = Nx * (T - 1); % obsolete but for better readability
+Nx       = 1;
 
 %% construct stacked system
 XX0 = sparse(T, 1);
 
 % AA
-rowndx = [1 : NxT, Nx + 1 : NxT];
-colndx = [1 : NxT, 1 : NxTm1];
-values = [ones(1,NxT), -rhoSTATE * ones(1, T-1)];
+rowndx = [1 : T, Nx + 1 : T];
+colndx = [1 : T, 1 : T - 1];
+values = [ones(1,T), -rhoSTATE * ones(1, T-1)];
 AA     = sparse(rowndx, colndx, values);
 
 % CC
@@ -40,7 +38,7 @@ CC     = sparse(rowndx, colndx, values);
 
 
 
-sqrtSIGMA   = volSTATE * speye(NxT); % Note: X(t=1) consists solely of innovation since X(t=0)=0
+sqrtSIGMA   = volSTATE * speye(T); % Note: X(t=1) consists solely of innovation since X(t=0)=0
 sqrtOMEGA   = sparse(1:NyT, 1:NyT, volNOISE(:)');
 
 %% set up  stacked system
@@ -67,7 +65,7 @@ end
 
 sqrtPXhat   = sqrtP \ (AAtilde' * XX0tilde + CCtilde' * Ytilde); 
 
-Zdraw        = randn(rndStream, Nx * T, Ndraws);
+Zdraw        = randn(rndStream, T, Ndraws);
 Xdraw        = (sqrtP') \ (sqrtPXhat + Zdraw);
 
 if nargout > 1
