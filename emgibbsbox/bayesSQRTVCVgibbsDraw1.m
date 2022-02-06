@@ -1,6 +1,6 @@
-function [iwishcholDraw, cholSigmaT, dof] = bayesSQRTVCVgibbsDraw1(cholSigma0T, dof0, resid, rndStream)
+function [iwishcholDraw, cholSigmaT, dof] = bayesSQRTVCVgibbsDraw1(Sigma0T, dof0, resid, rndStream)
 % bayesSQRTVCVgibbsDraw1 iwishcholDraws SQRT factor of variance-covariance matrix
-% [iwishcholDraws, cholSigmaT, dof] = bayesSQRTVCVgibbsDraw1(cholSigma0T, dof0, resid, rndStream)
+% [iwishcholDraws, cholSigmaT, dof] = bayesSQRTVCVgibbsDraw1(Sigma0T, dof0, resid, rndStream)
 % Prior is (Sigma0T, dof0) invWishart and posterior is (SigmaT, dof) invWishart
 % Recall: Mean of inverse Wishart is SigmaT / (dof - N - 1)
 % dof = dof0 + T
@@ -23,19 +23,22 @@ if nargin < 4 || isempty(rndStream)
     rndStream = getDefaultStream;
 end
 
-[T, Ny] = size(resid);
 
 if ~isscalar(dof0)
     error('dof must be a scalar')
 end
 
 %% draw random normals
-dof         = dof0 + T;
-z           = randn(rndStream, Ny, dof);
-
+if isnumeric(rndStream)
+    z = rndStream;
+else
+    [T, Ny] = size(resid);
+    dof     = dof0 + T;
+    z       = randn(rndStream, Ny, dof);
+end
 
 %% Posterior Update
-Sigma0T     = cholSigma0T * cholSigma0T';
+% Sigma0T     = cholSigma0T * cholSigma0T';
 SigmaT      = Sigma0T + resid' * resid;
 cholSigmaT  = chol(SigmaT)';
 
