@@ -105,6 +105,8 @@ end
 if ~isempty(y)
     xhanni = plot(x, y, yLinespec{:});
     set(gca,'Layer','top')
+else 
+    xhanni = [];
 end
 
 if nargout > 0
