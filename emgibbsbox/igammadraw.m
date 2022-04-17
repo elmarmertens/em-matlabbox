@@ -8,7 +8,7 @@ function [igams, gams] = igammadraw(sigmaT, dof, Ndraw, rndStream)
 % NOTE: THIS IS RATHER A UNIVARIATE INVERSE WISHART (and does not follow the notation for the inverse gamma)
 % the proper mapping from the univariate-inverse Wishart to the igamma would
 % be alpha = dof /2 and beta = sigmaT / 2
-% See also: iwishdraw
+% See also: iwishdraw, gamrnd
 
 %   Coded by  Elmar Mertens, em@elmarmertens.com
 
