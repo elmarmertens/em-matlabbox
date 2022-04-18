@@ -7,14 +7,14 @@ function [Xdraw, shockDraw,  X0draw, Xhat, X0hat, P] = rwnoisePrecisionBasedSamp
 %   ... 
 % see also AR1noisePrecisionBasedSampler
 
-% assumes volSTATE is Nx x 1 vector, and volNOISE is (Ny x T) x 1 vectors (i.e. no correlation within X and Y)
+% assumes volSTATE is Nx x 1 vector (or Nx x T matrix), and volNOISE is (Ny x T) x 1 vectors (i.e. no correlation within X and Y)
 
 % Stacks X0 onto X
 
-if nargin < 9
+if nargin < 8
     Ndraws = 1;
 end
-if nargin < 10
+if nargin < 9
     rndStream = getDefaultStream;
 end
 
@@ -36,8 +36,12 @@ AA     = sparse(rowndx, colndx, values);
 CC     = cat(2, sparse(NyT, Nx), speye(NyT, NxT));
 
 IT          = speye(T);
-sqrtSIGMA   = blkdiag(sqrtV0,  kron(IT, volSTATE));
-
+if size(volSTATE, 2) == 1
+    sqrtSIGMA   = blkdiag(sqrtV0,  kron(IT, volSTATE));
+else % assuming it is of length Nx x T
+    volSTATE = volSTATE(:);
+    sqrtSIGMA   = blkdiag(sqrtV0,  spdiags(volSTATE, 0, IT));
+end
 sqrtOMEGA   = sparse(1:NyT, 1:NyT, volNOISE(:)');
 
 %% set up  stacked system
