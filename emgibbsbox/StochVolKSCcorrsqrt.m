@@ -49,22 +49,11 @@ kai2States  = sum(rand(rndStream, Nsv, T) > cdf, 3) + 1;
 
 %% KSC State Space
 obs         = logy2 - KSC.mean(kai2States);
- 
-% DK
-% sqrtR = zeros(Nsv,Nsv,T);
-% for n = 1 : Nsv
-%     sqrtR(n,n,:) = KSC.vol(kai2States(n,:));
-% end
-% sqrtVh0full = full(sqrtVh0);
-% [h, hshock, h0] = vectorRWsmoothingsampler1draw(obs, hVCVsqrt, sqrtR, Eh0, sqrtVh0full, rndStream);
 
 % precision based sampler
-vecobs         = obs(:);
-noisevol       = KSC.vol(kai2States(:));
-[h, hhat]      = rwnoisePrecisionBasedSampler(vecobs, Nsv, T, hVCVsqrt, noisevol, Eh0, sqrtVh0, 1, rndStream);
-        
-h0     = hhat(:,1) + hVCVsqrt * randn(rndStream,Nsv,1); % backward simulation
-hshock = diff([h0, h], [], 2);
+vecobs           = obs(:);
+noisevol         = KSC.vol(kai2States(:));
+[h, hshock, h0]  = rwnoisePrecisionBasedSampler(vecobs, Nsv, T, hVCVsqrt, noisevol, Eh0, sqrtVh0, 1, rndStream);
 
 
 
