@@ -1,11 +1,8 @@
 function [Xdraw, shockDraw,  X0draw, Xhat, X0hat, P] = rwnoisePrecisionBasedSampler(Y, Ny, T, volSTATE, volNOISE, X0, sqrtV0, Ndraws, rndStream)
 % precisionBasedSampler for RW + noise vector
 % computes smoothed kalman states using the stacked approach of Chan and Jeliazkov
-%
-% same as AR1noisePrecisionBasedSampler with rho=1
 %  
 %   ... 
-% see also AR1noisePrecisionBasedSampler
 
 % assumes volSTATE is Nx x 1 vector (or Nx x T matrix), and volNOISE is (Ny x T) x 1 vectors (i.e. no correlation within X and Y)
 
