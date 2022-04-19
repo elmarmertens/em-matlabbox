@@ -32,14 +32,16 @@ AA     = sparse(rowndx, colndx, values);
 
 CC     = cat(2, sparse(NyT, Nx), speye(NyT, NxT));
 
-IT          = speye(T);
-sqrtSIGMA   = blkdiag(sqrtV0,  kron(IT, volSTATE));
-% todo: handle 3D and 2D cases
-% if size(volSTATE, 2) == 1 % convert volSTATE from Nx x 1 to Nx x T
-%     volSTATE = repmat(volSTATE, 1, T);
-% end
-% volSTATE    = cat(1, sqrtV0, volSTATE(:));
-% sqrtSIGMA   = sparse(1:NxTp1, 1:NxTp1, volSTATE);
+if size(volSTATE, 3) == 1
+    IT          = speye(T);
+    sqrtSIGMA   = blkdiag(sqrtV0,  kron(IT, volSTATE));
+else
+    rowndx      = repmat((1:Nx)', 1, Nx) + permute(Nx * (0:T), [1 3 2]);
+    colndx      = repmat((1:NxTp1), Nx, 1);
+    volSTATE    = cat(1,sqrtV0(:),volSTATE(:));
+    sqrtSIGMA   = sparse(rowndx(:), colndx(:), volSTATE(:));
+end
+
 
 sqrtOMEGA   = sparse(1:NyT, 1:NyT, volNOISE(:)');
 
