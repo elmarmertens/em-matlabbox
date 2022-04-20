@@ -13,8 +13,9 @@ function draw = igamVarianceDraw(resid, ssr0, dof0)
 
 
 %% FUNCTION BODY [ igVarianceDraw.m ]
-ssr          = sum(resid(:).^2) + ssr0;
-dof          = length(resid(:)) + dof0;
+resid        = resid(:);
+ssr          = sum(resid.^2) + ssr0;
+dof          = length(resid) + dof0;
 % igamrnd      = @(alpha,beta) 1 ./ gamrnd(alpha, 1 ./ beta);
 % draw         = igamrnd(dof * .5, ssr * .5);
 draw         = 1 ./ gamrnd(dof * .5, 2 ./ ssr); % use of ./ appears faster than /
