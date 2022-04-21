@@ -8,7 +8,7 @@ function [igams, gams] = igammadraw(sigmaT, dof, Ndraw, rndStream)
 % NOTE: THIS IS RATHER A UNIVARIATE INVERSE WISHART (and does not follow the notation for the inverse gamma)
 % the proper mapping from the univariate-inverse Wishart to the igamma would
 % be alpha = dof /2 and beta = sigmaT / 2
-% See also: iwishdraw, gamrnd
+% See also: iwishdraw, igamrnd, gamrnd
 
 %   Coded by  Elmar Mertens, em@elmarmertens.com
 
@@ -61,11 +61,17 @@ else
     end
     
     %% draw random normal numbers
-    z  = randn(rndStream, N, Ndraw, dof);
+    if isnumeric(rndStream)
+        z = rndStream;
+    else
+        z  = randn(rndStream, N, Ndraw, dof);
+    end
+
     
     %% construct inverse-gammas
     zz       = sum(z.^2,3);
-    igams    = bsxfun(@rdivide, sigmaT, zz);
+    %     igams    = bsxfun(@rdivide, sigmaT, zz);
+    igams    = sigmaT ./ zz;
     
     %% invert to gammas (if output is required)
     if nargout > 1

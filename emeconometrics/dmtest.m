@@ -1,5 +1,5 @@
 function [mu, tstat, pvalue, se] = dmtest(loss1, loss2, nlag)
-% DMTEST ... 
+% DMTEST: [mu, tstat, pvalue, se] = dmtest(loss1, loss2, nlag)
 %  
 %   ... 
 
@@ -11,6 +11,11 @@ function [mu, tstat, pvalue, se] = dmtest(loss1, loss2, nlag)
 % FILENAME  : dmtest.m 
 
 
+% convert inputs to column vector (to be safe)
+loss1  = loss1(:);
+loss2  = loss2(:);
+
+% find missing values
 nanny  = isnan(loss1) | isnan(loss2);
 
 delta = loss1(~nanny) - loss2(~nanny);
