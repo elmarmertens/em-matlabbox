@@ -1,7 +1,7 @@
 if true || isunix % && ~isdesktop
     clear wrap
     
-    wrap.dir    = fullfile(localtemp, 'foo');
+    wrap.dir    = localtemp;
     if ~exist('titlename', 'var')
         titlename   = mfilenamecaller;
     end
