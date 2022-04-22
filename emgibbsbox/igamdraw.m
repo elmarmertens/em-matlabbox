@@ -1,7 +1,7 @@
-function draws = igamrnd(ssr, dof, Ndraw)
+function draws = igamdraw(ssr, dof, Ndraw)
 % igamrnd 
 %
-% USAGE: igams = igamrnd(sigmaT, dof, Ndraw)
+% USAGE: igams = igamdraw(ssr, dof, Ndraw)
 %
 % See also: iwishdraw, igammadraw, gamrnd
 
