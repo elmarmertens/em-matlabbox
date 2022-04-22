@@ -14,4 +14,4 @@ if ~isscalar(dof)
     error('dof is supposed to be scalar')
 end
 % igamrnd      = @(alpha,beta) 1 ./ gamrnd(alpha, 1 ./ beta);
-draws  = 1 ./ igamrnd(dof * .5, 2 ./ ssr, Ndraw);
+draws  = 1 ./ gamrnd(dof * .5, 2 ./ ssr, Ndraw);
