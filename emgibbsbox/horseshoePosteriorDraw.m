@@ -24,7 +24,7 @@ igamrnd = @(alpha,beta) 1 ./ gamrnd(alpha, 1 ./ beta);
 
 
 %% compute
-this           = 1 ./ localScalePREV + .5 * shocks2 / globalStatePREV;
+this           = 1 ./ localScalePREV + .5 * shocks2 ./ globalStatePREV;
 localStatePREV = igamrnd(1, this);
 localScalePREV = igamrnd(1, 1 + 1 ./ localStatePREV);
 

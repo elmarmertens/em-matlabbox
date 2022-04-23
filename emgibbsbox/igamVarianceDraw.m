@@ -15,6 +15,11 @@ if nargin < 4 || isempty(dim)
     dim = 1;
 end
 
+if isvector(resid)
+    resid = resid(:);
+    dim   = 1;
+end
+
 T            = size(resid, dim);
 ssr          = sum(resid.^2, dim) + ssr0;
 dof          = T + dof0;

@@ -7,6 +7,10 @@ function draws = igamdraw(ssr, dof, Ndraw)
 
 %   Coded by  Elmar Mertens, em@elmarmertens.com
 
+if nargin < 3 || isempty(Ndraw)
+    Ndraw = 1;
+end
+
 if ~isscalar(ssr)
     error('ssr is supposed to be scalar')
 end
