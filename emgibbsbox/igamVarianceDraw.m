@@ -1,4 +1,4 @@
-function draw = igamVarianceDraw(resid, ssr0, dof0)
+function draw = igamVarianceDraw(resid, ssr0, dof0, dim)
 % IGVARIANCEDRAW draw = igVarianceDraw(resid, ssr0, dof0);
 %  
 %   ... 
@@ -11,11 +11,13 @@ function draw = igamVarianceDraw(resid, ssr0, dof0)
 % FILENAME  : igVarianceDraw.m 
 
 
+if nargin < 4 || isempty(dim)
+    dim = 1;
+end
 
-%% FUNCTION BODY [ igVarianceDraw.m ]
-resid        = resid(:);
-ssr          = sum(resid.^2) + ssr0;
-dof          = length(resid) + dof0;
+T            = size(resid, dim);
+ssr          = sum(resid.^2, dim) + ssr0;
+dof          = T + dof0;
 % igamrnd      = @(alpha,beta) 1 ./ gamrnd(alpha, 1 ./ beta);
 % draw         = igamrnd(dof * .5, ssr * .5);
-draw         = 1 ./ gamrnd(dof * .5, 2 ./ ssr); % use of ./ appears faster than /
+draw         = 1 ./ gamrnd(dof * .5, 2 ./ ssr); 
