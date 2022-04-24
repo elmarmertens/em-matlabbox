@@ -22,6 +22,7 @@ if nargin < 4
 end
 
 
+
 %% check dof
 N = size(cholSigmaT, 1);
 if isempty(dof)
@@ -29,8 +30,15 @@ if isempty(dof)
 end
 
 %% draw random normal numbers
-z       = randn(rndStream, N, dof, Ndraw);
-% todo: this could be improved w/bartlett decomposition ...
+if isnumeric(rndStream)
+    z = rndStream;
+else
+    z = randn(rndStream, N, dof, Ndraw);
+    % todo: this could be improved w/bartlett decomposition ...
+end
+
+
+
 
 %% loop over Ndraw and construct inverse-wisharts
 iwishchols = NaN(N,N,Ndraw);

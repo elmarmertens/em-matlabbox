@@ -32,8 +32,17 @@ AA     = sparse(rowndx, colndx, values);
 
 CC     = cat(2, sparse(NyT, Nx), speye(NyT, NxT));
 
-IT          = speye(T);
-sqrtSIGMA   = blkdiag(sqrtV0,  kron(IT, volSTATE));
+if size(volSTATE, 3) == 1
+    IT          = speye(T);
+    sqrtSIGMA   = blkdiag(sqrtV0,  kron(IT, volSTATE));
+else
+    rowndx      = repmat((1:Nx)', 1, Nx) + permute(Nx * (0:T), [1 3 2]);
+    colndx      = repmat((1:NxTp1), Nx, 1);
+    volSTATE    = cat(1,sqrtV0(:),volSTATE(:));
+    sqrtSIGMA   = sparse(rowndx(:), colndx(:), volSTATE(:));
+end
+
+
 sqrtOMEGA   = sparse(1:NyT, 1:NyT, volNOISE(:)');
 
 %% set up  stacked system
