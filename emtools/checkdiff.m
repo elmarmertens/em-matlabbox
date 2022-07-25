@@ -14,7 +14,7 @@ function [flag, delta] = checkdiff(a,b,tol,msg)
 
 % error(nargchk(2,4,nargin))
 alabel = inputname(1);
-if nargin < 2 || isempty(b);
+if nargin < 2 || isempty(b)
    b = zeros(size(a));
    blabel = '';
 else

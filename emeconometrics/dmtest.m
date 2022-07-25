@@ -26,5 +26,7 @@ reggae = nwest(delta, ones(Nobs,1), nlag);
 mu      = reggae.beta;
 tstat   = reggae.tstat;
 se      = sqrt(reggae.Vbeta);
-pvalue  = tdis_prb(tstat,Nobs-1);
+if ~isnan(tstat)
+    pvalue  = tdis_prb(tstat,Nobs-1);
+end
 

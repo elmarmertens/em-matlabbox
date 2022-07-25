@@ -1,4 +1,4 @@
-function out = dcolbf(dcolstr)
+function out = dcolbf(x, fmt, framenum)
 % BOLDCOLSTAR ... 
 %  
 %   ... 
@@ -10,11 +10,18 @@ function out = dcolbf(dcolstr)
 % DEVELOPED : 9.8.0.1451342 (R2020a) Update 5 
 % FILENAME  : boldcolstar.m 
 
+if nargin < 2 || isempty(fmt)
+    fmt = '%6.4f';
+end
+if nargin < 3
+    framenum = [];
+end
+fmtstr = sprintf(fmt, x);
+[pre, post] = strtok(fmtstr, '.');
+if isempty(framenum)
+    out = sprintf('{\\textbf{%s}}.{\\textbf{%s}}', pre, post(2:end));
+else
+    out = sprintf('{\\textbf<%d>{%s}}.{\\textbf<%d>{%s}}', framenum, pre, framenum, post(2:end));
+end
 
 
-%% FUNCTION BODY [ boldcolstar.m ] 
-
-% [pre, post] = strtok(dcolstr, '.');
-% out = sprintf('{\\bf%s}.{\\bf%s}', pre, post(2:end));
-
-out = strcat('\dcolcolor{darkgreen} ', dcolstr);

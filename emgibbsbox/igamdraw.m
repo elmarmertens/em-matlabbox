@@ -1,4 +1,4 @@
-function draws = igamdraw(ssr, dof, Ndraw)
+function draws = igamdraw(ssr, dof, varargin)
 % igamrnd 
 %
 % USAGE: igams = igamdraw(ssr, dof, Ndraw)
@@ -7,8 +7,8 @@ function draws = igamdraw(ssr, dof, Ndraw)
 
 %   Coded by  Elmar Mertens, em@elmarmertens.com
 
-if nargin < 3 || isempty(Ndraw)
-    Ndraw = 1;
+if nargin < 3 || isempty(varargin)
+    varargin = {1};
 end
 
 if ~isscalar(ssr)
@@ -18,4 +18,4 @@ if ~isscalar(dof)
     error('dof is supposed to be scalar')
 end
 % igamrnd      = @(alpha,beta) 1 ./ gamrnd(alpha, 1 ./ beta);
-draws  = 1 ./ gamrnd(dof * .5, 2 ./ ssr, Ndraw);
+draws  = 1 ./ gamrnd(dof * .5, 2 ./ ssr, varargin{:});
