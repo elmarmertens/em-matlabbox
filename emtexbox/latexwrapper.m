@@ -95,7 +95,6 @@ switch lower(command)
       fprintf(file.id, '%s\n', '\usepackage{listings}');
       fprintf(file.id, '%s\n', '\usepackage{a4wide}');
       fprintf(file.id, '%s\n', '\usepackage[table]{xcolor}');
-      fprintf(file.id, '%s\n', '\usepackage{beamerarticle}');
       
       fprintf(file.id, '%s\n', '% DCOL COLORS');
       fprintf(file.id, '%s\n', '\makeatletter');
@@ -109,6 +108,10 @@ switch lower(command)
       fprintf(file.id, '%s\n', '\definecolor{darkred}{rgb}{.6,0,0}');
       fprintf(file.id, '%s\n', '\definecolor{darkgray}{gray}{.3}');
       
+      if ~ispc
+          % the following pakcage creates an options clash with xcolor (when used in MikTeX)
+          fprintf(file.id, '%s\n', '\usepackage{beamerarticle}');
+      end
       
       fprintf(file.id, '%s\n', '\newcommand*{\titlecaveat}[1]{\texttt{-----------------------------\\ #1 \\-----------------------------}}');
       fprintf(file.id, '%s\n', '\newcounter{XYZs}');
