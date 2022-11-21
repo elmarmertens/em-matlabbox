@@ -35,12 +35,13 @@ if ~isfield(file, 'pagestyle')
    file.pagestyle = 'headings';
 end
 if ~isfield(file, 'dvidriver')
-   if isunix
-      file.dvidriver = 'dvips'; % 2015, works better this way at the Board
-   else
-%       file.dvidriver = 'dvipdfm';
-      file.dvidriver = 'dvips';
-   end
+   file.dvidriver = 'dvips';
+   %    if isunix
+   %       file.dvidriver = 'dvips'; % 2015, works better this way at the Board
+   %    else
+   % %       file.dvidriver = 'dvipdfm';
+   %       file.dvidriver = 'dvips';
+   %    end
 end
 
 filename = fullfile(file.dir, strcat(file.name, '.tex'));

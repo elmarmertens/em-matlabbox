@@ -1,5 +1,5 @@
-function [Sigma, K, P, SigmaStar] = abckalman(A,B,C)
-% ABCKALMAN solves a Kalman Filter equation by using matlab's dare
+function [Sigma, K, P, SigmaStar] = abckalman(A,B,C,useDare)
+% ABCKALMAN solves a Kalman Filter equation by using matlab's dare (or VFI)
 % [Sigma, K, P, SigmaStar] = abckalman(A,B,C)
 % 
 % where Sigma is innovation-VCV, K is gain, P is projection matrix 
@@ -16,8 +16,19 @@ function [Sigma, K, P, SigmaStar] = abckalman(A,B,C)
 % DEVELOPED : 7.8.0.347 (R2009a)
 % FILENAME  : abckalman.m
 
-% Sigma = dare(A', C', B*B', zeros(size(C, 1)));
-Sigma = riccati(A', C', B*B', zeros(size(C, 1)));
+if nargin < 4
+    useDare = false;
+end
+if useDare
+    try
+        Sigma = dare(A', C', B*B', zeros(size(C, 1)));
+    catch dareME
+        warning('DARE failed, using riccati via VFI: %s', dareME.identifier)
+        Sigma = riccati(A', C', B*B', zeros(size(C, 1)));
+    end
+else
+    Sigma = riccati(A', C', B*B', zeros(size(C, 1)));
+end
 varz = C * Sigma * C';
 covxz = Sigma * C';
 if rcond(varz) > 1e-10
