@@ -1,5 +1,5 @@
 function draw = igamVarianceDraw(resid, ssr0, dof0, dim)
-% IGVARIANCEDRAW draw = igVarianceDraw(resid, ssr0, dof0);
+% IGAMVARIANCEDRAW draw = igamVarianceDraw(resid, ssr0, dof0);
 %  
 %   ... 
 
@@ -8,7 +8,7 @@ function draw = igamVarianceDraw(resid, ssr0, dof0, dim)
 % $DATE     : 20-Apr-2022 12:36:23 $ 
 % $Revision : 1.00 $ 
 % DEVELOPED : 9.12.0.1884302 (R2022a) 
-% FILENAME  : igVarianceDraw.m 
+% FILENAME  : igamVarianceDraw.m 
 
 
 if nargin < 4 || isempty(dim)

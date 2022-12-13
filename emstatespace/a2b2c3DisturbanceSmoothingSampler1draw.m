@@ -1,12 +1,17 @@
-function [Xdraws, disturbanceDraws, X0draws, noiseDraws] = abcDisturbanceSmoothingSamplerNaN1draw(A, B, C, Ydata, yNaNndx, X00, cholSigma00, sqrtR, sqrtSigma, rndStream)
+function [Xdraws, disturbanceDraws, X0draws, noiseDraws] = ...
+    a2b2c3DisturbanceSmoothingSampler1draw(A, B, C, Ydata, X00, cholSigma00, ...
+	sqrtR, rndStream)
 % ABCDISTURBANCESMOOTHINGSAMPLER
 % ....
 
 %   Coded by  Elmar Mertens, em@elmarmertens.com
 
-% yNaNndx: if empty, this function will check for NaN and zero out rows of
-% C, if not empty, it will be taken as given, assuming that the
-% corresponding values of Ydata and rows of C have been zeroed out
+%% VERSION INFO
+% AUTHOR    : Elmar Mertens
+% $DATE     : 08-Aug-2009 17:58:16 $
+% $Revision : 1.00 $
+% DEVELOPED : 7.7.0.471 (R2008b)
+% FILENAME  : abcDisturbanceSmoothingSampler.m
 
 
 %% parse inputs
@@ -14,15 +19,11 @@ Nx                = size(A, 1);
 [Ny, T]           = size(Ydata);
 Nw                = size(B,2);
 
-if nargin < 8
+if nargin < 7
     sqrtR = [];
 end
 
-if nargin < 9
-    sqrtSigma = [];
-end
-
-if nargin < 10 || isempty(rndStream)
+if nargin < 8
     rndStream = getDefaultStream;
 end
 
@@ -30,24 +31,21 @@ end
 if ~isempty(sqrtR) && ismatrix(sqrtR)
     sqrtR = repmat(sqrtR, [1 1 T]);
 end
-if ~isempty(sqrtSigma) && isvector(sqrtSigma) 
-    sqrtSigma = repmat(sqrtSigma(:), [1 T]);
-end
 
-if ismatrix(A)
-    A = repmat(A, [1 1 T]);
-end
-if ismatrix(B)
-    B = repmat(B, [1 1 T]);
-end
+
+% if ismatrix(A)
+%     A = repmat(A, [1 1 T]);
+% end
+% if ismatrix(B)
+%     B = repmat(B, [1 1 T]);
+% end
 if ismatrix(C)
     C = repmat(C, [1 1 T]);
-    warning('em:msg', 'C should be three dimensional when there are missing data')
+    % warning('em:msg', 'C should be three dimensional when there are missing data')
 end
 
 I                 = eye(Nx);
-
-yDataNdx          = ~yNaNndx;
+Iy                = eye(Ny);
 
 %% allocate memory
 [Sigmattm1, ImKC]           = deal(zeros(Nx, Nx, T));
@@ -68,7 +66,7 @@ X0plus = X00 + cholSigma00 * randn(rndStream, Nx, 1);
 %% Forward Loop: Kalman Forecasts
 [Sigma00, Sigmatt] = deal(cholSigma00 * cholSigma00');
 Xtt     = zeros(Nx,1); % use zeros, since projection on difference between Y and Yplus
-BSigmaB = zeros(Nx, Nx, T);
+% BSigmaB = zeros(Nx, Nx, T);
 
 disturbanceplus  = zeros(Nx, T);
 if isempty(sqrtR)
@@ -77,26 +75,24 @@ else
     noiseplus        = zeros(Ny, T);
 end
 
+BB = B*B';
+
 for t = 1 : T
     
     % "plus" States and priors
-    if isempty(sqrtSigma)
-        disturbanceplus(:,t)  = B(:,:,t) * wplus(:,t);
-        BSigmaB(:,:,t)        = B(:,:,t) * B(:,:,t)';
-    else
-        disturbanceplus(:,t)  = B(:,:,t) * diag(sqrtSigma(:,t)) * wplus(:,t);
-        BSigmaB(:,:,t)        = B(:,:,t) * diag(sqrtSigma(:,t).^2) * B(:,:,t)';
-    end
+    disturbanceplus(:,t)  = B * wplus(:,t);
+    %     BSigmaB(:,:,t)        = B(:,:,t) * B(:,:,t)';
+
     
     if t == 1
-        Xplus(:,t) = A(:,:,t) * X0plus + disturbanceplus(:,t);
+        Xplus(:,t) = A * X0plus + disturbanceplus(:,t);
     else
-        Xplus(:,t) = A(:,:,t) * Xplus(:,t-1) + disturbanceplus(:,t);
+        Xplus(:,t) = A * Xplus(:,t-1) + disturbanceplus(:,t);
     end
     
     % priors
-    Sigmattm1(:,:,t)        = A(:,:,t) * Sigmatt * A(:,:,t)' + BSigmaB(:,:,t);
-    Xttm1(:,t)              = A(:,:,t) * Xtt;
+    Sigmattm1(:,:,t)        = A * Sigmatt * A' + BB;
+    Xttm1(:,t)              = A * Xtt;
     
     
     
@@ -118,7 +114,7 @@ for t = 1 : T
     Ytilde(:,t) = Ydata(:,t)  - Yplus  - C(:,:,t) * Xttm1(:,t);
     
     % Block Inverse of Y-VCV, accounting for missing obs (with zero VCV)
-    invSigmaYttm1(yDataNdx(:,t),yDataNdx(:,t),t) = eye(sum(yDataNdx(:,t))) / SigmaYttm1(yDataNdx(:,t),yDataNdx(:,t));
+    invSigmaYttm1(:,:,t) = Iy / SigmaYttm1;
 
     % Kalman Gain
     K                       = (Sigmattm1(:,:,t) * C(:,:,t)') * invSigmaYttm1(:,:,t);
@@ -138,7 +134,7 @@ StT             = C(:,:,T)' * (invSigmaYttm1(:,:,T) * Ytilde(:,T));
 
 if nargout > 1
     disturbancetT               = zeros(Nx, T);
-    disturbancetT(:,T)          = BSigmaB(:,:,T) * StT;
+    disturbancetT(:,T)          = BB * StT;
 else
     disturbancetT        = [];
 end
@@ -152,14 +148,14 @@ end
 
 
 for t = (T-1) : -1 : 1
-    Atilde      = A(:,:,t+1) * ImKC(:,:,t);
+    Atilde      = A * ImKC(:,:,t);
     
     StT         = Atilde' * StT + ...
         C(:,:,t)' * (invSigmaYttm1(:,:,t) * Ytilde(:,t));
     XtT(:,t)    = Xttm1(:,t) + Sigmattm1(:,:,t) * StT;
     
     if ~isempty(disturbancetT)
-        disturbancetT(:,t)        = BSigmaB(:,:,t) * StT;
+        disturbancetT(:,t)        = BB * StT;
     end
     if ~isempty(noisetT)
         noisetT(:,t)       = Ytilde(:,t) - C(:,:,t) * (XtT(:,t) - Xttm1(:,t));
@@ -176,7 +172,7 @@ if nargout > 1
     
     if nargout > 2
         
-        X0T      = Sigma00 * A(:,:,1)' * StT; % note: no mean added to X0T since it is already included in X0plus
+        X0T      = Sigma00 * A' * StT; % note: no mean added to X0T since it is already included in X0plus
         X0draws  = X0plus + X0T;
         
         
