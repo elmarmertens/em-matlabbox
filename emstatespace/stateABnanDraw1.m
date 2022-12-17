@@ -86,11 +86,6 @@ for t = 1 : T
     K                       = Sigmattm1(:,obsndx(:,t),t) * invSigmaYttm1(yDataNdx(:,t),yDataNdx(:,t),t);
     ImKC(:,:,t)             = I - K * CC(yDataNdx(:,t),:);
     
-    %     K2                      = (Sigmattm1(:,:,t) * C(:,:,t)') * invSigmaYttm1(:,:,t);
-    %     ImKC2                   = I - K2 * C(:,:,t);
-    %     checkdiff(K, K2(:,yDataNdx(:,t)));
-    %     checkdiff(ImKC(:,:,t), ImKC2);
-    
     % posteriors
     Sigmatt                 = ImKC(:,:,t) * Sigmattm1(:,:,t) * ImKC(:,:,t)'; % Joseph form for better numerical stability
     Xtt                     = Xttm1(:,t) + K * Ytilde(yDataNdx(:,t),t);
