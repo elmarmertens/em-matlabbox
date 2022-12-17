@@ -109,10 +109,9 @@ for t = 1 : T
         
     end
    
-    Ytilde(:,t) = Ydata(:,t)  - Yplus  - C(:,:,t) * Xttm1(:,t);
+    Ytilde(:,t)             = Ydata(:,t)  - Yplus  - C(:,:,t) * Xttm1(:,t);
     
-    % Block Inverse of Y-VCV, accounting for missing obs (with zero VCV)
-    invSigmaYttm1(:,:,t) = Iy / SigmaYttm1;
+    invSigmaYttm1(:,:,t)    = Iy / SigmaYttm1;
 
     % Kalman Gain
     K                       = (Sigmattm1(:,:,t) * C(:,:,t)') * invSigmaYttm1(:,:,t);
@@ -148,12 +147,11 @@ end
 for t = (T-1) : -1 : 1
     Atilde      = A(:,:,t+1) * ImKC(:,:,t);
     
-    StT         = Atilde' * StT + ...
-        C(:,:,t)' * (invSigmaYttm1(:,:,t) * Ytilde(:,t));
+    StT         = Atilde' * StT + C(:,:,t)' * (invSigmaYttm1(:,:,t) * Ytilde(:,t));
     XtT(:,t)    = Xttm1(:,t) + Sigmattm1(:,:,t) * StT;
     
     if ~isempty(disturbancetT)
-        disturbancetT(:,t)        = BSigmaB(:,:,t) * StT;
+        disturbancetT(:,t) = BSigmaB(:,:,t) * StT;
     end
     if ~isempty(noisetT)
         noisetT(:,t)       = Ytilde(:,t) - C(:,:,t) * (XtT(:,t) - Xttm1(:,t));
