@@ -21,8 +21,6 @@ end
 
 %% init Variables and allocate memory
 I          = eye(Nx);
-CC         = zeros(Ny,Nx); % todo: remove
-CC(:,ndxY) = eye(Ny);
 
 yDataNdx          = ~yNaNndx;
 obsndx = false(Nx,T);
@@ -78,17 +76,13 @@ for t = 1 : T
     % Kalman Gain
     K                       = Sigmattm1(:,obsndx(:,t),t) * invSigmaYttm1(yDataNdx(:,t),yDataNdx(:,t),t);
 
-    kc                = zeros(Nx);
-    kc(:,obsndx(:,t)) = K;
-    imkc              = I-kc;
-    ImKC(:,:,t)             = I - K * CC(yDataNdx(:,t),:);
-    if checkdiff(ImKC(:,:,t), imkc)
-        keyboard
-    end
-
     % posteriors
-    Sigmatt                 = ImKC(:,:,t) * Sigmattm1(:,:,t) * ImKC(:,:,t)'; % Joseph form for better numerical stability
     Xtt                     = Xttm1(:,t) + K * Ytilde(yDataNdx(:,t),t);
+
+    KC                      = zeros(Nx);
+    KC(:,obsndx(:,t))       = K;
+    ImKC(:,:,t)             = I-KC;
+    Sigmatt                 = ImKC(:,:,t) * Sigmattm1(:,:,t) * ImKC(:,:,t)'; % Joseph form for better numerical stability
     
 end
 
@@ -100,9 +94,6 @@ Yscaled          = invSigmaYttm1(yDataNdx(:,t),yDataNdx(:,t),t) * Ytilde(yDataNd
 StT              = zeros(Nx,1);
 StT(obsndx(:,t)) = Yscaled;
 
-thisC = CC(yDataNdx(:,t),:);
-checkdiff(StT, thisC' * Yscaled);
-
 for t = (T-1) : -1 : 1
     
     Atilde          = A * ImKC(:,:,t);
@@ -113,9 +104,6 @@ for t = (T-1) : -1 : 1
     StT                 = Atilde' * StT + stilde;
    
     XtT(:,t)        = Xttm1(:,t) + Sigmattm1(:,:,t) * StT;
-
-    thisC           = CC(yDataNdx(:,t),:);
-    checkdiff(stilde, thisC' * (invSigmaYttm1(yDataNdx(:,t),yDataNdx(:,t),t) * Ytilde(yDataNdx(:,t),t)));
 
 end
 
