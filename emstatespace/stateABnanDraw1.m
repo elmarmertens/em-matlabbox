@@ -20,17 +20,15 @@ end
 
 
 %% init Variables and allocate memory
-I                 = eye(Nx);
+I          = eye(Nx);
+CC         = zeros(Ny,Nx); % todo: remove
+CC(:,ndxY) = eye(Ny);
 
 yDataNdx          = ~yNaNndx;
 obsndx = false(Nx,T);
 for t = 1 : T
     obsndx(ndxY(yDataNdx(:,t)),t) = true;
 end
-
-CC         = zeros(Ny,Nx);
-CC(:,ndxY) = eye(Ny);
-
 
 %% allocate memory
 [Sigmattm1, ImKC]           = deal(zeros(Nx, Nx, T));
@@ -71,11 +69,6 @@ for t = 1 : T
     Yplus            = Xplus(obsndx(:,t),t);
     SigmaYttm1       = Sigmattm1(obsndx(:,t),obsndx(:,t),t);
     
-    %     that = C(:,:,t) * Xplus(:,t);
-    %     checkdiff(Yplus, that(yDataNdx(:,t)));
-    %     that =  C(:,:,t) * Sigmattm1(:,:,t) * C(:,:,t)';
-    %     checkdiff(SigmaYttm1, that(yDataNdx(:,t),yDataNdx(:,t)));
-    
     Ytilde(yDataNdx(:,t),t)      = Ydata(yDataNdx(:,t),t) - Yplus - Xttm1(obsndx(:,t),t);
     
     % Block Inverse of Y-VCV, accounting for missing obs (with zero VCV)
@@ -84,8 +77,15 @@ for t = 1 : T
      
     % Kalman Gain
     K                       = Sigmattm1(:,obsndx(:,t),t) * invSigmaYttm1(yDataNdx(:,t),yDataNdx(:,t),t);
+
+    kc                = zeros(Nx);
+    kc(:,obsndx(:,t)) = K;
+    imkc              = I-kc;
     ImKC(:,:,t)             = I - K * CC(yDataNdx(:,t),:);
-    
+    if checkdiff(ImKC(:,:,t), imkc)
+        keyboard
+    end
+
     % posteriors
     Sigmatt                 = ImKC(:,:,t) * Sigmattm1(:,:,t) * ImKC(:,:,t)'; % Joseph form for better numerical stability
     Xtt                     = Xttm1(:,t) + K * Ytilde(yDataNdx(:,t),t);
@@ -93,27 +93,34 @@ for t = 1 : T
 end
 
 %% Backward Loop: Disturbance Smoother
-XtT(:,T)        = Xtt;
+XtT(:,T)   = Xtt;
 
 t = T;
-thisC = CC(yDataNdx(:,t),:);
-StT   = thisC' * (invSigmaYttm1(yDataNdx(:,t),yDataNdx(:,t),t) * Ytilde(yDataNdx(:,t),t));
+Yscaled          = invSigmaYttm1(yDataNdx(:,t),yDataNdx(:,t),t) * Ytilde(yDataNdx(:,t),t);
+StT              = zeros(Nx,1);
+StT(obsndx(:,t)) = Yscaled;
 
+thisC = CC(yDataNdx(:,t),:);
+checkdiff(StT, thisC' * Yscaled);
 
 for t = (T-1) : -1 : 1
     
     Atilde          = A * ImKC(:,:,t);
-    thisC           = CC(yDataNdx(:,t),:);
     
-    StT             = Atilde' * StT + thisC' * (invSigmaYttm1(yDataNdx(:,t),yDataNdx(:,t),t) * Ytilde(yDataNdx(:,t),t));
+    Yscaled             = invSigmaYttm1(yDataNdx(:,t),yDataNdx(:,t),t) * Ytilde(yDataNdx(:,t),t);
+    stilde              = zeros(Nx,1);
+    stilde(obsndx(:,t)) = Yscaled;
+    StT                 = Atilde' * StT + stilde;
+   
     XtT(:,t)        = Xttm1(:,t) + Sigmattm1(:,:,t) * StT;
-    
+
+    thisC           = CC(yDataNdx(:,t),:);
+    checkdiff(stilde, thisC' * (invSigmaYttm1(yDataNdx(:,t),yDataNdx(:,t),t) * Ytilde(yDataNdx(:,t),t)));
+
 end
 
 %% sample everything together (and reorder output dimensions)
-% Xdraws  = bsxfun(@minus, XtT, XplustT) + Xplus;
 Xdraws  = XtT + Xplus;
-% Xdraws  = permute(Xdraws, [1 3 2]);
 
 
 
