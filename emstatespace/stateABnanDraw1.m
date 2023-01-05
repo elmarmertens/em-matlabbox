@@ -42,14 +42,10 @@ wplus   = randn(rndStream, Nw, T);
 Sigmatt = zeros(Nx,Nx);
 Xtt     = zeros(Nx,1); % mean of differences between actual and plus (and thus zeros)
 
-disturbanceplus  = zeros(Nx, T);
-
 for t = 1 : T
     
     % "plus" States and priors
     Bsv                     = B * diag(sqrtSigma(:,t));
-    disturbanceplus(:,t)    = Bsv * wplus(:,t);
-    BSigmaB                 = Bsv * Bsv';
     
     if t == 1
         Xlagplus = X0;
@@ -57,10 +53,10 @@ for t = 1 : T
         Xlagplus = Xplus(:,t-1);
     end
     
-    Xplus(:,t)              = A * Xlagplus + disturbanceplus(:,t);
+    Xplus(:,t)              = A * Xlagplus + Bsv * wplus(:,t);
     
     % priors
-    Sigmattm1(:,:,t)        = A * Sigmatt * A' + BSigmaB;
+    Sigmattm1(:,:,t)        = A * Sigmatt * A' + Bsv * Bsv';
     Xttm1(:,t)              = A * Xtt;
     
     % observed innovation

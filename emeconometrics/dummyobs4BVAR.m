@@ -20,13 +20,9 @@ function [Ystar, Xstar] = dummyobs4BVAR(Ny, p, Nx, ndxExo, lambda, priorMean, do
 
 if nargin < 4 || isempty(lambda)
     % hyperparameters (in Sims notation)
-    if Ny >= 15
-        lambda1     = 20; % overall shrinkage, corresponds to 1/20=0.05 in CCM
-    else
-        lambda1     = 10; % overall shrinkage, corresponds to 1/10=0.1 in CCM
-    end
-    lambda2     = 2; % decay
-    lambda0     = 1/100;
+    lambda1     = 5; % overall shrinkage, corresponds to 1/lambda1^2 = .2^2 in CCMM or RATS
+    lambda2     = 1; % decay, corresponds to lambda2*2=2 in CCMM or RATS
+    lambda0     = 1/10;
     % lambda = [lambda0 lambda1 lambda2];
 else
     lambda0 = lambda(1);
