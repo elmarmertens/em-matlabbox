@@ -1,7 +1,8 @@
 function id = parid()
-% PARID ...
+% PARID returns ID of current thread/task in parpool 
 %
-%   ...
+% USAGE: id = parid()
+
 
 %% VERSION INFO
 % AUTHOR    : Elmar Mertens
