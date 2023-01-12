@@ -28,16 +28,18 @@ if ~isempty(sqrtR) && ismatrix(sqrtR)
 end
 
 
-
-I                 = eye(Nx);
-Iy                = eye(Ny);
-
 %% allocate memory
-[Sigmattm1, ImKC]           = deal(zeros(Nx, Nx, T));
-invSigmaYttm1               = zeros(Ny, Ny, T);
-Ytilde                      = zeros(Ny, T);
+Ctilde                      = NaN(Ny,Nx,T);
+[Sigmattm1, Atilde]         = deal(zeros(Nx, Nx, T));
+Ztilde                      = zeros(Ny, T);
 [XtT, Xttm1, Xplus]         = deal(zeros(Nx, T));
 
+if nargout > 3 && ~isempty(sqrtR)    
+    doNoiseDraws = true; 
+    Ytilde       = zeros(Ny, T); 
+else
+    doNoiseDraws = false;
+end
 
 %% generate plus data
 
@@ -67,13 +69,14 @@ for t = 1 : T
     disturbanceplus(:,t)  = B * wplus(:,t);
     
     if t == 1
-        Xplus(:,t) = A * X0plus + disturbanceplus(:,t);
+        Xplus(:,t)       = A * X0plus + disturbanceplus(:,t);
+        Sigmattm1(:,:,t) = A * Sigmatt * A' + BB;
     else
-        Xplus(:,t) = A * Xplus(:,t-1) + disturbanceplus(:,t);
+        Xplus(:,t)       = A * Xplus(:,t-1) + disturbanceplus(:,t);
+        Sigmattm1(:,:,t) = Atilde(:,:,t-1) * Sigmattm1(:,:,t-1) * Atilde(:,:,t-1)' + BB;
     end
     
     % priors
-    Sigmattm1(:,:,t)        = A * Sigmatt * A' + BB;
     Xttm1(:,t)              = A * Xtt;
     
     
@@ -88,31 +91,32 @@ for t = 1 : T
         
         noiseplus(:,t)    = sqrtR(:,:,t) * eplus(:,t); %#ok<AGROW>
         Yplus             = C * Xplus(:,t) + noiseplus(:,t);
-        SigmaYttm1        = C * Sigmattm1(:,:,t) * C' + ...
-            sqrtR(:,:,t) * sqrtR(:,:,t)';
+        SigmaYttm1        = C * Sigmattm1(:,:,t) * C' + sqrtR(:,:,t) * sqrtR(:,:,t)';
         
     end
-   
-    Ytilde(:,t) = Ydata(:,t)  - Yplus  - C * Xttm1(:,t);
     
-    % Block Inverse of Y-VCV, accounting for missing obs (with zero VCV)
-    invSigmaYttm1(:,:,t) = Iy / SigmaYttm1;
+    ytilde                  = Ydata(:,t)  - Yplus  - C * Xttm1(:,t);
+    if doNoiseDraws
+        Ytilde(:,t) = ytilde;
+    end
+
+    sqrtSigmaYttm1          = chol(SigmaYttm1, 'lower');
+    Ztilde(:,t)             = sqrtSigmaYttm1 \ ytilde;
+    Ctilde(:,:,t)           = sqrtSigmaYttm1 \ C;
 
     % Kalman Gain
-    K                       = (Sigmattm1(:,:,t) * C') * invSigmaYttm1(:,:,t);
-    ImKC(:,:,t)             = I - K * C;
+    Ktilde                  = Sigmattm1(:,:,t) * Ctilde(:,:,t)';
+    Atilde(:,:,t)           = A - A * Ktilde * Ctilde(:,:,t); % A * (I - Ktilde * Ctilde)
     
     % posteriors
-    Sigmatt                 = ImKC(:,:,t) * Sigmattm1(:,:,t);
-    
-    Xtt                     = Xttm1(:,t) + K * Ytilde(:,t);
+    Xtt                     = Xttm1(:,t) + Ktilde * Ztilde(:,t);
    
 end
 
 %% Backward Loop: Disturbance Smoother
 XtT(:,T)        = Xtt;
 
-StT             = C' * (invSigmaYttm1(:,:,T) * Ytilde(:,T));
+StT             = Ctilde(:,:,T)' * Ztilde(:,T);
 
 if nargout > 1
     disturbancetT               = zeros(Nx, T);
@@ -121,25 +125,23 @@ else
     disturbancetT        = [];
 end
 
-if nargout > 2 && ~isempty(sqrtR)
+if doNoiseDraws
     noisetT            = zeros(Ny, T);
     noisetT(:,T)       = Ytilde(:,T) - C * (XtT(:,T) - Xttm1(:,T));
 else
-    noisetT      = [];
+    noisetT  = [];
 end
 
 
 for t = (T-1) : -1 : 1
-    Atilde      = A * ImKC(:,:,t);
-    
-    StT         = Atilde' * StT + ...
-        C' * (invSigmaYttm1(:,:,t) * Ytilde(:,t));
+    StT         = Atilde(:,:,t)' * StT + Ctilde(:,:,t)' * Ztilde(:,t);
     XtT(:,t)    = Xttm1(:,t) + Sigmattm1(:,:,t) * StT;
     
     if ~isempty(disturbancetT)
         disturbancetT(:,t)        = BB * StT;
     end
-    if ~isempty(noisetT)
+
+    if doNoiseDraws
         noisetT(:,t)       = Ytilde(:,t) - C * (XtT(:,t) - Xttm1(:,t));
     end
     
@@ -158,11 +160,8 @@ if nargout > 1
         X0draws  = X0plus + X0T;
         
         
-        if nargout > 3
+        if doNoiseDraws % nargout > 3
             noiseDraws  = noiseplus + noisetT;
         end
     end
 end
-
-
-       

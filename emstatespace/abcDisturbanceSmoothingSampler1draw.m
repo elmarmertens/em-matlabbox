@@ -6,13 +6,6 @@ function [Xdraws, disturbanceDraws, X0draws, noiseDraws] = ...
 
 %   Coded by  Elmar Mertens, em@elmarmertens.com
 
-%% VERSION INFO
-% AUTHOR    : Elmar Mertens
-% $DATE     : 08-Aug-2009 17:58:16 $
-% $Revision : 1.00 $
-% DEVELOPED : 7.7.0.471 (R2008b)
-% FILENAME  : abcDisturbanceSmoothingSampler.m
-
 
 %% parse inputs
 Nx                = size(A, 1);
@@ -44,14 +37,18 @@ if ismatrix(C)
     % warning('em:msg', 'C should be three dimensional when there are missing data')
 end
 
-I                 = eye(Nx);
-
 %% allocate memory
 Ctilde                      = NaN(Ny,Nx,T);
-[Sigmattm1, ImKC]           = deal(zeros(Nx, Nx, T));
+[Sigmattm1, Atilde]         = deal(zeros(Nx, Nx, T));
 Ztilde                      = zeros(Ny, T);
 [XtT, Xttm1, Xplus]         = deal(zeros(Nx, T));
 
+if nargout > 3 && ~isempty(sqrtR)    
+    doNoiseDraws = true; 
+    Ytilde       = zeros(Ny, T); 
+else
+    doNoiseDraws = false;
+end
 
 %% generate plus data
 
@@ -65,7 +62,7 @@ X0plus = X00 + cholSigma00 * randn(rndStream, Nx, 1);
 %% Forward Loop: Kalman Forecasts
 [Sigma00, Sigmatt] = deal(cholSigma00 * cholSigma00');
 Xtt     = zeros(Nx,1); % use zeros, since projection on difference between Y and Yplus
-BSigmaB = zeros(Nx, Nx, T);
+BB      = zeros(Nx, Nx, T);
 
 disturbanceplus  = zeros(Nx, T);
 if isempty(sqrtR)
@@ -78,17 +75,18 @@ for t = 1 : T
     
     % "plus" States and priors
     disturbanceplus(:,t)  = B(:,:,t) * wplus(:,t);
-    BSigmaB(:,:,t)        = B(:,:,t) * B(:,:,t)';
+    BB(:,:,t)              = B(:,:,t) * B(:,:,t)';
 
     
     if t == 1
         Xplus(:,t) = A(:,:,t) * X0plus + disturbanceplus(:,t);
+        Sigmattm1(:,:,t) = A(:,:,t) * Sigmatt * A(:,:,t)' + BB(:,:,t);
     else
         Xplus(:,t) = A(:,:,t) * Xplus(:,t-1) + disturbanceplus(:,t);
+        Sigmattm1(:,:,t) = Atilde(:,:,t-1) * Sigmattm1(:,:,t-1) * Atilde(:,:,t-1)' + BB(:,:,t);
     end
     
     % priors
-    Sigmattm1(:,:,t)        = A(:,:,t) * Sigmatt * A(:,:,t)' + BSigmaB(:,:,t);
     Xttm1(:,t)              = A(:,:,t) * Xtt;
     
     
@@ -107,18 +105,21 @@ for t = 1 : T
             sqrtR(:,:,t) * sqrtR(:,:,t)';
         
     end
-    sqrtSigmaYttm1          = chol(SigmaYttm1, 'lower');
+    
+    ytilde                  = Ydata(:,t)  - Yplus  - C(:,:,t) * Xttm1(:,t);
+    if doNoiseDraws
+        Ytilde(:,t) = ytilde;
+    end
 
-    Ztilde(:,t)             = sqrtSigmaYttm1 \ (Ydata(:,t)  - Yplus  - C(:,:,t) * Xttm1(:,t));
+    sqrtSigmaYttm1          = chol(SigmaYttm1, 'lower');
+    Ztilde(:,t)             = sqrtSigmaYttm1 \ ytilde;
     Ctilde(:,:,t)           = sqrtSigmaYttm1 \ C(:,:,t);
 
     % Kalman Gain
     Ktilde                  = Sigmattm1(:,:,t) * Ctilde(:,:,t)';
-    ImKC(:,:,t)             = I - Ktilde * Ctilde(:,:,t);
+    Atilde(:,:,t)           = A(:,:,t) - A(:,:,t) * Ktilde * Ctilde(:,:,t); % A * (I - Ktilde * Ctilde)
     
     % posteriors
-    Sigmatt                 = ImKC(:,:,t) * Sigmattm1(:,:,t);
-    
     Xtt                     = Xttm1(:,t) + Ktilde * Ztilde(:,t);
    
 end
@@ -130,30 +131,29 @@ StT             = Ctilde(:,:,T)' * Ztilde(:,T);
 
 if nargout > 1
     disturbancetT               = zeros(Nx, T);
-    disturbancetT(:,T)          = BSigmaB(:,:,T) * StT;
+    disturbancetT(:,T)          = BB(:,:,T) * StT;
 else
     disturbancetT        = [];
 end
 
-if nargout > 2 && ~isempty(sqrtR)
+if doNoiseDraws
     noisetT            = zeros(Ny, T);
-    noisetT(:,T)       = Ztilde(:,T) - C(:,:,T) * (XtT(:,T) - Xttm1(:,T));
+    noisetT(:,T)       = Ytilde(:,T) - C(:,:,T) * (XtT(:,T) - Xttm1(:,T));
 else
     noisetT      = [];
 end
 
 
 for t = (T-1) : -1 : 1
-    Atilde      = A(:,:,t+1) * ImKC(:,:,t);
-    
-    StT         = Atilde' * StT + Ctilde(:,:,t)' * Ztilde(:,t);
+    StT         = Atilde(:,:,t)' * StT + Ctilde(:,:,t)' * Ztilde(:,t);
     XtT(:,t)    = Xttm1(:,t) + Sigmattm1(:,:,t) * StT;
     
     if ~isempty(disturbancetT)
-        disturbancetT(:,t) = BSigmaB(:,:,t) * StT;
+        disturbancetT(:,t) = BB(:,:,t) * StT;
     end
-    if ~isempty(noisetT)
-        noisetT(:,t)       = Ztilde(:,t) - C(:,:,t) * (XtT(:,t) - Xttm1(:,t));
+
+    if doNoiseDraws
+        noisetT(:,t)       = Ytilde(:,t) - C(:,:,t) * (XtT(:,t) - Xttm1(:,t));
     end
     
 end
@@ -171,7 +171,7 @@ if nargout > 1
         X0draws  = X0plus + X0T;
         
         
-        if nargout > 3
+        if doNoiseDraws % nargout > 3
             noiseDraws  = noiseplus + noisetT;
         end
     end
