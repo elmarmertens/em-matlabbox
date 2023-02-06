@@ -1,4 +1,4 @@
-function writedatatable(wrap, filename, dates, data, datalabels, datefmt)
+function writedatatable2tex(wrap, tabname, dates, data, datalabels, datefmt)
 % WRITEDATATABLE stores times series data in a csv file with column headers
 % and a date column.
 %
@@ -28,43 +28,38 @@ if nargin < 6
     datefmt = 'yyyyqq';
 end
 
-filename = strcat(filename, '.csv');
 
 if isempty(wrap) 
     return
 else
     if isstruct(wrap) && isfield(wrap, 'dir')
-        filename = fullfile(wrap.dir, filename);
+        tabdir = wrap.dir;
     else % assuming it is a string ....
-        filename = fullfile(wrap, filename);
+        tabdir = wrap;
     end
 end
 
-fid = fopen(filename, 'wt');
-fprintf(fid, '%15s', 'dates/labels');
-fprintf(fid, ',%30s', datalabels{:});
+fid = fopen(fullfile(tabdir, strcat(tabname, '.tex')), 'wt');
+
+fprintf(fid, '\\begin{small}\n');
+fprintf(fid, '\\begin{center}\n');
+fprintf(fid, '\\begin{tabular}{l%s}\n', repmat('.4', 1, size(data,2)));
+fprintf(fid, '\\toprule\n');
+fprintf(fid, 'Dates ');
+fprintf(fid, ' & \\multicolumn{1}{c}{%s}', datalabels{:});
+fprintf(fid, '\\\\\n');
+fprintf(fid, '\\midrule\n');
+for t = 1 : size(data,1)
+     fprintf(fid, '%s ', datestr(dates(t), datefmt)); %#ok<DATST> 
+     fprintf(fid, '& %6.2f ', data(t,:));
+     fprintf(fid, '\\\\\n');
+end
+ 
+fprintf(fid, '\\bottomrule\n');
+fprintf(fid, '\\end{tabular}\n');
+fprintf(fid, '\\end{center}\n');
 fprintf(fid, '\n');
-
-for n = 1 : length(dates)
-    if iscell(dates)
-        fprintf(fid, '%15s', dates{n});
-    else
-        if isempty(datefmt)
-            fprintf(fid, '%15d', dates(n));
-        else
-            fprintf(fid, '%15s', datestr(dates(n), datefmt));
-        end
-    end
-    fprintf(fid, ',%30.16e', data(n,:));
-    %     fprintf(fid, ',%6.2f', data(n,:));
-    fprintf(fid, '\n');
-
-    
-end
-fprintf(fid,'\n');
+fprintf(fid, '\\end{small}\n');
 fclose(fid);
-
-% dlmwrite(filename, data, 'delimiter',',', 'precision', '%30.16e');
-
-
-     
+type(fullfile(tabdir, strcat(tabname, '.tex')))
+latexwrapper(wrap, 'add', 'sidetab', strcat(tabname, '.tex'), [])
