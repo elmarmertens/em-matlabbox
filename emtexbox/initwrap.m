@@ -10,10 +10,16 @@ if true || isunix % && ~isdesktop
         wrap.name   = 'foo';
     else
         latextitle = strrep(titlename, '_', ' ');
-        wrap.title   = sprintf('\\titlecaveat{%s}', latextitle);
+        % insert a linebreak if title too long
+        dashes = strfind(latextitle, '-');
+        ndx = find(dashes <= 50, 1, 'last');
+        latextitle = [latextitle(1:dashes(ndx)), '\ldots\linebreak ', ...
+            latextitle(dashes(ndx)+1:end)];
+
+        wrap.title = sprintf('\\titlecaveat{%s}', latextitle);
         
         % remove any LaTeX line breaks included in titlename
-        titlename = strrep(titlename, '\\', '');
+        % titlename = strrep(titlename, '\\', '');
         
         [jim, titlename] = fileparts(titlename);
         wrap.name    = titlename;
