@@ -56,7 +56,6 @@ for n = 1 : length(dates)
         end
     end
     fprintf(fid, ',%30.16e', data(n,:));
-    %     fprintf(fid, ',%6.2f', data(n,:));
     fprintf(fid, '\n');
 
     
