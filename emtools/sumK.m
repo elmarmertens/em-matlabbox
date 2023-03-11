@@ -10,7 +10,7 @@ function Sk = sumK(x, horizons, exante)
 
 %   Coded by  Elmar Mertens, em@elmarmertens.com
 
-error(nargchk(2,3,nargin))
+narginchk(2,3)
 if nargin < 3
    exante = false;
 end
