@@ -39,6 +39,7 @@ if nargout > 3 && ~isempty(sqrtR)
     Ytilde       = zeros(Ny, T); 
 else
     doNoiseDraws = false;
+    noiseDraws   = [];
 end
 
 %% generate plus data
