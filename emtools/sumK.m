@@ -17,6 +17,10 @@ end
 
 horizons = horizons(:);
 
+if isvector(x)
+    x = x(:);
+end
+
 [T, N] = size(x);
 
 Sk = NaN([T, N, length(horizons)]);
