@@ -1,26 +1,26 @@
-function wrapthisfigure(this, figurename, wrap, captionname, figurecomment, landscape, doJPG, noWrap)
+function wrapthisfigure(this, figurename, wrap, captionname, figurecomment, landscape, fmt, noWrap)
 %--------------------------------------------------------------
 % Prints the current figure to file 'figurename' as fig, eps, jpg and pdf.
 % inserts into wrap
 %--------------------------------------------------------------
-% function wrapthisfigure(this, figurename, wrap, captionname, figurecomment, landscape, doJPG, noWrap)
+% function wrapthisfigure(this, figurename, wrap, captionname, figurecomment, landscape, fmt, noWrap)
 
 %   Coded by  Elmar Mertens, em@elmarmertens.com
 
 if nargin < 4
-   captionname = [];
+    captionname = [];
 end
 if nargin < 5
-   figurecomment = [];
+    figurecomment = [];
 end
 if nargin < 6
-   landscape = false;
+    landscape = false;
 end
-if nargin < 7
-   doJPG = false;
+if nargin < 7 || isempty(fmt)
+    fmt = 'eps';
 end
 if nargin < 8
-   noWrap = false;
+    noWrap = false;
 end
 
 if ~isempty(figurename)
@@ -30,9 +30,9 @@ if ~isempty(figurename)
 end
 
 if ~isempty(captionname)
-   set(this, 'name', captionname)
+    set(this, 'name', captionname)
 elseif ~isempty(figurename)
-   set(this, 'name', figurename)
+    set(this, 'name', figurename)
 end
 
 if isempty(wrap) % do nothing, except changing the name of the figure as above
@@ -53,22 +53,23 @@ if nargin > 1 && ~isempty(wrap)
             warning('em:msg', 'Cannot append figure to latexwrapper since wrap file is closed (fid=0)')
         end
     end
-   if isfield(wrap, 'dir')
-      figurename = fullfile(wrap.dir, figurename);
-   end
+    if isfield(wrap, 'dir')
+        figurename = fullfile(wrap.dir, figurename);
+    end
 end
 
 
 if landscape
-   orient(this, 'landscape')
+    orient(this, 'landscape')
 end
 
 drawnow
 
-if doJPG
-    print(this, '-djpeg', '-r500', figurename);
-else
-    print(this, '-depsc', '-r300', '-loose', figurename);
-    %     orient landscape
-    %     print('-dpdf', '-r300', '-fillpage', figurename);
+switch lower(fmt)
+    case {'jpg', 'jpeg'}
+        print(this, '-djpeg', '-r500', figurename);
+    case {'pdf'}
+        print(this, '-dpdf', '-r300', '-fillpage', figurename);
+    case {'eps', 'epsc'}
+        print(this, '-depsc', '-r300', '-loose', figurename);
 end
