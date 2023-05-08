@@ -1,7 +1,7 @@
 function [Ystar, Xstar] = dummyobs4BVAR(Ny, p, Nx, ndxExo, lambda, priorMean, dof0, SIGMA0)
 % BAYESREGDUMMYOBS constructs dummy opbs for Bayesian Regression with Conjugate Prior
 %
-% usage [Ystar, Xstar] = bayesRegDummyObs(Ny, Nx, ndxExo, dof0, SIGMA0)
+% usage [Ystar, Xstar] = dummyobs4BVAR(Ny, p, Nx, ndxExo, lambda, priorMean, dof0, SIGMA0)
 %
 % Note: ndxExo can be a constant intercept or other deterministic dummies
 %
