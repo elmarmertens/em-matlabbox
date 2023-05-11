@@ -84,8 +84,9 @@ for t = 1 : T
         disturbanceplus(:,t)  = B(:,:,t) * wplus(:,t);
         BSigmaB(:,:,t)        = B(:,:,t) * B(:,:,t)';
     else
-        disturbanceplus(:,t)  = B(:,:,t) * diag(sqrtSigma(:,t)) * wplus(:,t);
-        BSigmaB(:,:,t)        = B(:,:,t) * diag(sqrtSigma(:,t).^2) * B(:,:,t)';
+        Bsv                   = B(:,:,t) * diag(sqrtSigma(:,t));
+        disturbanceplus(:,t)  = Bsv * wplus(:,t);
+        BSigmaB(:,:,t)        = Bsv * Bsv';
     end
     
     if t == 1
