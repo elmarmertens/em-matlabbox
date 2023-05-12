@@ -29,6 +29,10 @@ if isscalar(Vh0)
     Vh0 = repmat(Vh0, Nsv, 1);
 end
 
+if isvector(logy2)
+    logy2 = transpose(logy2(:)); % ensure row vector
+end
+
 %% CORRIGENDUM CHANGES ORDER OF GIBBS STEPS!
 
 %% draw mixture states

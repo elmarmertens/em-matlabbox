@@ -1,12 +1,10 @@
-function [Xdraws, disturbanceDraws, X0draws, noiseDraws] = abcDisturbanceSmoothingSamplerNaN1draw(A, B, C, Ydata, yNaNndx, X00, cholSigma00, sqrtR, sqrtSigma, rndStream)
+function [Xdraws, disturbanceDraws, X0draws, noiseDraws] = ...
+     abcDisturbanceSmoothingSamplerNaN1draw(A, B, C, Ydata, yNaNndx, X00, cholSigma00, ...
+	 sqrtR, sqrtSigma, rndStream)
 % ABCDISTURBANCESMOOTHINGSAMPLER
 % ....
 
 %   Coded by  Elmar Mertens, em@elmarmertens.com
-
-% yNaNndx: if empty, this function will check for NaN and zero out rows of
-% C, if not empty, it will be taken as given, assuming that the
-% corresponding values of Ydata and rows of C have been zeroed out
 
 
 %% parse inputs
@@ -46,7 +44,6 @@ if ismatrix(C)
 end
 
 I                 = eye(Nx);
-
 yDataNdx          = ~yNaNndx;
 
 %% allocate memory
