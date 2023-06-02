@@ -5,7 +5,7 @@ function [Ystar, Xstar] = dummyobs4BVAR(Ny, p, Nx, ndxExo, lambda, priorMean, do
 %
 % Note: ndxExo can be a constant intercept or other deterministic dummies
 %
-% defaults ndxExo=Nx, priorMean=0, dof=0 (SIGMA0 irrelevant)
+% defaults ndxExo=[], priorMean=0, dof=0 (SIGMA0 irrelevant)
 %
 % see also BVARjeffries, BVARdraws
 
