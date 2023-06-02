@@ -1,7 +1,7 @@
 function [Ystar, Xstar] = dummyobs4BVAR(Ny, p, Nx, ndxExo, lambda, priorMean, dof0, SIGMA0)
 % BAYESREGDUMMYOBS constructs dummy opbs for Bayesian Regression with Conjugate Prior
 %
-% usage [Ystar, Xstar] = bayesRegDummyObs(Ny, Nx, ndxExo, dof0, SIGMA0)
+% usage [Ystar, Xstar] = dummyobs4BVAR(Ny, p, Nx, ndxExo, lambda, priorMean, dof0, SIGMA0)
 %
 % Note: ndxExo can be a constant intercept or other deterministic dummies
 %
@@ -20,9 +20,9 @@ function [Ystar, Xstar] = dummyobs4BVAR(Ny, p, Nx, ndxExo, lambda, priorMean, do
 
 if nargin < 4 || isempty(lambda)
     % hyperparameters (in Sims notation)
+    lambda0     = 1/10;
     lambda1     = 5; % overall shrinkage, corresponds to 1/lambda1^2 = .2^2 in CCMM or RATS
     lambda2     = 1; % decay, corresponds to lambda2*2=2 in CCMM or RATS
-    lambda0     = 1/10;
     % lambda = [lambda0 lambda1 lambda2];
 else
     lambda0 = lambda(1);

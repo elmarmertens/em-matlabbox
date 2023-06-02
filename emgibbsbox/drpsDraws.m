@@ -31,7 +31,7 @@ Nbins    = length(binEdges);
 binEdges = permute(binEdges, [2 3 1]); % 1 x 1 x Nbins from now on
 
 if nargin < 4 || isempty(weights)
-    weights = ones(Ndraws,1) ./ Ndraws;
+    weights = ones(Ndraws,Nvar) ./ Ndraws;
 else
     if any(abs(sum(weights) - 1) > 1e-6, 'all')
         error('weights do not sum to one')
@@ -49,7 +49,7 @@ end
 %% sort if needed
 if hasBeenSorted
     Xordered = Xdraws;
-    weights  = repmat(weights, [1 Nvar Nbins]);
+    weights  = repmat(weights, [1 1 Nbins]);
 else
     [Xordered, sortNdx] = sort(Xdraws, 1); % sort columnwise
     if ~isvector(weights)
