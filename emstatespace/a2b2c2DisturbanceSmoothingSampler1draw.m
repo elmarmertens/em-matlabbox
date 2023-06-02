@@ -39,11 +39,13 @@ if nargout > 3 && ~isempty(sqrtR)
     Ytilde       = zeros(Ny, T); 
 else
     doNoiseDraws = false;
+    noiseDraws   = [];
 end
 
 %% generate plus data
 
-wplus   = randn(rndStream, Nw, T);
+disturbanceplus = B * randn(rndStream, Nw, T);
+
 if ~isempty(sqrtR) 
     Nmeasurmentnoise = size(sqrtR, 2);
     eplus            = randn(rndStream, Nmeasurmentnoise, T);
@@ -54,7 +56,6 @@ X0plus = X00 + cholSigma00 * randn(rndStream, Nx, 1);
 [Sigma00, Sigmatt] = deal(cholSigma00 * cholSigma00');
 Xtt     = zeros(Nx,1); % use zeros, since projection on difference between Y and Yplus
 
-disturbanceplus  = zeros(Nx, T);
 if isempty(sqrtR)
     noiseplus        = [];
 else
@@ -65,8 +66,6 @@ BB = B*B';
 
 for t = 1 : T
     
-    % "plus" States and priors
-    disturbanceplus(:,t)  = B * wplus(:,t);
     
     if t == 1
         Xplus(:,t)       = A * X0plus + disturbanceplus(:,t);
