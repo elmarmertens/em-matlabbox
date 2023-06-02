@@ -1,8 +1,8 @@
 function xtickdates(dates, varargin)
 % XTICKDATES sets dateticks 
-%  xtickdates(dates) or xtickdates(dates, 10, 'keepticks') etc
-%  in addition to calling datetick, the function also implements a bugfix
-%  to ensure properly prionted datelabels by disablign 3GL rendering
+%  xtickdates(dates) or xtickdates(dates, ...) set date limits to conform to date vector dates
+%  and passes any additional arguments to Matlab's datetick function
+%
 % see also datetick
 
 %% VERSION INFO 
@@ -14,4 +14,4 @@ function xtickdates(dates, varargin)
 
 xlim(dates([1 end]))
 datetick('x', 'keeplimits', varargin{:})
-% set(gcf, 'Renderer', 'painters')
+% set(gcf, 'Renderer', 'painters') % legacy
