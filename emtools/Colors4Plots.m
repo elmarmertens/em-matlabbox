@@ -54,5 +54,9 @@ else
                 ndx = 8;
         end
     end
-    c = clrs{ndx};
+    if isscalar(ndx)
+        c = clrs{ndx};
+    else
+        c = clrs(ndx);
+    end
 end
