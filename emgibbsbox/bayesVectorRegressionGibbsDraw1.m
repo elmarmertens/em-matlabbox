@@ -38,11 +38,6 @@ aTilde   = sqrt_aSigma' * (iVa0a0 + XYiSig(:));
 % draw from posterior
 aDraw   = sqrt_aSigma * (aTilde + z); % chol_aSigma is the UPPER triangular factorization of aSigma, but this is OK for drawing RV
 
-% check:
-% aSigma  = sqrt_aSigma * sqrt_aSigma';       % checkdiff(aSigma, inv(inv_aSigma));
-% a       = aSigma * (iVa0a0 + XYiSig(:));
-% checkdiff(aDraw, a + sqrt_aSigma * z);
-
 A       = reshape(aDraw, Nx, Ny);
 
 if nargout > 1
