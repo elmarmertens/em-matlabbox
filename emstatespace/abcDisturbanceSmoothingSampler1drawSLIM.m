@@ -39,7 +39,7 @@ end
 
 %% allocate memory
 Ctilde                      = NaN(Ny,Nx,T);
-[Sigmattm1, Atilde]         = deal(zeros(Nx, Nx, T));
+[Sigmattm1, Atildetp1]      = deal(zeros(Nx, Nx, T));
 Ztilde                      = zeros(Ny, T);
 [XtT, Xttm1, Xplus]         = deal(zeros(Nx, T));
 
@@ -66,7 +66,8 @@ for t = 1 : T
         Sigmattm1(:,:,t) = A(:,:,t) * Sigmatt * A(:,:,t)' + B(:,:,t) * B(:,:,t)';
     else
         Xplus(:,t) = A(:,:,t) * Xplus(:,t-1) + B(:,:,t) * wplus(:,t);
-        Sigmattm1(:,:,t) = Atilde(:,:,t-1) * Sigmattm1(:,:,t-1) * Atilde(:,:,t-1)' + B(:,:,t) * B(:,:,t)';
+        Sigmattm1(:,:,t) = Atildetp1(:,:,t-1) * Sigmattm1(:,:,t-1) * A(:,:,t)' + B(:,:,t) * B(:,:,t)';
+        % note: time A' above to handle cases with measurement error
     end
     
     % priors
@@ -95,10 +96,11 @@ for t = 1 : T
 
     % Kalman Gain
     Ktilde                  = Sigmattm1(:,:,t) * Ctilde(:,:,t)';
-    Atilde(:,:,t)           = A(:,:,t) - A(:,:,t) * Ktilde * Ctilde(:,:,t); % A * (I - Ktilde * Ctilde)
-    
     % posteriors
     Xtt                     = Xttm1(:,t) + Ktilde * Ztilde(:,t);
+    if t < T
+        Atildetp1(:,:,t)        = A(:,:,t+1) - A(:,:,t+1) * Ktilde * Ctilde(:,:,t); % A * (I - Ktilde * Ctilde)
+    end
    
 end
 
@@ -109,13 +111,12 @@ StT             = Ctilde(:,:,T)' * Ztilde(:,T);
 
 
 for t = (T-1) : -1 : 1
-    StT         = Atilde(:,:,t)' * StT + Ctilde(:,:,t)' * Ztilde(:,t);
+    StT         = Atildetp1(:,:,t)' * StT + Ctilde(:,:,t)' * Ztilde(:,t);
     XtT(:,t)    = Xttm1(:,t) + Sigmattm1(:,:,t) * StT;
 end
 
 %% sample everything together (and reorder output dimensions)
 Xdraws  = Xplus + XtT;
-
 
 if nargout > 1
     X0T      = Sigma00 * A(:,:,1)' * StT; % note: no mean added to X0T since it is already included in X0plus

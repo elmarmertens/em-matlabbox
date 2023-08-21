@@ -76,7 +76,8 @@ for t = 1 : T
         Sigmattm1(:,:,t) = A * Sigmatt * A' + BB;
     else
         Xplus(:,t)       = A * Xplus(:,t-1) + disturbanceplus(:,t);
-        Sigmattm1(:,:,t) = Atilde(:,:,t-1) * Sigmattm1(:,:,t-1) * Atilde(:,:,t-1)' + BB;
+        Sigmattm1(:,:,t) = Atilde(:,:,t-1) * Sigmattm1(:,:,t-1) * A' + BB;
+        % note: time A' above to handle cases with measurement error
     end
     
     % priors
