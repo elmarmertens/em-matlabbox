@@ -43,7 +43,7 @@ if ismatrix(C)
     warning('em:msg', 'C should be three dimensional when there are missing data')
 end
 
-I                 = eye(Nx);
+% I                 = eye(Nx);
 yDataNdx          = ~yNaNndx;
 
 %% allocate memory
@@ -94,15 +94,14 @@ for t = 1 : T
     
     if t == 1
         Xplus(:,t) = A(:,:,t) * X0plus + disturbanceplus(:,t);
-        Sigmattm1(:,:,t) = A(:,:,t) * Sigmatt * A(:,:,t)' + BB(:,:,t);
     else
         Xplus(:,t) = A(:,:,t) * Xplus(:,t-1) + disturbanceplus(:,t);
-        Sigmattm1(:,:,t) = Atildetp1(:,:,t-1) * Sigmattm1(:,:,t-1) * A(:,:,t)' + BB(:,:,t);
-        % note: time A' above to handle cases with measurement error
     end
-    
+
     % priors
-    Xttm1(:,t)              = A(:,:,t) * Xtt;
+    Xttm1(:,t)       = A(:,:,t) * Xtt;
+    Sigmattm1(:,:,t) = A(:,:,t) * Sigmatt * A(:,:,t)' + BB(:,:,t);
+    
     
     
     
@@ -138,7 +137,8 @@ for t = 1 : T
     % posteriors
     Xtt                     = Xttm1(:,t) + Ktilde * Ztilde(:,t);
     if t < T
-        Atildetp1(:,:,t)        = A(:,:,t+1) - A(:,:,t+1) * Ktilde * Ctilde(:,:,t); % A * (I - Ktilde * Ctilde)
+        Atildetp1(:,:,t)    = A(:,:,t+1) - A(:,:,t+1) * Ktilde * Ctilde(:,:,t); % A * (I - Ktilde * Ctilde)
+        Sigmatt             = Sigmattm1(:,:,t) - Ktilde * Ktilde';
     end
    
 end

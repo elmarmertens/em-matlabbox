@@ -73,15 +73,13 @@ for t = 1 : T
     
     if t == 1
         Xplus(:,t)       = A * X0plus + disturbanceplus(:,t);
-        Sigmattm1(:,:,t) = A * Sigmatt * A' + BB;
     else
         Xplus(:,t)       = A * Xplus(:,t-1) + disturbanceplus(:,t);
-        Sigmattm1(:,:,t) = Atilde(:,:,t-1) * Sigmattm1(:,:,t-1) * A' + BB;
-        % note: time A' above to handle cases with measurement error
     end
     
     % priors
-    Xttm1(:,t)              = A * Xtt;
+    Xttm1(:,t)           = A * Xtt;
+    Sigmattm1(:,:,t)     = A * Sigmatt * A' + BB;
     
     
     
@@ -115,7 +113,8 @@ for t = 1 : T
     
     % posteriors
     Xtt                     = Xttm1(:,t) + Ktilde * Ztilde(:,t);
-   
+    Sigmatt                 = Sigmattm1(:,:,t) - Ktilde * Ktilde';
+    
 end
 
 %% Backward Loop: Disturbance Smoother
