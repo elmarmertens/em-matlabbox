@@ -1,9 +1,9 @@
-function [rhodraw, resid, Erho, Vrho] = bayesAR1SURdraw(y, ylag, Vresid, rho0, rhoV0i, Ndraws, rndStream)
+function [betadraw, resid, E, V] = bayesAR1SURdraw(y, ylag, Vresid, beta0, betaV0i, Ndraws, rndStream)
 % bayesAR1SURdraw
 
 %   Coded by  Elmar Mertens, em@elmarmertens.com
 
-
+%% parse inputs
 if nargin < 6 || isempty(Ndraws)
    Ndraws = 1;
 end
@@ -12,23 +12,32 @@ if nargin < 7 || isempty(rndStream)
 end
 
 
-[T, Ny] = size(y);
-resid   = NaN(T,Ny);
-% rhodraw = NaN(Ny,1);
-Iy      = eye(Ny);
+%% draw SUR coefficients
+Ny         = size(y,2);
+Iy         = eye(Ny);
 
-H      = Iy / Vresid;
-ytilde = y * H;
-XX     = ylag' * ylag;
+zdraws     = randn(rndStream, Ny, Ndraws);
 
-rhoVi = rhoV0i + XX .* H;
-Vrho  = Iy / rhoVi;
-Erho  = Vrho * (rhoV0i * rho0 + sum(ylag .* ytilde)');
+H          = Iy / Vresid; 
+ytilde     = y * H;
 
-cholVrho = chol(Vrho)';
-rhodraw = bsxfun(@plus, Erho, cholVrho * randn(rndStream, Ny, Ndraws)); 
+XX         = ylag' * ylag;
+Vi         = betaV0i + XX .* H;
+cholVi     = chol(Vi, 'upper');
+cholinvVE  = transpose(cholVi) \ (betaV0i * beta0 + sum(ylag .* ytilde)');
+betadraw   = cholVi \ (cholinvVE + zdraws);
 
+%% additional output arguments
 if nargout > 1 && (Ndraws == 1)
-   resid       = y - bsxfun(@times, ylag, rhodraw');
+   resid       = y - ylag * betadraw';
+else
+   resid = [];
 end
-   
+
+if nargout > 2
+   E = cholVi \ cholinvVE;
+end
+if nargout > 3
+   invcholV = cholVi \ Iy;
+   V        = invcholV * transpose(invcholV);
+end

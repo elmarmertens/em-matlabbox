@@ -1,4 +1,4 @@
-function [h, hbar, hresid, htilde, kai2States] = StochVolKSCcorrAR1(logy2, h, rho, hVCV, Eh0, Vh0, KSC, KSCt, Nsv, T, rndStream)
+function [h, hbar, hshock, htilde, kai2States] = StochVolKSCcorrAR1(logy2, h, rho, hVCV, Eh0, Vh0, KSC, KSCt, Nsv, T, rndStream)
 % StochVolKSCcorrAR1 performs a Gibbs updating step on a SV model with AR1
 % dynamics and correlated shocks
 %
@@ -20,19 +20,16 @@ end
 %% draw mixture states
 % zdraws are standardized draws for each component of the normal mixture 
 % zdraws is thus Nsv x T x Nmixtures
-% zdraws      = bsxfun(@minus, logy2 - h, KSCt.mean) ./ KSCt.vol;
 zdraws      = (logy2 - h - KSCt.mean) ./ KSCt.vol;
 
 % construct CDF
 % factor of sqrt(2 * pi) can be ommitted for kernel
 pdfKernel           = KSCt.pdf ./ KSCt.vol .* exp(-.5 * zdraws.^2); 
 cdf                 = cumsum(pdfKernel, 3);                % integrate
-% cdf(:,:,1:end-1)    = bsxfun(@rdivide, cdf(:,:,1:end-1), cdf(:,:, end)); 
 cdf(:,:,1:end-1)    = cdf(:,:,1:end-1) ./ cdf(:,:, end); % using automatic expansion 
 cdf(:,:,end)        = 1;    % normalize
 
 % draw states
-% kai2States  = sum(bsxfun(@gt, rand(rndStream, Nsv, T), cdf), 3) + 1;
 kai2States  = sum(rand(rndStream, Nsv, T) > cdf, 3) + 1;
 
 
@@ -50,7 +47,7 @@ end
 
 sqrtVh0 = diag(sqrt(Vh0));
 
-sqrtVhtilde  = zeros(Nsv); % Note: need fixed prior, not depended on estimated rhos (alt: use prior rho)
+sqrtVhtilde  = eye(Nsv); % Note: need fixed prior, not dependent on estimated rhos (alt: use prior rho)
 x0           = [zeros(Nsv, 1); Eh0];
 sqrtVx0      = [sqrtVhtilde, zerosNsv; zerosNsv sqrtVh0];
 [H, Hshock, H0] = a2b2c2DisturbanceSmoothingSampler1draw(A, B, C, obs, x0, sqrtVx0, ...
@@ -59,4 +56,4 @@ sqrtVx0      = [sqrtVhtilde, zerosNsv; zerosNsv sqrtVh0];
 h      = H(1:Nsv,:) + H(Nsv+1:end,:); % C * H
 hbar   = H0(Nsv+1:end);
 htilde = cat(2, H0(1:Nsv,:), H(1:Nsv,:));
-hresid = Hshock(1:Nsv,:);
+hshock = Hshock(1:Nsv,:);
