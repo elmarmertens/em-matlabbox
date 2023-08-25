@@ -65,5 +65,6 @@ else % diagonal case -- assumes vector input/output instead of VCV-matrix
    
    %% construct inverse-gammas
    zz           = sum(z.^2,2);
-   iwishDraws   = bsxfun(@rdivide, SigmaT, zz);
+   % iwishDraws   = bsxfun(@rdivide, SigmaT, zz);
+   iwishDraws   = SigmaT ./ zz;
 end
