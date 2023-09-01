@@ -15,17 +15,17 @@ function [h, lambda, lambdaResid, hbar, kai2States] = StochVolSingleFactor(logy2
 %% draw mixture states
 % zdraws are standardized draws for each component of the normal mixture 
 % zdraws is thus Nsv x T x 7 
-zdraws      = bsxfun(@minus, logy2 - h, KSCt.mean) ./ KSCt.vol;
+zdraws      = (logy2 - h - KSCt.mean) ./ KSCt.vol;
 
 % construct CDF
 % factor of sqrt(2 * pi) can be ommitted for kernel
 pdfKernel           = KSCt.pdf ./ KSCt.vol .* exp(-.5 * zdraws.^2); 
 cdf                 = cumsum(pdfKernel, 3);                % integrate
-cdf(:,:,1:end-1)    = bsxfun(@rdivide, cdf(:,:,1:end-1), cdf(:,:, end)); 
+cdf(:,:,1:end-1)    = cdf(:,:,1:end-1) ./ cdf(:,:,end); 
 cdf(:,:,end)        = 1;    % normalize
 
 % draw states
-kai2States  = sum(bsxfun(@gt, rand(rndStream, Nsv, T), cdf), 3) + 1;
+kai2States  = sum(rand(rndStream, Nsv, T) > cdf, 3) + 1;
 obs         = logy2 - KSC.mean(kai2States);
 
 %% Single-Factor State Space
@@ -47,7 +47,7 @@ sqrtVX0 = diag(cat(1, 0, sqrt(Vh0)));
 lambda      = X(1,:);
 lambdaResid = Xshock(1,:);
 hbar        = X0(2:end);
-h           = bsxfun(@plus, beta * lambda, hbar);
+h           = beta * lambda + hbar;
 
 
 
