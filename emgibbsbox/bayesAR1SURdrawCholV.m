@@ -1,4 +1,4 @@
-function [betadraw, resid, E, V] = bayesAR1SURdraw(y, ylag, Vresid, beta0, betaV0i, Ndraws, rndStream)
+function [betadraw, resid, E, V] = bayesAR1SURdrawCholV(y, ylag, cholVresid, beta0, betaV0i, Ndraws, rndStream)
 % bayesAR1SURdraw
 
 %   Coded by  Elmar Mertens, em@elmarmertens.com
@@ -18,8 +18,11 @@ Iy         = eye(Ny);
 
 zdraws     = randn(rndStream, Ny, Ndraws);
 
-H          = Iy / Vresid; % todo: rewrite based on sqrt-factors
-ytilde     = y * H;
+invcholVresid = Iy / cholVresid;
+H             = transpose(invcholVresid) * invcholVresid; 
+checkdiff(H, inv(cholVresid * cholVresid'));
+
+ytilde        = y * H;
 
 XX         = ylag' * ylag;
 Vi         = betaV0i + XX .* H;

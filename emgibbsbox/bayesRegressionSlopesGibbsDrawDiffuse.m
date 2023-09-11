@@ -47,6 +47,7 @@ b     = V * (Xy * h);
 bdraw = bsxfun(@plus, b, cV * randn(rndStream, size(b,1), Ndraws)); 
 
 if nargout > 1
-    resid       = bsxfun(@minus, y, X * bdraw);
+    % resid       = bsxfun(@minus, y, X * bdraw);
+    resid       = y - X * bdraw;
 end
    
