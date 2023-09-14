@@ -3,10 +3,19 @@ function [Xdraw, CC, QQ, RR1, arows, acols, asortndx, brows, bcols, bsortndx] = 
     arows, acols, asortndx, brows, bcols, bsortndx)
 % VARTVPSVprecisionsamplerNaN0const for case of VAR(p) with missing values and fixed initial conditions
 %
+% USAGE: [Xdraw, CC, QQ, RR1, arows, acols, asortndx, brows, bcols, bsortndx] = ...
+%     VARTVPSVprecisionsamplerNaN0constTrunc(aaa,invbbb,ccc,y,yNaN,x0,xbar,rndStream,CC,QQ,RR1,...
+%     arows, acols, asortndx, brows, bcols, bsortndx)
+%
 % aaa is Ny x Ny x p (x T) (T dimension is optional)
 % invbbb is Ny x Ny (x T) (T dimension is optional); invbbb * invbbb' is inverse of variance of VAR residuals
 % ccc is measurement vector (typically be identity matrix), in general Ny x Ny ( x T)
+%
+% y is Ny x T data matrix, and yNaN is Ny x T logical matrix that designates the missing values 
+% values of y(yNaN) will be ignored
+%
 % x0 is Ny x p matrix of initial conditions (p lags of y)
+% xbar is Ny x 1 vector of intercepts
 % arguments after rndStream can be empty and will be returned as outputs for use in future calls
 % Xdraws is Ny * T vector output (can be shaped to Ny x T)
 
