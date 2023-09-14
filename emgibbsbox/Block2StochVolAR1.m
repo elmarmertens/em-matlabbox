@@ -1,4 +1,4 @@
-function [h, hshock, kai2States] = Block2StochVolAR1(logy2, N11, ndx11, N22, ndx22, h, rho, hsqrtvcv, KSC, KSCt, Ny, T, rndStream)
+function [h, hshock, h0, kai2States] = Block2StochVolAR1(logy2, N11, ndx11, N22, ndx22, h, rho, hsqrtvcv, KSC, KSCt, Ny, T, rndStream)
 % CommonStochVolAR1 performs a Gibbs updating step on a common SV model
 % with AR1 SV
 %
@@ -58,14 +58,9 @@ for n = 1 : Ny
 end
 
 % initial scale levels fixed at zero
-sqrtVh0 = 0;
+sqrtVh0 = 100;
 Eh0     = 0;
-if nargout == 1
-    h = a2b2c2DisturbanceSmoothingSampler1draw(A, B, C, obs, Eh0, sqrtVh0, ...
+[h, hshock, h0] = a2b2c2DisturbanceSmoothingSampler1draw(A, B, C, obs, Eh0, sqrtVh0, ...
         sqrtR, rndStream);
-else
-    [h, hshock] = a2b2c2DisturbanceSmoothingSampler1draw(A, B, C, obs, Eh0, sqrtVh0, ...
-        sqrtR, rndStream);
-end
 
 
