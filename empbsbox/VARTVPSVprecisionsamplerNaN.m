@@ -1,10 +1,10 @@
 function [Xdraw, CC, QQ, RR1, arows, acols, asortndx, brows, bcols, bsortndx] = ...
-    VARTVPSVprecisionsamplerNaN0const(aaa,invbbb,ccc,y,yNaN,x0,xbar,rndStream,CC,QQ,RR1,...
-    arows, acols, asortndx, brows, bcols, bsortndx)
+    VARTVPSVprecisionsamplerNaN(aaa,invbbb,y,yNaN,y0,ybar,rndStream,CC,QQ,RR1,...
+    arows, acols, asortndx, brows, bcols, bsortndx, Ndraws)
 % VARTVPSVprecisionsamplerNaN0const for case of VAR(p) with missing values and fixed initial conditions
 %
 % USAGE: [Xdraw, CC, QQ, RR1, arows, acols, asortndx, brows, bcols, bsortndx] = ...
-%     VARTVPSVprecisionsamplerNaN0constTrunc(aaa,invbbb,ccc,y,yNaN,x0,xbar,rndStream,CC,QQ,RR1,...
+%     VARTVPSVprecisionsamplerNaN(aaa,invbbb,ccc,y,yNaN,y0,ybar,rndStream,CC,QQ,RR1,...
 %     arows, acols, asortndx, brows, bcols, bsortndx)
 %
 % aaa is Ny x Ny x p (x T) (T dimension is optional)
@@ -14,23 +14,29 @@ function [Xdraw, CC, QQ, RR1, arows, acols, asortndx, brows, bcols, bsortndx] = 
 % y is Ny x T data matrix, and yNaN is Ny x T logical matrix that designates the missing values 
 % values of y(yNaN) will be ignored
 %
-% x0 is Ny x p matrix of initial conditions (p lags of y)
-% xbar is Ny x 1 vector of intercepts
+% y0 is Ny x p matrix of initial conditions (p lags of y)
+% ybar is Ny x 1 vector of intercepts
 % arguments after rndStream can be empty and will be returned as outputs for use in future calls
 % Xdraws is Ny * T vector output (can be shaped to Ny x T)
 
 %% VERSION INFO
 % AUTHOR    : Elmar Mertens
 
+if nargin < 17
+    Ndraws = 1;
+end
 
 % get dimensions
 [Ny, T] = size(y);
 p       = size(aaa,3);
-Nx      = size(x0,1);
+Ny0     = size(y0,1);
 Nw      = size(invbbb,2);
 
-if Nw ~= Nx
-    error('Expecting Nw identical to Nx')
+if Nw ~= Ny
+    error('Expecting Nw identical to Ny')
+end
+if Ny ~= Ny0
+    error('Expecting Ny identical to Ny0')
 end
 
 if nargin < 9
@@ -46,9 +52,8 @@ end
 if ismatrix(invbbb)
     invbbb = repmat(invbbb, [1 1 T]);
 end
-if ismatrix(ccc)
-    ccc = repmat(ccc, [1 1 T]);
-end
+
+Nx    = Ny; % for ease of comparison against more general state space routines
 
 NyT   = Ny * T;
 NwT   = Nw * T;
@@ -64,17 +69,16 @@ Y     = Y(~Ynan);
 NxNx         = Nx * Nx;
 NxNxT        = NxNx * T;
 invbbb       = reshape(invbbb, NxNxT, 1);
-ccc          = reshape(ccc, Ny * NxT, 1);
 
-XX0          = repmat(xbar, T, 1);
+XX0          = repmat(ybar, T, 1);
 
 %% adjust XX0 for initial conditions
 % adjust for initial conditions
-for k = 1 : p
+for k = 1 : min(p,T)
     xndx                       = (k-1) * Ny + (1 : Ny);
     theseInitialLags           = p - k + 1;
     thisA                      = reshape(aaa(:,:,k:p), Ny, Ny * theseInitialLags);
-    thisX0                     = reshape(x0(:,1:p-k+1), Ny * theseInitialLags, 1);
+    thisX0                     = reshape(y0(:,1:p-k+1), Ny * theseInitialLags, 1);
     XX0(xndx)                  = XX0(xndx) + thisA * thisX0; 
 end
 
@@ -118,21 +122,7 @@ if isempty(CC)
     bcols         = bcols(bsortndx);
 
     % C
-    crows     = repmat((1 : Ny)', 1 , Nx, T);
-    crows     = crows + permute(Ny * (0 : T-1), [1 3 2]);
-    crows     = crows(:);
-    ccols     = repmat(1 : NxT, Ny, 1);
-    ccols     = ccols(:);
-
-
-    % sort C indices
-    ndx = sub2ind([NyT, NxT], crows, ccols);
-    [~, csortndx] = sort(ndx);
-    crows         = crows(csortndx);
-    ccols         = ccols(csortndx);
-    ccc           = ccc(csortndx);
-    CC            = sparse(crows, ccols, ccc, NyT, NxT);
-
+    CC        = speye(NyT);
     % drop rows associated with NaN
     CC        = CC(~yNaN,:);
     % perform QR
@@ -185,7 +175,7 @@ cholinvQSIG22 = chol(invQSIG22, 'lower');
 
 X2hat         = - cholinvQSIG22 \ (AAtildeQQ2' * AAtildeQQX1);
 
-Z2draw        = randn(rndStream, N2, 1) + X2hat;
+Z2draw        = randn(rndStream, N2, Ndraws) + X2hat;
 X2draw        = cholinvQSIG22' \ Z2draw;
 Xdraw         = EX + QQX1tilde + QQ2' * X2draw;
 
