@@ -143,11 +143,12 @@ QQ2       = QQ(:,N1+1:end)';
 
 %% sparse builds for BB and AA
 % AA
-Naa              = NxT + NxNx * p * (T - p) +sum(NxNx * (1 : p - 1));
+pEff             = min(T,p); % to catch cases where T<p
+Naa              = NxT + NxNx * p * max(T - p, 0) + sum(NxNx * (1 : pEff - 1));
 values           = ones(Naa,1);
 % fill p lags (sequentially)
 offset = NxT;
-for k = 1 : p
+for k = 1 : pEff
     values(offset + (1 : NxNx * (T-k))) = -reshape(aaa(:,:,k,1+k:T), Nx * Nx * (T - k), 1);
     offset = offset + NxNx * (T-k);
 end
