@@ -55,7 +55,7 @@ elseif (nargin >3)
    error('Wrong # of arguments'); 
 end
 
-[nobs nvar] = size(X); [nobs2 junk] = size(y);
+[nobs nvar] = size(X); [nobs2 , ~] = size(y);
 
 if (nobs ~= nobs2); error('X and y must have same # obs in ols');  end;
 
@@ -66,7 +66,7 @@ results.X = X;
 results.nobs = nobs;
 results.nvar = nvar;
 
-[q r] = qr(X,0);
+[~, r] = qr(X,0);
 XpXi = (r'*r)\eye(nvar);
 
 

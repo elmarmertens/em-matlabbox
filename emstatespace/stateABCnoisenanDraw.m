@@ -1,4 +1,4 @@
-function [Xdraw, noiseDraw, disturbanceDraw] = stateABCnoiseDraw(A, B, C, Ydata, yNaNndx, X0, sqrtSigma, sqrtR, rndStream)
+function [Xdraw, noiseDraw, disturbanceDraw] = stateABCnoisenanDraw(A, B, C, Ydata, yNaNndx, X0, sqrtSigma, sqrtR, rndStream)
 % STATEABCDRAW
 % ....
 % supposes X0 is deterministically given

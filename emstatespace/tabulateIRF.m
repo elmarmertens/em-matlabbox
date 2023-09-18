@@ -2,7 +2,7 @@ function tabulateIRF(irf, ynames, wnames)
 % function tabulateIRF(irf, ynames, wnames)
 % print out each IRF on the screen
 
-[ny, nw, lags] = size(irf);
+[ny, ~, lags] = size(irf);
 lags = lags - 1;
 
 for y = 1 : ny

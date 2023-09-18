@@ -1,4 +1,4 @@
-function [h, lambda, lambdaResid, hbar, kai2States] = StochVolSingleFactor(logy2, h, beta, lambdavar, Eh0, sqrtVh0, KSC, KSCt, Nsv, T, rndStream)
+function [h, lambda, lambdaResid, hbar, kai2States] = StochVolSingleFactorSqrtPrior(logy2, h, beta, lambdavar, Eh0, sqrtVh0, KSC, KSCt, Nsv, T, rndStream)
 % StochVolSingleFactor ...
 %
 
