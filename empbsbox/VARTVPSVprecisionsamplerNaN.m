@@ -15,7 +15,7 @@ function [Xdraw, CC, QQ, RR1, arows, acols, asortndx, brows, bcols, bsortndx] = 
 % values of y(yNaN) will be ignored
 %
 % y0 is Ny x p matrix of initial conditions (p lags of y)
-% ybar is Ny x 1 vector of intercepts
+% ybar is a vector of intercepts (Ny x 1) or a matrix of time-varying intercepts
 % arguments after rndStream can be empty and will be returned as outputs for use in future calls
 % Xdraws is Ny * T vector output (can be shaped to Ny x T)
 
@@ -70,7 +70,11 @@ NxNx         = Nx * Nx;
 NxNxT        = NxNx * T;
 invbbb       = reshape(invbbb, NxNxT, 1);
 
-XX0          = repmat(ybar, T, 1);
+if isvector(ybar) && (length(ybar) ==  Ny)
+    XX0          = repmat(ybar, T, 1);
+else
+    XX0      = ybar(:); 
+end
 
 %% adjust XX0 for initial conditions
 % adjust for initial conditions
