@@ -71,9 +71,9 @@ NxNxT        = NxNx * T;
 invbbb       = reshape(invbbb, NxNxT, 1);
 
 if isvector(ybar) && (length(ybar) ==  Ny)
-    XX0          = repmat(ybar, T, 1);
+    XX0  = repmat(ybar, T, 1);
 else
-    XX0      = ybar(:); 
+    XX0  = ybar(:); 
 end
 
 %% adjust XX0 for initial conditions
