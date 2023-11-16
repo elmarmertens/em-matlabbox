@@ -59,7 +59,7 @@ else
    if condi < sqrt(eps)
       warning('em:VARls', 'Badly Conditioned System: rcond(XX) = %e', condi)
    end
-   [tmp r]  = qr(Xdev,0);
+   [~, r]  = qr(Xdev,0);
    XXidev   = (r'*r) \ eye(k - 1);
 end
 

@@ -25,7 +25,9 @@ if true || isunix % && ~isdesktop
         [jim, titlename] = fileparts(titlename);
         wrap.name    = titlename;
     end
-    
+    if exist('doCharts', 'var')
+        wrap.doDcolColors = true;
+    end
     % wrap.name = strcat(wrap.name, datestr(now, 30));
     wrap = latexwrapper(wrap, 'start');
     % wrap = diary2wrap(wrap, [], true);

@@ -1,7 +1,7 @@
 function [xgrid, hpost, hprior] = plotpriorposteriordraws(posteriordraws, priordraws, x, farbe, muflag)
 % PLOTPRIORPOSTERIORDRAWS ...
 %
-% plotpriorposteriordraws(posteriordraws, priordraws, x, farbe, muflag)
+% [xgrid, hpost, hprior] = plotpriorposteriordraws(posteriordraws, priordraws, x, farbe, muflag)
 %   ...
 
 %% VERSION INFO

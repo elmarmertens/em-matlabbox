@@ -1,4 +1,4 @@
-function logical2fortran(filename, x)
+function cell2fortran(filename, x)
 % LOGICAL2FORTRAN writes a matrix of logical values (integer 0/1)
 %  
 % Usage: logical2fortran(filename, x)

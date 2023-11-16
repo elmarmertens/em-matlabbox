@@ -1,4 +1,4 @@
-function ACC = ACF2ACC(ACF, lowmemory)
+function ACC = acf2acc(ACF, lowmemory)
 % function ACC = ACF2ACC(ACF, lowmemory)
 % converts autocovariance function ACF into autocorrelation function ACC
 % first three dimensions must be: nvar x nvar x lags
