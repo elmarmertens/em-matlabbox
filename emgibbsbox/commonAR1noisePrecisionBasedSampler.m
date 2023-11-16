@@ -6,7 +6,7 @@ function [Xdraw, Xshock, X0draw, Xhat, P] = commonAR1noisePrecisionBasedSampler(
 %   ... 
 
 % assumes rhoSTATE and volSTATE are scalars, and volNOISE is (Ny x T) x 1 vector (i.e. no correlation within X and Y)
-% X0 is zero but sqrtV0 is non-zero (allowing stochasit initial condition) 
+% X0 is zero but sqrtV0 is non-zero (allowing stochastic initial condition) 
 % Note: mean of AR1 is zero (initial condition is free)
 
 if nargin < 7 || isempty(Ndraws)
