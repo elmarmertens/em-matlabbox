@@ -97,7 +97,7 @@ end
 
 
 % bail out if no graphics system (added by em)
-if ~usejava('desktop')
+if ~usejava('desktop') || strcmpi(get(groot, 'defaultFigureWindowStyle'), 'docked')
     progressbar4xterm(fractiondone, message, false);
     return
 end
