@@ -57,7 +57,7 @@ for n = 1 : Ny
     sqrtR(n,n,:) = KSC.vol(kai2States(n,:));
 end
 
-% initial scale levels fixed at zero
+% initial scale levels diffuse, mean fixed at zero
 sqrtVh0 = 100;
 Eh0     = 0;
 [h, hshock, h0] = a2b2c2DisturbanceSmoothingSampler1draw(A, B, C, obs, Eh0, sqrtVh0, ...
