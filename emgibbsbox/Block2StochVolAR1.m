@@ -9,11 +9,11 @@ function [h, hshock, h0, kai2States] = Block2StochVolAR1(logy2, N11, ndx11, N22,
 
 %   Coded by  Elmar Mertens, em@elmarmertens.com
 
-% note distinction between Ny observables, adn Nsv=1 SV processes
+% note distinction between Ny observables, and Nsv=1 SV processes
 
 % TODO: use sqrthvcv instead of hvcv
 
-% note: assigning N11 and ndx11 directly (to avoid confusion over whether ndx11 cold be numeri or logical index)
+% note: assigning N11 and ndx11 directly (to avoid confusion over whether ndx11 could be numeric or logical index)
 
 %% blow up h according to block structure
 Nblocks         = 2;
@@ -58,8 +58,8 @@ for n = 1 : Ny
 end
 
 % initial scale levels diffuse, mean fixed at zero
-sqrtVh0 = 100;
-Eh0     = 0;
+sqrtVh0 = 100 .* eye(Nsv);
+Eh0     = zeros(Nsv,1);
 [h, hshock, h0] = a2b2c2DisturbanceSmoothingSampler1draw(A, B, C, obs, Eh0, sqrtVh0, ...
         sqrtR, rndStream);
 
