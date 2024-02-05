@@ -1,8 +1,12 @@
-function [Xdraw, NoiseDraw, arows, acols, asortndx, brows, bcols, bsortndx, crows, ccols, csortndx] = ALBCnoiseprecisionsampler(aaa,invbbb,ccc,invnoisevol,y,x0,invsqrtsig0,rndStream,arows,acols,asortndx,brows,bcols,bsortndx,crows,ccols,csortndx)
-% ALAGBCPRECISIONSAMPLER ...
+function [Xdraw,  XshockDraw, NoiseDraw, ...
+    arows, acols, asortndx, brows, bcols, bsortndx, crows, ccols, csortndx] = ...
+    ALBCnoiseprecisionsampler(aaa,invbbb,ccc,invnoisevol,y,x0,invsqrtsig0,rndStream, ...
+    arows,acols,asortndx,brows,bcols,bsortndx,crows,ccols,csortndx)
+% ALBCnoiseprecisionsampler ...
 %
 % allows for lags of A; important: aaa should be ordered from p to 1 in 3rd dimension
 %   ...
+% note: invnoisevol should be Ny x T matrix or Ny * T vector, sampler assumes noise-vol is diagonal
 
 %% VERSION INFO
 % AUTHOR    : Elmar Mertens
@@ -16,8 +20,12 @@ Nw      = size(invbbb,2);
 if Nx ~= Nw
     error('dimension mismatch: Nx not equal to Nw')
 end
-
-if ndims(aaa) == 3
+if ismatrix(invnoisevol) && (size(invnoisevol,1) ~= Ny || size(invnoisevol,2) ~= T)
+        error('dimension mismatch: invnoisevol should be Ny x T matrix (or Ny * T vector)')
+elseif isvector(invnoisevol) && length(invnoisevol) ~= Ny * T
+    error('dimension mismatch: invnoisevol should be Ny x T matrix (or Ny * T vector)')
+end
+if ndims(aaa) <= 3
     aaa = repmat(aaa, [1 1 1 T]);
 end
 if ismatrix(invbbb)
@@ -135,10 +143,13 @@ if flag > 0
     % checkdiff(sqrtP * sqrtP', sqrtP2 * sqrtP2');
 end
 
-sqrtPXhat    =  sqrtP \ (AAtilde' * XX0tilde + CCtilde' * Ytilde);
+sqrtPXhat    = sqrtP \ (AAtilde' * XX0tilde + CCtilde' * Ytilde);
 Zdraw        = randn(rndStream, NxTp, 1);
 Xdraw        = transpose(sqrtP) \ (sqrtPXhat + Zdraw);
 if nargout > 1
+    XshockDraw   = AA * Xdraw - XX0;
+end
+if nargout > 2
     NoiseDraw    = Y - CC * Xdraw;
 end
 

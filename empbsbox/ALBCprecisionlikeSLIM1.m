@@ -24,7 +24,7 @@ if nargin < 7
     [arows, acols, asortndx, brows, bcols, bsortndx] = deal([]);
 end
 
-if ndims(aaa) == 3
+if ndims(aaa) <= 3
     aaa = repmat(aaa, [1 1 1 T]);
 end
 if ismatrix(invbbb)
