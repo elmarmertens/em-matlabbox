@@ -16,7 +16,7 @@ function [h, hshock, h0, kai2States] = Block2StochVolAR1(logy2, N11, ndx11, N22,
 % note: assigning N11 and ndx11 directly (to avoid confusion over whether ndx11 could be numeric or logical index)
 
 %% blow up h according to block structure
-Nblocks         = 2;
+Nsv             = 2; % number of SV blocks
 hBlock          = NaN(Ny,T);
 hBlock(ndx11,:) = repmat(h(1,:), N11, 1);
 hBlock(ndx22,:) = repmat(h(2,:), N22, 1);
@@ -40,27 +40,40 @@ kai2States  = sum(rand(rndStream, Ny, T) > cdf, 3) + 1;
 %% KSC State Space
 obs   = logy2 - KSC.mean(kai2States);
 
-% TODO: implement PS
-% vecobs         = obs(:);
-% noisevol       = KSC.vol(kai2States(:));
-% [h, hshock]    = commonAR1noisePrecisionBasedSampler(vecobs, Ny, T, rho, hvol, noisevol, 1, rndStream);
+% DK sampler (quite a bit slower than precision-based sampler):
+% A     = diag(rho);
+% B     = hsqrtvcv;
+% C     = zeros(Ny,Nblocks);
+% C(ndx11,1) = 1;
+% C(ndx22,2) = 1;
+%
+% sqrtR = zeros(Ny,Ny,T);
+% for n = 1 : Ny
+%     sqrtR(n,n,:) = KSC.vol(kai2States(n,:));
+% end
+%
+% % initial scale levels diffuse, mean fixed at zero
+% sqrtVh0 = 100 .* eye(Nsv);
+% Eh0     = zeros(Nsv,1);
+% [h, hshock, h0] = a2b2c2DisturbanceSmoothingSampler1draw(A, B, C, obs, Eh0, sqrtVh0, ...
+%         sqrtR, rndStream);
 
+% PS sampler
 % DK sampler (quite a bit slower than precision-based sampler):
 A     = diag(rho);
 B     = hsqrtvcv;
-C     = zeros(Ny,Nblocks);
+C     = zeros(Ny,Nsv);
 C(ndx11,1) = 1;
 C(ndx22,2) = 1;
 
-sqrtR = zeros(Ny,Ny,T);
-for n = 1 : Ny
-    sqrtR(n,n,:) = KSC.vol(kai2States(n,:));
-end
+sqrtRinv = 1 ./ KSC.vol(kai2States); % PS assumes diagonal noise
 
 % initial scale levels diffuse, mean fixed at zero
-sqrtVh0 = 100 .* eye(Nsv);
-Eh0     = zeros(Nsv,1);
-[h, hshock, h0] = a2b2c2DisturbanceSmoothingSampler1draw(A, B, C, obs, Eh0, sqrtVh0, ...
-        sqrtR, rndStream);
-
+sqrtVh0inv = eye(Nsv) ./ 100;
+Eh0        = zeros(Nsv,1);
+[Hdraw, HshockDraw] = ALBCnoiseprecisionsampler(A,invB,C,sqrtRinv,obs, ...
+    Eh0,sqrtVh0inv,rndStream);
+h0            = Hdraw(1:Nsv);
+h             = reshape(Hdraw(Nsv+1:end), Nsv, T);
+hshock        = reshape(HshockDraw(Nsv+1:end), Nsv, T);
 
