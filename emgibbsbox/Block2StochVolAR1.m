@@ -59,10 +59,9 @@ obs   = logy2 - KSC.mean(kai2States);
 %         sqrtR, rndStream);
 
 % PS sampler
-% DK sampler (quite a bit slower than precision-based sampler):
-A     = diag(rho);
-B     = hsqrtvcv;
-C     = zeros(Ny,Nsv);
+A          = diag(rho);
+invB       = eye(Nsv) / hsqrtvcv;
+C          = zeros(Ny,Nsv);
 C(ndx11,1) = 1;
 C(ndx22,2) = 1;
 
