@@ -24,7 +24,7 @@ if nargin < 4 || isempty(farbe)
 end
 
 if nargin < 5 || isempty(muflag)
-    muflag = true;
+    muflag = false;
 end
 
 % if isempty(x)
