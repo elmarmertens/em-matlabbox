@@ -125,7 +125,7 @@ for c = 1 : N
          
          
          if ~isempty(otherACC)
-            MultiColors = Colors4Plots;
+            MultiColors = colors4plots;
             for o = 1 : length(otherACC)
                plot(-k : k,  fliplr(ACCotherTab{o}(r, :)), 'color', MultiColors{o+1});
             end
@@ -144,7 +144,7 @@ for c = 1 : N
          end
 
          if ~isempty(otherACF)
-            MultiColors = Colors4Plots;
+            MultiColors = colors4plots;
             for o = 1 : length(otherACF)
                plot(-k : k,  ACFotherTab{o}(r, :), 'color', MultiColors{o+1});
             end
