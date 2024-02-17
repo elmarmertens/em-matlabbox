@@ -71,7 +71,7 @@ for r = 1 : ny
 
       plot(timeAxis', squeeze(irf(r, c, :)), linetype{:});
       if ~isempty(irf2)
-          colors = Colors4Plots;
+          colors = colors4plots;
           colors = colors(2:end);
           for n = 1 : size(irf2,4)
               plot(timeAxis', squeeze(irf2(r, c, :,n)), '-.', 'color', colors{n}, 'LineWidth', 2);
