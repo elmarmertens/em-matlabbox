@@ -1,4 +1,4 @@
-function [h, hshock, kai2States] = CommonStochVolAR1(logy2, h, rho, hvol, KSC, KSCt, Ny, T, rndStream)
+function [h, hshock, h0, kai2States] = CommonStochVolAR1(logy2, h, rho, hvol, KSC, KSCt, Ny, T, rndStream)
 % CommonStochVolAR1 performs a Gibbs updating step on a common SV model
 % with AR1 SV
 %
@@ -31,9 +31,9 @@ kai2States  = sum(rand(rndStream, Ny, T) > cdf, 3) + 1;
 %% KSC State Space
 obs   = logy2 - KSC.mean(kai2States);
 
-vecobs         = obs(:);
-noisevol       = KSC.vol(kai2States(:));
-[h, hshock]    = commonAR1noisePrecisionBasedSampler(vecobs, Ny, T, rho, hvol, noisevol, 1, rndStream);
+vecobs          = obs(:);
+noisevol        = KSC.vol(kai2States(:));
+[h, hshock, h0] = commonAR1noisePrecisionBasedSampler(vecobs, Ny, T, rho, hvol, noisevol, 1, rndStream);
 
 % DK sampler (quite a bit slower than precision-based sampler):
 % A     = rho;

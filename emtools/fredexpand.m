@@ -18,7 +18,7 @@ names       = arrayfun(@(x) x.NAME, DATA, 'uniformoutput', false);
 data        = NaN(length(dates), length(DATA));
 
 for jj = 1:length(DATA)
-    [c, ia, ib] = intersect(dates,DATA(jj).DATES);
+    [~, ia, ib] = intersect(dates,DATA(jj).DATES);
     data(ia,jj) = DATA(jj).VALUES(ib);
 end
 

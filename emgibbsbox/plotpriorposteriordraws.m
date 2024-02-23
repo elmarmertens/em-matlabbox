@@ -1,7 +1,7 @@
 function [xgrid, hpost, hprior] = plotpriorposteriordraws(posteriordraws, priordraws, x, farbe, muflag)
 % PLOTPRIORPOSTERIORDRAWS ...
 %
-% plotpriorposteriordraws(posteriordraws, priordraws, x, farbe, muflag)
+% [xgrid, hpost, hprior] = plotpriorposteriordraws(posteriordraws, priordraws, x, farbe, muflag)
 %   ...
 
 %% VERSION INFO
@@ -24,7 +24,7 @@ if nargin < 4 || isempty(farbe)
 end
 
 if nargin < 5 || isempty(muflag)
-    muflag = true;
+    muflag = false;
 end
 
 % if isempty(x)

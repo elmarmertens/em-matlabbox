@@ -26,7 +26,7 @@ end
 %% t-shocks via outlier draws (following JPR04)
 y2scaled        = y2 .* exp(-h);
 
-scalePosterior     = SVtdof + 1 + y2scaled; % note the explicit vector expansion of SVtdof
+scalePosterior     = SVtdof + y2scaled; % note the explicit vector expansion of SVtdof
 % note: matlab doc says stats box handles parallel streams automatically via the global stream ....
 chi2draws          = chi2rnd(repmat(SVtdof + 1, 1, T));
 SVtScalelog2Draws  = log(scalePosterior) - log(chi2draws);

@@ -54,7 +54,7 @@ results.nvar    = nvar;
 results.nlag    = nlag;
 
 % xpxi            = inv(X'*X);
-[q, r] = qr(X,0);
+[~, r] = qr(X,0);
 xpxi   = (r'*r)\eye(nvar);
 
 results.beta    = xpxi*(X'*y);

@@ -1,7 +1,7 @@
 function iwishchols = iwishcholdraw(cholSigmaT, dof, Ndraw, rndStream)
 % IWISHCHOLDRAW produces random number from inverse wishart distribution
 %
-% USAGE: ...
+% USAGE: iwishchols = iwishcholdraw(cholSigmaT, dof, Ndraw, rndStream)
 %
 % return left square root factor of IWISH (though not lower triangular)
 %

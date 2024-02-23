@@ -17,7 +17,7 @@ if isscalar(w)
    T = w;
    w = randn(T, nw);
 else
-   [T, check] = size(w);
+   [~, check] = size(w);
    if check ~= nw
       error('dimension of w not conistent with number of shocks')
    end

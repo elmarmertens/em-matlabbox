@@ -39,7 +39,7 @@ end
 
 %% allocate memory
 Ctilde                      = NaN(Ny,Nx,T);
-[Sigmattm1, Atilde]         = deal(zeros(Nx, Nx, T));
+[Sigmattm1, Atildetp1]      = deal(zeros(Nx, Nx, T));
 Ztilde                      = zeros(Ny, T);
 [XtT, Xttm1, Xplus]         = deal(zeros(Nx, T));
 
@@ -80,14 +80,13 @@ for t = 1 : T
     
     if t == 1
         Xplus(:,t) = A(:,:,t) * X0plus + disturbanceplus(:,t);
-        Sigmattm1(:,:,t) = A(:,:,t) * Sigmatt * A(:,:,t)' + BB(:,:,t);
     else
         Xplus(:,t) = A(:,:,t) * Xplus(:,t-1) + disturbanceplus(:,t);
-        Sigmattm1(:,:,t) = Atilde(:,:,t-1) * Sigmattm1(:,:,t-1) * Atilde(:,:,t-1)' + BB(:,:,t);
     end
     
     % priors
-    Xttm1(:,t)              = A(:,:,t) * Xtt;
+    Xttm1(:,t)       = A(:,:,t) * Xtt;
+    Sigmattm1(:,:,t) = A(:,:,t) * Sigmatt * A(:,:,t)' + BB(:,:,t);
     
     
     
@@ -117,10 +116,12 @@ for t = 1 : T
 
     % Kalman Gain
     Ktilde                  = Sigmattm1(:,:,t) * Ctilde(:,:,t)';
-    Atilde(:,:,t)           = A(:,:,t) - A(:,:,t) * Ktilde * Ctilde(:,:,t); % A * (I - Ktilde * Ctilde)
-    
     % posteriors
     Xtt                     = Xttm1(:,t) + Ktilde * Ztilde(:,t);
+    if t < T
+        Atildetp1(:,:,t)    = A(:,:,t+1) - A(:,:,t+1) * Ktilde * Ctilde(:,:,t); % A * (I - Ktilde * Ctilde)
+        Sigmatt             = Sigmattm1(:,:,t) - Ktilde * Ktilde';
+    end
    
 end
 
@@ -145,7 +146,7 @@ end
 
 
 for t = (T-1) : -1 : 1
-    StT         = Atilde(:,:,t)' * StT + Ctilde(:,:,t)' * Ztilde(:,t);
+    StT         = Atildetp1(:,:,t)' * StT + Ctilde(:,:,t)' * Ztilde(:,t);
     XtT(:,t)    = Xttm1(:,t) + Sigmattm1(:,:,t) * StT;
     
     if ~isempty(disturbancetT)

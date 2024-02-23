@@ -1,9 +1,11 @@
-function [h, lambda, lambdaResid, hbar, kai2States] = StochVolSingleFactorSqrtPrior(logy2, h, beta, lambdavar, Eh0, sqrtVh0, KSC, KSCt, Nsv, T, rndStream)
+function [h, lambda, lambdaResid, hbar, kai2States] = StochVolSingleFactorAR1(logy2, h, beta, lambdarho, lambdavar, Eh0, Vh0, KSC, KSCt, Nsv, T, rndStream)
 % StochVolSingleFactor ...
 %
 
 %   Coded by  Elmar Mertens, em@elmarmertens.com
 
+
+% todo: currently ignoring lambdarho and using RW instead of AR1
 
 %% VERSION INFO
 % AUTHOR    : Elmar Mertens
@@ -26,10 +28,11 @@ cdf(:,:,end)        = 1;    % normalize
 
 % draw states
 kai2States  = sum(rand(rndStream, Nsv, T) > cdf, 3) + 1;
-obs         = logy2 - KSC.mean(kai2States);
 
-%% Single-Factor State Space
+%% Single-Factor State Space, with AR(1) SV factor
+obs    = logy2 - KSC.mean(kai2States);
 A      = eye(Nsv+1);
+A(1,1) = lambdarho;
 B      = zeros(Nsv+1,1);
 B(1,1) = sqrt(lambdavar);
 C      = cat(2, beta, eye(Nsv));
@@ -39,7 +42,7 @@ for n = 1 : Nsv
 end
 
 EX0     = cat(1, 0, Eh0);
-sqrtVX0 = blkdiag(0, sqrtVh0);
+sqrtVX0 = diag(cat(1, 0, sqrt(Vh0)));
 
 [X, Xshock, X0] = a2b2c2DisturbanceSmoothingSampler1draw(A, B, C, obs, EX0, sqrtVX0, ...
     sqrtR, rndStream); 

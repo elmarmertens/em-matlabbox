@@ -1,4 +1,4 @@
-function [h, hanni] = plotCIaltcolor(y, tails, x, ybase, varargin)
+function [h, hanni] = plotCIredshades(y, tails, x, ybase, varargin)
 % function [h, hanni] = plotCI(y, tails, x, ybase, varargin)
 % plots series y against x plus confidence intervals
 %   (e.g.: y is IRF and x are the lags)

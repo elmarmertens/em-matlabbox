@@ -1,9 +1,11 @@
-function [h, lambda, lambdaResid, hbar, kai2States] = StochVolSingleFactorSqrtPrior(logy2, h, beta, lambdavar, Eh0, sqrtVh0, KSC, KSCt, Nsv, T, rndStream)
+function [h, lambda, lambdaShock, hbar, kai2States] = StochVolFactorAR1(logy2, h, beta, lambdarho, lambdavar, Eh0, Vh0, KSC, KSCt, Nsv, T, rndStream)
 % StochVolSingleFactor ...
 %
 
 %   Coded by  Elmar Mertens, em@elmarmertens.com
 
+
+% todo: currently ignoring lambdarho and using RW instead of AR1
 
 %% VERSION INFO
 % AUTHOR    : Elmar Mertens
@@ -26,27 +28,30 @@ cdf(:,:,end)        = 1;    % normalize
 
 % draw states
 kai2States  = sum(rand(rndStream, Nsv, T) > cdf, 3) + 1;
-obs         = logy2 - KSC.mean(kai2States);
 
-%% Single-Factor State Space
-A      = eye(Nsv+1);
-B      = zeros(Nsv+1,1);
-B(1,1) = sqrt(lambdavar);
+%% Single-Factor State Space, with AR(1) SV factor
+Nfactors = size(beta,2);
+
+obs                      = logy2 - KSC.mean(kai2States);
+A                        = eye(Nfactors+Nsv);
+A(1:Nfactors,1:Nfactors) = diag(lambdarho);
+
+B      = cat(1, chol(lambdavar, 'lower'), zeros(Nsv,Nfactors));
 C      = cat(2, beta, eye(Nsv));
 sqrtR  = zeros(Nsv,Nsv,T);
 for n = 1 : Nsv
     sqrtR(n,n,:) = KSC.vol(kai2States(n,:));
 end
 
-EX0     = cat(1, 0, Eh0);
-sqrtVX0 = blkdiag(0, sqrtVh0);
+EX0     = cat(1, zeros(Nfactors,1), Eh0);
+sqrtVX0 = diag(cat(1, zeros(Nfactors,1), sqrt(Vh0)));
 
 [X, Xshock, X0] = a2b2c2DisturbanceSmoothingSampler1draw(A, B, C, obs, EX0, sqrtVX0, ...
     sqrtR, rndStream); 
 
-lambda      = X(1,:);
-lambdaResid = Xshock(1,:);
-hbar        = X0(2:end);
+lambda      = X(1:Nfactors,:);
+lambdaShock = Xshock(1:Nfactors,:);
+hbar        = X0(Nfactors+1:end);
 h           = beta * lambda + hbar;
 
 

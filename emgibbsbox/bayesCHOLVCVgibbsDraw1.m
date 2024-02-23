@@ -1,14 +1,16 @@
-function [iwishcholDraw, cholSigmaT, dof] = bayesSQRTVCVgibbsDraw1(Sigma0T, dof0, resid, rndStream)
-% bayesSQRTVCVgibbsDraw1 iwishcholDraws SQRT factor of variance-covariance matrix
-% [iwishcholDraws, cholSigmaT, dof] = bayesSQRTVCVgibbsDraw1(Sigma0T, dof0, resid, rndStream)
+function [iwishcholDraw, cholSigmaT, dof] = bayesCHOLVCVgibbsDraw1(Sigma0T, dof0, resid, rndStream)
+% bayesSQRTVCVgibbsDraw1 iwishcholDraws CHOLESKI factor of variance-covariance matrix
+% [iwishcholDraws, cholSigmaT, dof] = bayesCHOLVCVgibbsDraw1(Sigma0T, dof0, resid, rndStream)
 % Prior is (Sigma0T, dof0) invWishart and posterior is (SigmaT, dof) invWishart
 % Recall: Mean of inverse Wishart is SigmaT / (dof - N - 1)
 % dof = dof0 + T
 %
 % resid is T x N
 %
+% same as bayesSQRTVCVgibbsDraw1, but enforces lower triangular choleski factorization
 %
-% See also iwishdraw, bayesVCVgibbsDraw1, bayesVCVgibbsDraw
+%
+% See also iwishdraw, bayesVCVgibbsDraw1, bayesVCVgibbsDraw, bayesSQRTVCVgibbsDraw1
 
 %   Coded by  Elmar Mertens, em@elmarmertens.com
 
@@ -44,8 +46,15 @@ cholSigmaT  = chol(SigmaT)';
 
 
 %% compute invWishart iwishDraws from iW(Sigma, dof)
-sqrtZZ         = chol(z * z'); % note absence of transpose
+ZZ             = z * transpose(z);
+sqrtZZ         = chol(ZZ); % note absence of transpose
 iwishcholDraw  = cholSigmaT / sqrtZZ;
 
-% wishdraw = cholSigmaT / (z * z') * cholSigmaT';
-% checkdiff(wishdraw, iwishcholDraw * iwishcholDraw');
+% enforce choleski:
+iwishcholDraw = chol(iwishcholDraw * transpose(iwishcholDraw), 'lower');
+
+% slower:
+% wishdraw       = cholSigmaT / ZZ * cholSigmaT';
+% iwishcholDraw2 = chol(wishdraw, 'lower');
+% checkdiff(iwishcholDraw, iwishcholDraw2);
+
