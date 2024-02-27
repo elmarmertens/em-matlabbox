@@ -65,11 +65,11 @@ results.sige    = sigu/(nobs-nvar);
 
 % perform Newey-West correction
 
-        %V=xpxi*G*xpxi;
-        orth = results.resid(:, ones(nvar, 1)) .* X;
-        %V = xpxi * haccme(orth', nlag) * xpxi * nobs^2 / (nobs - nvar);
-        V = xpxi * haccme(orth', nlag) * xpxi * nobs;
-        nwerr= sqrt(diag(V));
+%V=xpxi*G*xpxi;
+orth = results.resid(:, ones(nvar, 1)) .* X;
+%V = xpxi * haccme(orth', nlag) * xpxi * nobs^2 / (nobs - nvar);
+V = xpxi * haccme(orth', nlag) * xpxi * nobs;
+nwerr= sqrt(diag(V));
 
 results.Vbeta = V;
 results.tstat = results.beta./nwerr; % Newey-West t-statistics
