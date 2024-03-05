@@ -20,10 +20,12 @@ Nw      = size(invbbb,2);
 if Nx ~= Nw
     error('dimension mismatch: Nx not equal to Nw')
 end
-if ismatrix(invnoisevol) && (size(invnoisevol,1) ~= Ny || size(invnoisevol,2) ~= T)
-        error('dimension mismatch: invnoisevol should be Ny x T matrix (or Ny * T vector)')
-elseif isvector(invnoisevol) && length(invnoisevol) ~= Ny * T
-    error('dimension mismatch: invnoisevol should be Ny x T matrix (or Ny * T vector)')
+if isvector(invnoisevol) 
+    if length(invnoisevol) ~= Ny * T
+        error('dimension mismatch: invnoisevol is vector and should be Ny * T (but it is not)')
+    end
+elseif size(invnoisevol,1) ~= Ny || size(invnoisevol,2) ~= T % ismatrix returns true also for vectors
+    error('dimension mismatch: invnoisevol is matrix and should be Ny x T (but it is not)')
 end
 if ndims(aaa) <= 3
     aaa = repmat(aaa, [1 1 1 T]);
