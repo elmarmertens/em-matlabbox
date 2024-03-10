@@ -1,4 +1,4 @@
-function plotfortyfive(varargin)
+function h = plotfortyfive(varargin)
 % PLOTFORTYFIVE ...
 %
 %   ...
@@ -11,7 +11,7 @@ function plotfortyfive(varargin)
 % FILENAME  : plotfortyfive.m
 
 if isempty(varargin)
-    plot(xlim, xlim, 'k--')
+    h = plot(xlim, xlim, 'k--');
 else
-    plot(xlim, xlim, varargin{:})
+    h = plot(xlim, xlim, varargin{:});
 end
