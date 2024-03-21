@@ -39,7 +39,7 @@ if isnumeric(a) && isnumeric(b)
    a           = a(:);
    b           = b(:);
    nanny       = ~any(isnan([a b]), 2);
-   delta       = max(abs(a(nanny) - b(nanny)));
+   delta       = full(max(abs(a(nanny) - b(nanny)))); % full ensures non sparse output
    flag        = delta > tol;
    
 else
