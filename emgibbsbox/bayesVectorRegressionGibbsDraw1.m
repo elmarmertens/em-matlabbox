@@ -1,4 +1,4 @@
-function [A, residDraw]  = bayesVectorRegressionGibbsDraw1(Y, X, iSigmaResid, iVa0a0, iVa0, rndStream)
+function [A, residDraw, meanA]  = bayesVectorRegressionGibbsDraw1(Y, X, iSigmaResid, iVa0a0, iVa0, rndStream)
 % bayesVectorRegressionGibbsDraw performs Gibbs step for vector linear regression model with known variance
 %
 % [A, residDraw]  = bayesVectorRegressionGibbsDraw1(Y, X, iSigmaResid, iVa0a0, iVa0, rndStream)
@@ -15,14 +15,13 @@ end
 
 [~, Ny]     = size(Y);
 [~, Nx]     = size(X);
-Na          = length(iVa0a0);
-Ia          = eye(Na);
 
 %% draw random numbers as needed
 if isnumeric(rndStream)
     z = rndStream;
 else
-    z       = randn(rndStream, Na, 1);
+    Na  = length(iVa0a0);
+    z   = randn(rndStream, Na, 1);
 end
 
 
@@ -30,18 +29,18 @@ end
 
 % posterior variance
 iVa            = iVa0 + kron(iSigmaResid, X' * X);
-sqrt_aSigma    = chol(iVa) \ Ia;            % notice: Matlab's choleski delivers UPPER triangular matrix
+invsqrtVa      = chol(iVa);   % notice: Matlab's choleski delivers UPPER triangular matrix
 
 % posterior mean
 XYiSig   = X' * Y * iSigmaResid;
-
-aTilde   = sqrt_aSigma' * (iVa0a0 + XYiSig(:));
-
-% draw from posterior
-aDraw   = sqrt_aSigma * (aTilde + z); % chol_aSigma is the UPPER triangular factorization of aSigma, but this is OK for drawing RV
+aTilde   = transpose(invsqrtVa) \ (iVa0a0 + XYiSig(:));
+aDraw    = invsqrtVa \ (aTilde + z); 
 
 A       = reshape(aDraw, Nx, Ny);
 
 if nargout > 1
     residDraw   = Y - X * A;
+end
+if nargout > 2
+    meanA = invsqrtVa \ aTilde;
 end
