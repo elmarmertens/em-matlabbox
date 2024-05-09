@@ -24,7 +24,7 @@ end
 
 
 h = rotate3d;
-set(h, 'rotatestyle', 'box');
+% set(h, 'rotatestyle', 'box');
 set(this, 'defaultLegendAutoUpdate','off')
 
 % set(gcf, 'Renderer', 'painters')
