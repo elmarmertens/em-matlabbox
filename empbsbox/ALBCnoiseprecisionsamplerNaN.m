@@ -1,11 +1,13 @@
 function [Xdraw,  XshockDraw, NoiseDraw, ...
     arows, acols, asortndx, brows, bcols, bsortndx, crows, ccols, csortndx] = ...
-    ALBCnoiseprecisionsampler(aaa,invbbb,ccc,invnoisevol,y,x0,invsqrtsig0,rndStream, ...
+    ALBCnoiseprecisionsamplerNaN(aaa,invbbb,ccc,invnoisevol,y,yNaN,x0,invsqrtsig0,rndStream, ...
     arows,acols,asortndx,brows,bcols,bsortndx,crows,ccols,csortndx)
-% ALBCnoiseprecisionsampler ...
+
+% ALBCnoiseprecisionsamplerNaN ...
 %
 % allows for lags of A; important: aaa should be ordered from p to 1 in 3rd dimension
 %   ...
+% note: invnoisevol should be Ny x T matrix or Ny * T vector, sampler assumes noise-vol is diagonal
 
 %% VERSION INFO
 % AUTHOR    : Elmar Mertens
@@ -19,14 +21,11 @@ Nw      = size(invbbb,2);
 if Nx ~= Nw
     error('dimension mismatch: Nx not equal to Nw')
 end
-
-if nargin < 8
-    CC  = [];
-    QQ  = [];
-    RR1 = [];
-    [arows, acols, a0ndx, asortndx, brows, bcols, b0ndx, bsortndx] = deal([]);
+if ismatrix(invnoisevol) && (size(invnoisevol,1) ~= Ny || size(invnoisevol,2) ~= T)
+        error('dimension mismatch: invnoisevol should be Ny x T matrix (or Ny * T vector)')
+elseif isvector(invnoisevol) && length(invnoisevol) ~= Ny * T
+    error('dimension mismatch: invnoisevol should be Ny x T matrix (or Ny * T vector)')
 end
-
 if ndims(aaa) <= 3
     aaa = repmat(aaa, [1 1 1 T]);
 end
@@ -45,19 +44,23 @@ NxTp  = Nx * (T + p);
 
 %% construct vectorized state space
 Y     = reshape(y, NyT, 1);
-XX0   = sparse(1:Nx0, 1, x0, NxTp, 1);
+Ynan  = reshape(yNaN, NyT, 1);
+Y     = Y(~Ynan);
+if length(x0) == NxTp
+    XX0 = x0;
+else % for now assume x0 has Nx0=Nx*p length unless it has full length
+    XX0 = sparse(1:Nx0, 1, x0, NxTp, 1); 
+end
 
 %% vectorize input matrices
 NxNx         = Nx * Nx;
 NxNxT        = NxNx * T;
 invsqrtsig0  = reshape(invsqrtsig0, Nx0 * Nx0, 1);
 invbbb       = reshape(invbbb, NxNxT, 1);
-% ccc          = reshape(ccc, Ny * NxT, 1); % will be vectorized later
+ccc          = reshape(ccc, Ny * NxT, 1);
 
-%% CC and prepare Arows and Brows
-
-if isempty(CC)
-
+%% construct row- and column indices (if needed)
+if nargin < 10
     % AA
     arows1     = transpose(1 : NxTp);
     acols1     = transpose(1 : NxTp);
@@ -69,19 +72,12 @@ if isempty(CC)
     arows      = [arows1; reshape(arows2, NxNx * p * T, 1)];
     acols      = [acols1; reshape(acols2, NxNx * p * T, 1)];
 
-    % a0ndx
-    avalues                 = ones(NxTp + NxNx * p * T,1);
-    avalues(NxTp + 1 :end)  = -aaa(:);
-    a0ndx                  = ~(avalues == 0);
-    arows                  = arows(a0ndx);
-    acols                  = acols(a0ndx);
-
     % sort A indices
     ndx = sub2ind([NxTp, NxTp], arows, acols);
     [~, asortndx] = sort(ndx);
     arows         = arows(asortndx);
     acols         = acols(asortndx);
-
+    
     % BB
     brows0  = repmat((1 : Nx0)', 1 , Nx0);
     brows1  = Nx0 + repmat((1 : Nx)', 1 , Nx) + permute(Nx * (0 : T-1), [1 3 2]);
@@ -90,12 +86,6 @@ if isempty(CC)
     bcols0  = repmat((1 : Nx0), Nx0, 1);
     bcols1  = Nx0 + repmat((1 : Nx), Nx, 1) + permute(Nx * (0 : T-1), [1 3 2]);
     bcols   = [reshape(bcols0, Nx0 * Nx0, 1); reshape(bcols1, NxNx * T, 1)];
-
-    % collect zero indices
-    bvalues  = [invsqrtsig0; invbbb];
-    b0ndx   = ~(bvalues == 0);
-    brows   = brows(b0ndx);
-    bcols   = bcols(b0ndx);
 
     % sort B indices
     ndx = sub2ind([NxTp, NxTp], brows, bcols);
@@ -115,60 +105,60 @@ if isempty(CC)
     [~, csortndx] = sort(ndx);
     crows         = crows(csortndx);
     ccols         = ccols(csortndx);
-    ccc           = ccc(csortndx);
-    CC            = sparse(reshape(crows, Ny * Nx * T, 1), reshape(ccols, Ny * Nx * T, 1), ccc, NyT, NxTp);
-
-    % perform QR
-    [QQ,RR]   = qr(CC');
-    [N1, N2]  = size(CC);
-    N2        = N2 - N1;
-    RR1       = RR(1:N1,1:N1)';
-
-else
-
-    N1        = size(RR1,1);
-    N2        = size(QQ,1) - N1;
-
-    avalues                 = ones(NxTp + NxNx * p * T,1);
-    avalues(NxTp + 1 :end)  = -aaa(:);
-
-    bvalues  = [invsqrtsig0; invbbb];
 
 end
+%% CC and prepare Arows and Brows
 
-QQ1       = QQ(:,1:N1)';
-QQ2       = QQ(:,N1+1:end)';
+% AA
+% values1    = ones(NxTp,1);
+% values2    = reshape(-aaa, NxNx * p * T, 1); % (:,:,p:-1:1,:);
+% values     = [values1; values2];
+values             = ones(NxTp + NxNx * p * T,1);
+values(NxTp+1:end) = -aaa(:);
+values             = values(asortndx);
+AA                 = sparse(arows, acols, values, NxTp, NxTp);
 
-%% sparse builds for BB and AA
-bvalues  = bvalues(b0ndx);
-bvalues  = bvalues(bsortndx);
-invBB    = sparse(brows, bcols, bvalues, NxTp, NxTp);
+% BB
+values        = [invsqrtsig0; invbbb];
+invsqrtSIGMA  = sparse(brows, bcols, values, NxTp, NxTp);
 
-avalues  = avalues(a0ndx);
-avalues  = avalues(asortndx);
-AA       = sparse(arows, acols, avalues, NxTp, NxTp);
+% C
+CC = sparse(crows, ccols, ccc, NyT, NxTp);
+% drop rows associated with NaN
+CC = CC(~yNaN,:);
+	
+% noiseVOL
+invsqrtOMEGA = spdiags(invnoisevol(:),0,NyT,NyT);
+invsqrtOMEGA = invsqrtOMEGA(~yNaN,~yNaN);
+
 
 %% means and innovations
-EX        = AA \ XX0;
-EY        = CC * EX;
+AAtilde            = invsqrtSIGMA * AA;
+XX0tilde           = invsqrtSIGMA * XX0;
 
-X1tilde   = RR1 \ (Y - EY);
+CCtilde            = invsqrtOMEGA * CC;
+Ytilde             = invsqrtOMEGA * Y;
 
-QQX1tilde = QQ1' * X1tilde;
+P                   = AAtilde' * AAtilde + (CCtilde' * CCtilde);
+[sqrtP, flag]       = chol(P, 'lower');
 
-%% precision-based sampler
-AAtilde       = invBB * AA;
-AAtildeQQX1   = AAtilde * QQX1tilde;
-AAtildeQQ2    = AAtilde * QQ2';
-invQSIG22     = transpose(AAtildeQQ2) * AAtildeQQ2;
-cholinvQSIG22 = chol(invQSIG22, 'lower');
+if flag > 0
+    warning('P not posdf, using QR instead')
+    % via qr -- much slower
+    M = [AAtilde; CCtilde];
+    m = size(M,2);
+    [~, R] = qr(M);
+    sqrtP = R(1:m,1:m)';
+    % checkdiff(sqrtP * sqrtP', sqrtP2 * sqrtP2');
+end
 
-X2hat         = - cholinvQSIG22 \ (AAtildeQQ2' * AAtildeQQX1);
-
-Z2draw        = randn(rndStream, N2, 1) + X2hat;
-X2draw        = cholinvQSIG22' \ Z2draw;
-Xdraw         = EX + QQX1tilde + QQ2' * X2draw;
+sqrtPXhat    = sqrtP \ (AAtilde' * XX0tilde + CCtilde' * Ytilde);
+Zdraw        = randn(rndStream, NxTp, 1);
+Xdraw        = transpose(sqrtP) \ (sqrtPXhat + Zdraw);
 if nargout > 1
     XshockDraw   = AA * Xdraw - XX0;
+end
+if nargout > 2
+    NoiseDraw    = Y - CC * Xdraw;
 end
 
