@@ -27,7 +27,7 @@ if useDare
         Sigma = riccati(A', C', B*B', zeros(size(C, 1)));
     end
 else
-    Sigma = riccati(A', C', B*B', zeros(size(C, 1)));
+    Sigma = riccati(A', C', B*B', zeros(size(C, 1)), [], [], 1e-8, 1e6);
 end
 varz = C * Sigma * C';
 covxz = Sigma * C';
