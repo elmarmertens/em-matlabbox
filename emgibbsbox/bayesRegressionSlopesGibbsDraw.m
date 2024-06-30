@@ -43,19 +43,22 @@ Xy    = X' * y;
 
 %% draw Regression-slope
 
-% Note: 
-% The choleski of V will be needed anyway for the random number generation, 
-% hence it is (slightly) more efficient to use the choleski also for computing the inverse
-
 Vi    = (V0i + XX * h); 
 cV    = chol(Vi) \ I; % notice: Matlab's choleski delivers UPPER triangular matrix
-V     = cV * cV';
+zdraw = randn(rndStream, K, Ndraws);
 
-b     = V * (V0i * b0 + Xy * h);
-
-bdraw = bsxfun(@plus, b, cV * randn(rndStream, size(b,1), Ndraws)); 
+b     = cV' * (V0i * b0 + Xy * h);
+bdraw = cV * (b + zdraw); 
 
 if nargout > 1
-    resid       = bsxfun(@minus, y, X * bdraw);
+    % resid       = bsxfun(@minus, y, X * bdraw);
+    resid       = y - X * bdraw;
 end
+if nargout > 2
+    b = cV * b;
+end
+if nargout > 3
+    V     = cV * cV';
+end
+
    

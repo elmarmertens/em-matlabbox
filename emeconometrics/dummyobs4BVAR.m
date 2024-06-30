@@ -1,11 +1,11 @@
 function [Ystar, Xstar] = dummyobs4BVAR(Ny, p, Nx, ndxExo, lambda, priorMean, dof0, SIGMA0)
-% BAYESREGDUMMYOBS constructs dummy opbs for Bayesian Regression with Conjugate Prior
+% BAYESREGDUMMYOBS constructs dummy obs for Bayesian Regression with Conjugate Prior
 %
-% usage [Ystar, Xstar] = bayesRegDummyObs(Ny, Nx, ndxExo, dof0, SIGMA0)
+% usage [Ystar, Xstar] = dummyobs4BVAR(Ny, p, Nx, ndxExo, lambda, priorMean, dof0, SIGMA0)
 %
 % Note: ndxExo can be a constant intercept or other deterministic dummies
 %
-% defaults ndxExo=Nx, priorMean=0, dof=0 (SIGMA0 irrelevant)
+% defaults ndxExo=[], priorMean=0, dof=0 (SIGMA0 irrelevant)
 %
 % see also BVARjeffries, BVARdraws
 
@@ -18,24 +18,20 @@ function [Ystar, Xstar] = dummyobs4BVAR(Ny, p, Nx, ndxExo, lambda, priorMean, do
 
 %% process arguments
 
-if nargin < 4 || isempty(lambda)
+if nargin < 4
+    ndxExo = [];
+end
+
+if nargin < 5 || isempty(lambda)
     % hyperparameters (in Sims notation)
-    if Ny >= 15
-        lambda1     = 20; % overall shrinkage, corresponds to 1/20=0.05 in CCM
-    else
-        lambda1     = 10; % overall shrinkage, corresponds to 1/10=0.1 in CCM
-    end
-    lambda2     = 2; % decay
-    lambda0     = 1/100;
+    lambda0     = 1/10;
+    lambda1     = 5; % overall shrinkage, corresponds to 1/lambda1^2 = .2^2 in CCMM or RATS
+    lambda2     = 1; % decay, corresponds to lambda2*2=2 in CCMM or RATS
     % lambda = [lambda0 lambda1 lambda2];
 else
     lambda0 = lambda(1);
     lambda1 = lambda(2);
     lambda2 = lambda(3);
-end
-
-if nargin < 5 
-    ndxExo = [];
 end
 
 if nargin < 6 || isempty(priorMean)

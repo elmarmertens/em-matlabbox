@@ -6,13 +6,6 @@ function [Xdraws, disturbanceDraws, X0draws, noiseDraws] = ...
 
 %   Coded by  Elmar Mertens, em@elmarmertens.com
 
-%% VERSION INFO
-% AUTHOR    : Elmar Mertens
-% $DATE     : 08-Aug-2009 17:58:16 $
-% $Revision : 1.00 $
-% DEVELOPED : 7.7.0.471 (R2008b)
-% FILENAME  : abcDisturbanceSmoothingSampler.m
-
 
 %% parse inputs
 Nx                = size(A, 1);
@@ -33,26 +26,23 @@ if ~isempty(sqrtR) && ismatrix(sqrtR)
 end
 
 
-% if ismatrix(A)
-%     A = repmat(A, [1 1 T]);
-% end
-% if ismatrix(B)
-%     B = repmat(B, [1 1 T]);
-% end
 if ismatrix(C)
     C = repmat(C, [1 1 T]);
     % warning('em:msg', 'C should be three dimensional when there are missing data')
 end
 
-I                 = eye(Nx);
-Iy                = eye(Ny);
-
 %% allocate memory
-[Sigmattm1, ImKC]           = deal(zeros(Nx, Nx, T));
-invSigmaYttm1               = zeros(Ny, Ny, T);
-Ytilde                      = zeros(Ny, T);
+Ctilde                      = NaN(Ny,Nx,T);
+[Sigmattm1, Atilde]         = deal(zeros(Nx, Nx, T));
+Ztilde                      = zeros(Ny, T);
 [XtT, Xttm1, Xplus]         = deal(zeros(Nx, T));
 
+if nargout > 3 && ~isempty(sqrtR)    
+    doNoiseDraws = true; 
+    Ytilde       = zeros(Ny, T); 
+else
+    doNoiseDraws = false;
+end
 
 %% generate plus data
 
@@ -66,7 +56,6 @@ X0plus = X00 + cholSigma00 * randn(rndStream, Nx, 1);
 %% Forward Loop: Kalman Forecasts
 [Sigma00, Sigmatt] = deal(cholSigma00 * cholSigma00');
 Xtt     = zeros(Nx,1); % use zeros, since projection on difference between Y and Yplus
-% BSigmaB = zeros(Nx, Nx, T);
 
 disturbanceplus  = zeros(Nx, T);
 if isempty(sqrtR)
@@ -81,18 +70,16 @@ for t = 1 : T
     
     % "plus" States and priors
     disturbanceplus(:,t)  = B * wplus(:,t);
-    %     BSigmaB(:,:,t)        = B(:,:,t) * B(:,:,t)';
-
     
     if t == 1
-        Xplus(:,t) = A * X0plus + disturbanceplus(:,t);
+        Xplus(:,t)       = A * X0plus + disturbanceplus(:,t);
     else
-        Xplus(:,t) = A * Xplus(:,t-1) + disturbanceplus(:,t);
+        Xplus(:,t)       = A * Xplus(:,t-1) + disturbanceplus(:,t);
     end
     
     % priors
-    Sigmattm1(:,:,t)        = A * Sigmatt * A' + BB;
-    Xttm1(:,t)              = A * Xtt;
+    Xttm1(:,t)           = A * Xtt;
+    Sigmattm1(:,:,t)     = A * Sigmatt * A' + BB;
     
     
     
@@ -110,27 +97,30 @@ for t = 1 : T
             sqrtR(:,:,t) * sqrtR(:,:,t)';
         
     end
-   
-    Ytilde(:,t) = Ydata(:,t)  - Yplus  - C(:,:,t) * Xttm1(:,t);
     
-    % Block Inverse of Y-VCV, accounting for missing obs (with zero VCV)
-    invSigmaYttm1(:,:,t) = Iy / SigmaYttm1;
+    ytilde                  = Ydata(:,t)  - Yplus  - C(:,:,t) * Xttm1(:,t);
+    if doNoiseDraws
+        Ytilde(:,t) = ytilde;
+    end
+
+    sqrtSigmaYttm1          = chol(SigmaYttm1, 'lower');
+    Ztilde(:,t)             = sqrtSigmaYttm1 \ ytilde;
+    Ctilde(:,:,t)           = sqrtSigmaYttm1 \ C(:,:,t);
 
     % Kalman Gain
-    K                       = (Sigmattm1(:,:,t) * C(:,:,t)') * invSigmaYttm1(:,:,t);
-    ImKC(:,:,t)             = I - K * C(:,:,t);
+    Ktilde                  = Sigmattm1(:,:,t) * Ctilde(:,:,t)';
+    Atilde(:,:,t)           = A - A * Ktilde * Ctilde(:,:,t); % A * (I - Ktilde * Ctilde)
     
     % posteriors
-    Sigmatt                 = ImKC(:,:,t) * Sigmattm1(:,:,t);
+    Xtt                     = Xttm1(:,t) + Ktilde * Ztilde(:,t);
+    Sigmatt                 = Sigmattm1(:,:,t) - Ktilde * Ktilde';
     
-    Xtt                     = Xttm1(:,t) + K * Ytilde(:,t);
-   
 end
 
 %% Backward Loop: Disturbance Smoother
 XtT(:,T)        = Xtt;
 
-StT             = C(:,:,T)' * (invSigmaYttm1(:,:,T) * Ytilde(:,T));
+StT             = Ctilde(:,:,T)' * Ztilde(:,T);
 
 if nargout > 1
     disturbancetT               = zeros(Nx, T);
@@ -139,26 +129,24 @@ else
     disturbancetT        = [];
 end
 
-if nargout > 2 && ~isempty(sqrtR)
+if doNoiseDraws
     noisetT            = zeros(Ny, T);
     noisetT(:,T)       = Ytilde(:,T) - C(:,:,T) * (XtT(:,T) - Xttm1(:,T));
 else
-    noisetT      = [];
+    noisetT  = [];
 end
 
 
 for t = (T-1) : -1 : 1
-    Atilde      = A * ImKC(:,:,t);
-    
-    StT         = Atilde' * StT + ...
-        C(:,:,t)' * (invSigmaYttm1(:,:,t) * Ytilde(:,t));
+    StT         = Atilde(:,:,t)' * StT + Ctilde(:,:,t)' * Ztilde(:,t);
     XtT(:,t)    = Xttm1(:,t) + Sigmattm1(:,:,t) * StT;
     
     if ~isempty(disturbancetT)
         disturbancetT(:,t)        = BB * StT;
     end
-    if ~isempty(noisetT)
-        noisetT(:,t)       = Ytilde(:,t) - C(:,:,t) * (XtT(:,t) - Xttm1(:,t));
+
+    if doNoiseDraws
+        noisetT(:,t)       = Ytilde(:,t) - C * (XtT(:,t) - Xttm1(:,t));
     end
     
 end
@@ -176,11 +164,8 @@ if nargout > 1
         X0draws  = X0plus + X0T;
         
         
-        if nargout > 3
+        if doNoiseDraws % nargout > 3
             noiseDraws  = noiseplus + noisetT;
         end
     end
 end
-
-
-       

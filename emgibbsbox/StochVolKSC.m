@@ -4,7 +4,7 @@ function [h, h0, kai2States] = StochVolKSC(logy2, h, hInno, Eh0, Vh0, KSC, KSCt,
 %
 % Uses Kim, Shephard and Chib normal mixtures
 %
-% USAGE: [h, kai2States] =  StochVolKSC(logy2, h, hInno, Eh0, Vh0, KSC, KSCt, Nsv, T, rndStream)
+% USAGE: [h, h0, kai2States] =  StochVolKSC(logy2, h, hInno, Eh0, Vh0, KSC, KSCt, Nsv, T, rndStream)
 %
 % where h are the log-SV's and hInno is the *volatility* in the innovations of h
 %
@@ -27,6 +27,10 @@ if isscalar(Eh0)
 end
 if isscalar(Vh0)
     Vh0 = repmat(Vh0, Nsv, 1);
+end
+
+if isvector(logy2)
+    logy2 = transpose(logy2(:)); % ensure row vector
 end
 
 %% CORRIGENDUM CHANGES ORDER OF GIBBS STEPS!
@@ -57,5 +61,9 @@ for n = 1 : Nsv
        Eh0(n),Vh0(n),rndStream);
 end
 
-% alt code: call vectorRWsmoothingsampler1draw
+% precision-based sampling version (not necessarily faster, since smoothingsamplerRWnoise loops over scalar, and JIT helps there)
+% vecobs           = obs(:);
+% noisevol         = KSC.vol(kai2States(:));
+% hVCVsqrt         = diag(hInno);
+% [h, ~, h0]       = rwnoisePrecisionBasedSampler(vecobs, Nsv, T, hVCVsqrt, noisevol, Eh0, sqrt(Vh0), 1, rndStream);
 

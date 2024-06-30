@@ -7,11 +7,6 @@ function [iwishcholDraw, cholSigmaT, dof] = bayesSQRTVCVgibbsDraw1(Sigma0T, dof0
 %
 % resid is T x N
 %
-% Optional Argument:
-%     diagFlag: if true it will assume diagonal VCV and treat input/output of Sigma0T,
-%               SigmaT and iwishDraws as column vectors (default is false)
-%
-% Optional Output: iwishcholDraws
 %
 % See also iwishdraw, bayesVCVgibbsDraw1, bayesVCVgibbsDraw
 

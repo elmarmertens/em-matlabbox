@@ -45,7 +45,7 @@ dofStates      = sum(rand(rndStream, Nsv, 1) > cdf, 2) + 1;
 SVtdofDraws    = tdof.values(dofStates)'; % transpose!
 
 
-scalePosterior     = SVtdofDraws + 1 + y2scaled; % note the explicit vector expansion of SVtdof
+scalePosterior     = SVtdofDraws + y2scaled; % note the explicit vector expansion of SVtdof
 % note: matlab doc says stats box handles parallel streams automatically via the global stream ....
 chi2draws          = chi2rnd(repmat(SVtdofDraws + 1, 1, T));
 SVtScalelog2Draws  = log(scalePosterior) - log(chi2draws);

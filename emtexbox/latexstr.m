@@ -5,4 +5,8 @@ function l = latexstr(s)
 
 %   Coded by  Elmar Mertens, em@elmarmertens.com
 
-l = strrep(s, '_', '\_');
+l = s;
+l = strrep(l, '_', '\_');
+l = strrep(l, '&', '\&');
+l = strrep(l, '%', '\%');
+
