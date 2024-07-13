@@ -132,7 +132,11 @@ XX0tilde           = invsqrtSIGMA * XX0;
 CCtilde            = invsqrtOMEGA * CC;
 Ytilde             = invsqrtOMEGA * Y;
 
-P                   = AAtilde' * AAtilde + (CCtilde' * CCtilde);
+
+AAAAprime           = AAtilde' * AAtilde;
+CCCCprime           = CCtilde' * CCtilde;
+P                   = AAAAprime + CCCCprime;
+% a tad slower: P                   = AAtilde' * AAtilde + (CCtilde' * CCtilde);
 [sqrtP, flag]       = chol(P, 'lower');
 
 if flag > 0
