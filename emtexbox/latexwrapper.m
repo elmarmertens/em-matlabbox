@@ -419,7 +419,7 @@ switch lower(command)
       
       fprintf('Converting PS to PDF  ... ');
       
-      [status, log] = system(sprintf('ps2pdf %s.ps', file.name));
+      [status, log] = system(sprintf('ps2pdf -dAutoRotatePages=/None %s.ps', file.name));
       if status
           disp(log)
       end
