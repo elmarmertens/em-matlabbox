@@ -136,16 +136,17 @@ Ytilde             = invsqrtOMEGA * Y;
 AAAAprime           = AAtilde' * AAtilde;
 CCCCprime           = CCtilde' * CCtilde;
 P                   = AAAAprime + CCCCprime;
-% a tad slower: P                   = AAtilde' * AAtilde + (CCtilde' * CCtilde);
+% a tad slower: P = AAtilde' * AAtilde + (CCtilde' * CCtilde);
 [sqrtP, flag]       = chol(P, 'lower');
 
 if flag > 0
     warning('P not posdf, using QR instead')
+    keyboard
     % via qr -- much slower
     M = [AAtilde; CCtilde];
     m = size(M,2);
     [~, R] = qr(M);
-    sqrtP = R(1:m,1:m)';
+    sqrtP  = R(1:m,1:m)';
     % checkdiff(sqrtP * sqrtP', sqrtP2 * sqrtP2');
 end
 
