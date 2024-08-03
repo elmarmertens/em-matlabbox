@@ -141,7 +141,6 @@ P                   = AAAAprime + CCCCprime;
 
 if flag > 0
     warning('P not posdf, using QR instead')
-    keyboard
     % via qr -- much slower
     M = [AAtilde; CCtilde];
     m = size(M,2);
