@@ -90,7 +90,7 @@ thisYstar = zeros(Ny * p, Ny);
 thisXstar = zeros(Ny * p, Nx);
 
 % build thisXstar via kronecker
-LAMBDA               = lambda1 .* (1:p) .^ lambda2;
+LAMBDA               = lambda1 .* ((1:p) .^ lambda2);
 thisXstar(:,ndxLags) = kron(diag(LAMBDA), sqrtSIGMA0);
 
 
