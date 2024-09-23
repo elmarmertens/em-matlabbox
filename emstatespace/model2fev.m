@@ -14,8 +14,8 @@ function [fev, fevcond] = model2fev(A,B,C,k,ndxImpulse)
 error(abcdchk(A,B,C)) % check dimensional consistency
 
 % nx = size(A, 1);
-nw = size(B, 2);
-ny = size(C, 1);
+Nw = size(B, 2);
+Ny = size(C, 1);
 if nargin < 4 || isempty(k)
     k = 16;
 end
@@ -25,7 +25,7 @@ end
 
 
 %% unconditional FEV
-fev = NaN(ny, ny, k);
+fev = NaN(Ny, Ny, k);
 
 BB  = B * B';
 
@@ -40,7 +40,7 @@ end
 
 %% conditional fev
 if nargout >1
-    fevcond = NaN(ny, ny, k, length(ndxImpulse));
+    fevcond = NaN(Ny, Ny, k, length(ndxImpulse));
 
     for n = ndxImpulse
 
