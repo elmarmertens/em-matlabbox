@@ -11,7 +11,7 @@ function [X, F, converged, message] = riccati(A,B,Q,R,N,X0,tolerance,maxiter)
 %
 % [X, F, converged, message] = riccati(A,B,Q,R,N,X0,tolerance,maxiter)
 %
-% where tolerance and maxiter are optional with defaults of 1e-12 and 1e4
+% where tolerance and maxiter are optional with defaults of 1e-12 and 1e6
 % and converged is a boolean variable equal to true if the VFI has
 % successfully converged
 %
@@ -51,13 +51,6 @@ if nargin < 8 || isempty(maxiter)
     maxiter     = 1e6;
 end
 
-
-% if nargout > 4
-%    history = repmat(struct('F', NaN(size(B, 2), size(B, 1)), 'X', repmat(NaN, size(A))), maxiter, 1);
-% else
-%    history = [];
-% end
-
 iter        = 0;
 converged   = false;
 
@@ -73,20 +66,12 @@ while ~converged && iter < maxiter
     converged = max(abs(dV(:))) < tolerance;
     
     X0 = X;
-    
-    %    if ~isempty(history)
-    %       history(iter).F = F;
-    %       history(iter).X = X;
-    %    end
+
     
 end
 
-% if ~isempty(history)
-%    history = history(1:iter);
-% end
-
 if ~converged
-    message = sprintf('RICCATI failed to converge after %d iteration, mae is %f', iter, max(abs(dV(:))));
+    message = sprintf('RICCATI failed to converge after %.2e iteration, mae is %.2e', iter, max(abs(dV(:))));
     if nargout < 3
         error(message) %#ok<SPERR>
     end
