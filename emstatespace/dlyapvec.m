@@ -31,6 +31,6 @@ end
 n           = size(Q, 1);
 In2         = eye(n * n);
 
-vecX        = (In2 - kron(B, A)) \ Q(:);
-X           = reshape(vecX, n, n);
+X           = (In2 - kron(B, A)) \ Q(:);
+X           = reshape(X, n, n);
 
