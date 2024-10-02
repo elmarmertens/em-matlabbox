@@ -149,7 +149,9 @@ if flag > 0
     m = size(M,2);
     [~, R] = qr(M);
     sqrtP = R(1:m,1:m)';
-    % checkdiff(sqrtP * sqrtP', sqrtP2 * sqrtP2');
+
+    checkdiff(sqrtP * sqrtP', P);
+    checkdiff(M'*M,P);
 end
 
 sqrtPXhat    = sqrtP \ (AAtilde' * XX0tilde + CCtilde' * Ytilde);
