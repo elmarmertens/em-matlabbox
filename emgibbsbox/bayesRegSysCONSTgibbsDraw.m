@@ -2,6 +2,8 @@ function [paiDraws, resid, pai, paiSigma]  = bayesRegSysCONSTgibbsDraw(Y, X, Ny,
 %
 %
 % See also bayesVectorRegressionGibbsDraw2Steps, bayesVectorRegressionGibbsDraw, lag4VAR
+%
+% this function mimics calling strcuture of CTA, production code is in bayesVectorRegressionGibbsDraw however
 
 %   Coded by  Elmar Mertens, em@elmarmertens.com
 

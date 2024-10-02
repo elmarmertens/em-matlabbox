@@ -132,7 +132,11 @@ XX0tilde           = invsqrtSIGMA * XX0;
 CCtilde            = invsqrtOMEGA * CC;
 Ytilde             = invsqrtOMEGA * Y;
 
-P                   = AAtilde' * AAtilde + (CCtilde' * CCtilde);
+
+AAAAprime           = AAtilde' * AAtilde;
+CCCCprime           = CCtilde' * CCtilde;
+P                   = AAAAprime + CCCCprime;
+% a tad slower: P = AAtilde' * AAtilde + (CCtilde' * CCtilde);
 [sqrtP, flag]       = chol(P, 'lower');
 
 if flag > 0
@@ -141,7 +145,7 @@ if flag > 0
     M = [AAtilde; CCtilde];
     m = size(M,2);
     [~, R] = qr(M);
-    sqrtP = R(1:m,1:m)';
+    sqrtP  = R(1:m,1:m)';
     % checkdiff(sqrtP * sqrtP', sqrtP2 * sqrtP2');
 end
 
