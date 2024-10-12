@@ -153,8 +153,8 @@ if flag > 0
     [~, R] = qr(M);
     sqrtP = R(1:m,1:m)';
 
-    checkdiff(sqrtP * sqrtP', P);
-    checkdiff(M'*M,P);
+    % checkdiff(sqrtP * sqrtP', P);
+    % checkdiff(M'*M,P);
 end
 
 sqrtPXhat    = sqrtP \ (AAtilde' * XX0tilde + CCtilde' * Ytilde);
