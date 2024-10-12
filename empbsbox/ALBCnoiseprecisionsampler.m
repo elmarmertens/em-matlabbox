@@ -87,8 +87,7 @@ if nargin < 9
     % [~, bsortndx] = sort(ndx);
     % brows         = brows(bsortndx);
     % bcols         = bcols(bsortndx);
-    bsortndx = []; % legacy output argument
-
+    
     %% CC
     crows     = repmat((1 : Ny)', 1 , Nx, T) + permute(Ny * (0 : T-1), [1 3 2]);
     ccols     = Nx0 + repmat(1 : NxT, Ny, 1);
@@ -104,8 +103,7 @@ if nargin < 9
     % [~, csortndx] = sort(ndx);
     % crows         = crows(csortndx);
     % ccols         = ccols(csortndx);
-    csortndx = []; % legacy output argument
-
+    
 end
 %% CC and prepare Arows and Brows
 
