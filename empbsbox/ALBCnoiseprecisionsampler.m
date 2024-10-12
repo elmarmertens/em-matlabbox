@@ -1,7 +1,7 @@
 function [Xdraw,  XshockDraw, NoiseDraw, ...
-    arows, acols, asortndx, brows, bcols, bsortndx, crows, ccols, csortndx] = ...
+    arows, acols, asortndx, brows, bcols, crows, ccols] = ...
     ALBCnoiseprecisionsampler(aaa,invbbb,ccc,invnoisevol,y,x0,invsqrtsig0,rndStream, ...
-    arows,acols,asortndx,brows,bcols,bsortndx,crows,ccols,csortndx)
+    arows,acols,asortndx,brows,bcols,crows,ccols)
 % ALBCnoiseprecisionsampler ...
 %
 % allows for lags of A; important: aaa should be ordered from p to 1 in 3rd dimension
@@ -82,12 +82,12 @@ if nargin < 9
     bcols1  = Nx0 + repmat((1 : Nx), Nx, 1) + permute(Nx * (0 : T-1), [1 3 2]);
     bcols   = [reshape(bcols0, Nx0 * Nx0, 1); reshape(bcols1, NxNx * T, 1)];
 
-    % sort B indices
-    ndx = sub2ind([NxTp, NxTp], brows, bcols);
-    [~, bsortndx] = sort(ndx);
-    brows         = brows(bsortndx);
-    bcols         = bcols(bsortndx);
-
+    % sort B indices -- not necessary, since the above is already sorted
+    % ndx = sub2ind([NxTp, NxTp], brows, bcols);
+    % [~, bsortndx] = sort(ndx);
+    % brows         = brows(bsortndx);
+    % bcols         = bcols(bsortndx);
+    
     %% CC
     crows     = repmat((1 : Ny)', 1 , Nx, T) + permute(Ny * (0 : T-1), [1 3 2]);
     ccols     = Nx0 + repmat(1 : NxT, Ny, 1);
@@ -95,12 +95,15 @@ if nargin < 9
     ccols     = ccols(:);
 
 
-    % sort C indices
-    ndx = sub2ind([NyT, NxTp], crows, ccols);
-    [~, csortndx] = sort(ndx);
-    crows         = crows(csortndx);
-    ccols         = ccols(csortndx);
-
+    % sort C indices -- not necessary, since the above is already sorted
+    % ndx = sub2ind([NyT, NxTp], crows, ccols);
+    % if ~issorted(ndx)
+    %     error houston
+    % end
+    % [~, csortndx] = sort(ndx);
+    % crows         = crows(csortndx);
+    % ccols         = ccols(csortndx);
+    
 end
 %% CC and prepare Arows and Brows
 
@@ -132,7 +135,11 @@ XX0tilde           = invsqrtSIGMA * XX0;
 CCtilde            = invsqrtOMEGA * CC;
 Ytilde             = invsqrtOMEGA * Y;
 
-P                   = AAtilde' * AAtilde + (CCtilde' * CCtilde);
+
+AAAAprime           = AAtilde' * AAtilde;
+CCCCprime           = CCtilde' * CCtilde;
+P                   = AAAAprime + CCCCprime;
+% a tad slower: P = AAtilde' * AAtilde + (CCtilde' * CCtilde);
 [sqrtP, flag]       = chol(P, 'lower');
 
 if flag > 0
@@ -141,7 +148,7 @@ if flag > 0
     M = [AAtilde; CCtilde];
     m = size(M,2);
     [~, R] = qr(M);
-    sqrtP = R(1:m,1:m)';
+    sqrtP  = R(1:m,1:m)';
     % checkdiff(sqrtP * sqrtP', sqrtP2 * sqrtP2');
 end
 
