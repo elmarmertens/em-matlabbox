@@ -1,7 +1,7 @@
 function [Xdraw,  XshockDraw, NoiseDraw, ...
-    arows, acols, asortndx, brows, bcols, bsortndx, crows, ccols, csortndx] = ...
+    arows, acols, asortndx, brows, bcols, crows, ccols] = ...
     ALBCnoiseprecisionsampler(aaa,invbbb,ccc,invnoisevol,y,x0,invsqrtsig0,rndStream, ...
-    arows,acols,asortndx,brows,bcols,bsortndx,crows,ccols,csortndx)
+    arows,acols,asortndx,brows,bcols,crows,ccols)
 % ALBCnoiseprecisionsampler ...
 %
 % allows for lags of A; important: aaa should be ordered from p to 1 in 3rd dimension
@@ -82,11 +82,12 @@ if nargin < 9
     bcols1  = Nx0 + repmat((1 : Nx), Nx, 1) + permute(Nx * (0 : T-1), [1 3 2]);
     bcols   = [reshape(bcols0, Nx0 * Nx0, 1); reshape(bcols1, NxNx * T, 1)];
 
-    % sort B indices
-    ndx = sub2ind([NxTp, NxTp], brows, bcols);
-    [~, bsortndx] = sort(ndx);
-    brows         = brows(bsortndx);
-    bcols         = bcols(bsortndx);
+    % sort B indices -- not necessary, since the above is already sorted
+    % ndx = sub2ind([NxTp, NxTp], brows, bcols);
+    % [~, bsortndx] = sort(ndx);
+    % brows         = brows(bsortndx);
+    % bcols         = bcols(bsortndx);
+    bsortndx = []; % legacy output argument
 
     %% CC
     crows     = repmat((1 : Ny)', 1 , Nx, T) + permute(Ny * (0 : T-1), [1 3 2]);
@@ -95,11 +96,15 @@ if nargin < 9
     ccols     = ccols(:);
 
 
-    % sort C indices
-    ndx = sub2ind([NyT, NxTp], crows, ccols);
-    [~, csortndx] = sort(ndx);
-    crows         = crows(csortndx);
-    ccols         = ccols(csortndx);
+    % sort C indices -- not necessary, since the above is already sorted
+    % ndx = sub2ind([NyT, NxTp], crows, ccols);
+    % if ~issorted(ndx)
+    %     error houston
+    % end
+    % [~, csortndx] = sort(ndx);
+    % crows         = crows(csortndx);
+    % ccols         = ccols(csortndx);
+    csortndx = []; % legacy output argument
 
 end
 %% CC and prepare Arows and Brows
