@@ -134,6 +134,7 @@ switch lower(command)
       fprintf(file.id, '%s\n', '\newcommand*{\FloatHead}{\hrulefill}');
       fprintf(file.id, '%s\n', '\newcommand*{\FloatBottom}{\FloatHead}');
       % fprintf(file.id, '%s\n', '\newcommand{\imagesandtables}{}');
+      fprintf(file.id, '%s\n', '\newcommand*{\legend}[1]{Notes: #1}');
       fprintf(file.id, '%s\n', '\newcommand*{\inputTAB}[2]{');
       fprintf(file.id, '%s\n', '  \begin{table}[t]');
       fprintf(file.id, '%s\n', '  \caption{#2}');
