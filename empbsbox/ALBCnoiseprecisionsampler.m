@@ -108,9 +108,6 @@ end
 %% CC and prepare Arows and Brows
 
 % AA
-% values1    = ones(NxTp,1);
-% values2    = reshape(-aaa, NxNx * p * T, 1); % (:,:,p:-1:1,:);
-% values     = [values1; values2];
 values             = ones(NxTp + NxNx * p * T,1);
 values(NxTp+1:end) = -aaa(:);
 values             = values(asortndx);
