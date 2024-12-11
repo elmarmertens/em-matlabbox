@@ -38,4 +38,4 @@ kai2States  = sum(rand(rndStream, Nsv, T) > cdf, 3) + 1;
 obs       = logy2 - KSC.mean(kai2States);
 noisevol  = KSC.vol(kai2States);
 
-[h, hbar, hshock, htilde] = sampleVAR1noisePBS(obs, Nsv, T, rho, hVCVsqrt, Eh0, sqrtVh0, noisevol, rndStream);
+[h, hbar, hshock, htilde] = sampleVAR1noise(obs, Nsv, T, rho, hVCVsqrt, Eh0, sqrtVh0, noisevol, rndStream);
