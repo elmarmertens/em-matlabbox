@@ -41,7 +41,7 @@ else
 end
 
 fid = fopen(filename, 'wt');
-fprintf(fid, '%15s', 'dates/labels');
+fprintf(fid, '%15s', 'dates');
 fprintf(fid, ',%30s', datalabels{:});
 fprintf(fid, '\n');
 
@@ -52,7 +52,7 @@ for n = 1 : length(dates)
         if isempty(datefmt)
             fprintf(fid, '%15d', dates(n));
         else
-            fprintf(fid, '%15s', datestr(dates(n), datefmt));
+            fprintf(fid, '%15s', datestr(dates(n), datefmt)); %#ok<DATST>
         end
     end
     fprintf(fid, ',%30.16e', data(n,:));
