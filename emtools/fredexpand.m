@@ -1,7 +1,7 @@
 function [data, dates, names] = fredexpand(DATA, dates)
 % function [data, dates, names] = fredexpand(DATA, dates)
 
-% Copyright, 2011, Ben Brookins
+% Ben Brookins
 % May 4, 2011
 % benbrookins@gmail.com
 % Reworked from fredtrim by:

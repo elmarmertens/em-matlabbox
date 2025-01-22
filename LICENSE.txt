@@ -3,6 +3,7 @@ Modified BSD License (https://opensource.org/licenses/BSD-3-Clause)
   This is any statements or instructions to be used directly or 
   indirectly in a computer in order to bring about a certain result, 
   and may include interpretive, object or source code.
+  - Some code snippets are based on publicly available code with credits and copyrights indicated in the respective files.
 
 Creative Commons Attribution 4.0 International Public License
 (https://creativecommons.org/licenses/by/4.0/)
