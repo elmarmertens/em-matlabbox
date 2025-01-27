@@ -5,6 +5,8 @@ function h = plotirf(irf, ynames, wnames, irf2, ticksize, plotname, linetype)
 % if irf2 is specified, it will be superimposed on the plots next to irf
 % (irf2 needs to be of same dimension as irf)
 %
+% assumes: [ny, nw, lags] = size(irf);
+%
 % ticksize: specify steps of xtick-labels, default: 4, use auto-setting if empty
 %
 % h returns ny x nw array of handels for each irf's subplot
@@ -83,7 +85,7 @@ for r = 1 : ny
       end
 
       if c == 1 && ~isempty(ynames)
-         ylabel(ynames(r));
+         ylabel(ynames(r), 'FontWeight', 'bold');
       end
       if r == 1 && ~isempty(wnames)
          title(wnames(c));
