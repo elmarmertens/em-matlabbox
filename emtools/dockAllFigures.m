@@ -11,10 +11,11 @@ if nargin < 1
 end
 
 if usejava('desktop') || force  % && (ispc || ismac))
-   
-   openFigures=findobj(allchild(0),'flat','Visible','on');
+
+   openFigures=findobj(allchild(0),'flat'); % ,'Visible','on');
 
    for f = openFigures'
+      set(f,'Visible','on');
       set(f,'WindowStyle','docked');
    end
    

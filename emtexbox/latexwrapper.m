@@ -87,13 +87,13 @@ switch lower(command)
       fprintf(file.id, '%s\n', '\usepackage{exscale, xspace, setspace, ifthen}');
       fprintf(file.id, '%s\n', '\usepackage{amsmath, amsbsy, amsfonts, dcolumn, booktabs} ');
       fprintf(file.id, '%s\n', '\usepackage{afterpage,lastpage}');
-      fprintf(file.id, '%s\n', '\usepackage{lscape}');
+      % fprintf(file.id, '%s\n', '\usepackage{pdflscape}');
 
       fprintf(file.id, '%s\n', '\usepackage{ifpdf}');
       fprintf(file.id, '%s\n', '\ifpdf');
-      fprintf(file.id, '%s\n', '  \usepackage{graphicx,rotating,hyperref}');
+      fprintf(file.id, '%s\n', '  \usepackage{pdflscape,graphicx,rotating,hyperref}');
       fprintf(file.id, '%s\n', '\else');
-      fprintf(file.id, '%s\n', '  \usepackage[dvips]{graphicx,rotating,hyperref}');
+      fprintf(file.id, '%s\n', '  \usepackage[dvips]{pdflscape,graphicx,rotating,hyperref}');
       fprintf(file.id, '%s\n', '  \DeclareGraphicsExtensions{.eps}');
       fprintf(file.id, '%s\n', '\fi');
       
@@ -134,6 +134,7 @@ switch lower(command)
       fprintf(file.id, '%s\n', '\newcommand*{\FloatHead}{\hrulefill}');
       fprintf(file.id, '%s\n', '\newcommand*{\FloatBottom}{\FloatHead}');
       % fprintf(file.id, '%s\n', '\newcommand{\imagesandtables}{}');
+      fprintf(file.id, '%s\n', '\newcommand*{\legend}[1]{Notes: #1}');
       fprintf(file.id, '%s\n', '\newcommand*{\inputTAB}[2]{');
       fprintf(file.id, '%s\n', '  \begin{table}[t]');
       fprintf(file.id, '%s\n', '  \caption{#2}');
@@ -157,13 +158,15 @@ switch lower(command)
       fprintf(file.id, '%s\n', '}');
      
       fprintf(file.id, '%s\n', '\newcommand*{\inputSIDETAB}[2]{');
-      fprintf(file.id, '%s\n', '  \begin{sidewaystable}[t]');
+      fprintf(file.id, '%s\n', '  \begin{landscape}');
+      fprintf(file.id, '%s\n', '  \begin{table}[t]');
       fprintf(file.id, '%s\n', '  \caption{#2}');
       %       fprintf(file.id, '%s\n', '  \begin{center}');
       fprintf(file.id, '%s\n', '  \input{#1}');
       %       fprintf(file.id, '%s\n', '  \end{center}');
       fprintf(file.id, '%s\n', '  \begin{center} \texttt{File: #1} \end{center}');
-      fprintf(file.id, '%s\n', '  \end{sidewaystable}');
+      fprintf(file.id, '%s\n', '  \end{table}');
+      fprintf(file.id, '%s\n', '  \end{landscape}');
       fprintf(file.id, '%s\n', '  \clearpage');
       fprintf(file.id, '%s\n', '}');
       fprintf(file.id, '%s\n', '\newcommand*{\inputFIG}[3]{');
@@ -176,14 +179,16 @@ switch lower(command)
       fprintf(file.id, '%s\n', '  \clearpage');
       fprintf(file.id, '%s\n', '}');
       fprintf(file.id, '%s\n', '\newcommand*{\inputSIDEFIG}[3]{');
-      fprintf(file.id, '%s\n', '  \begin{sidewaysfigure}[t]');
+      fprintf(file.id, '%s\n', '  \begin{landscape}');
+      fprintf(file.id, '%s\n', '  \begin{figure}[t]');
       %       fprintf(file.id, '%s\n', '  \caption{#2}');
       fprintf(file.id, '%s\n', '  \centering\includegraphics[width=.95\textwidth]{#1}');
       fprintf(file.id, '%s\n', '  \\ \noindent');
       fprintf(file.id, '%s\n', '  \begin{footnotesize} #3 \end{footnotesize}');
       % fprintf(file.id, '%s\n', '  \begin{center} \caption{#2} -- \texttt{File: #1} \end{center}');
       fprintf(file.id, '%s\n', '  \begin{center} \caption{#2} \end{center}');
-      fprintf(file.id, '%s\n', '  \end{sidewaysfigure}');
+      fprintf(file.id, '%s\n', '  \end{figure}');
+      fprintf(file.id, '%s\n', '  \end{landscape}');
       fprintf(file.id, '%s\n', '  \clearpage');
       fprintf(file.id, '%s\n', '}');
 
@@ -230,7 +235,7 @@ switch lower(command)
       if ~isempty(file.pagestyle)
          fprintf(file.id, '\\pagestyle{%s}\n', file.pagestyle);
       end
-      fprintf(file.id, '%s\n', '\newpage');
+      fprintf(file.id, '%s\n', '\clearpage');
 
    case 'add'
       type2add = varargin{1};
@@ -286,7 +291,7 @@ switch lower(command)
             else
                fprintf(file.id, '\\%s{%s}{%s}\n', lcom, file2add, caption2add);
             end
-            fprintf(file.id, '\\newpage\n');
+            fprintf(file.id, '\\clearpage\n');
             if strcmpi(type2add, 'diary')
                fprintf(file.id, '\\lstset{escapechar = {}}\n');
             end
@@ -419,7 +424,7 @@ switch lower(command)
       
       fprintf('Converting PS to PDF  ... ');
       
-      [status, log] = system(sprintf('ps2pdf %s.ps', file.name));
+      [status, log] = system(sprintf('ps2pdf -dAutoRotatePages=/None %s.ps', file.name));
       if status
           disp(log)
       end

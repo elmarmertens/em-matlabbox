@@ -14,7 +14,7 @@ if nargin < 2 || isempty(fmt)
     fmt = '%6.4f';
 end
 if nargin < 3 || isempty(boldflag)
-    dobold = false;
+    dobold = true;
 else
     if isa(boldflag,'function_handle')
         dobold = boldflag(x);
