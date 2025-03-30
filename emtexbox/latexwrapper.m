@@ -11,6 +11,11 @@ if nargin < 1
    return
 end
 
+if isempty(file)
+    outfile = [];
+    return
+end
+
 if ~isstruct(file)
    if ischar(file)
       file.name = file;
