@@ -1,4 +1,5 @@
-function [Xdraw, CC, QQ, RR1, arows, acols, a0ndx, asortndx, brows, bcols, b0ndx, bsortndx] = ...
+function [Xdraw, XshockDraw, CC, QQ, RR1, ...
+    arows, acols, a0ndx, asortndx, brows, bcols, b0ndx, bsortndx] = ...
     ALBCprecisionsamplerNaN(aaa,invbbb,ccc,y,yNaN,x0,invsqrtsig0,rndStream,CC,QQ,RR1,...
     arows, acols, a0ndx, asortndx, brows, bcols, b0ndx, bsortndx)
 	
@@ -177,4 +178,7 @@ X2hat         = - cholinvQSIG22 \ (AAtildeQQ2' * AAtildeQQX1);
 Z2draw        = randn(rndStream, N2, 1) + X2hat;
 X2draw        = cholinvQSIG22' \ Z2draw;
 Xdraw         = EX + QQX1tilde + QQ2' * X2draw;
+if nargout > 1
+    XshockDraw   = AA * Xdraw - XX0;
+end
 

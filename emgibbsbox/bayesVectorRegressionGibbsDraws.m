@@ -1,8 +1,11 @@
-function [A, residDraw]  = bayesVectorRegressionGibbsDraws(Y, X, iSigmaResid, iVa0a0, iVa0, Ndraws, rndStream)
+function [PAI, residDraw]  = bayesVectorRegressionGibbsDraws(Y, X, iSigmaResid, iVpai0pai0, iVpai0, Ndraws, rndStream)
 % bayesVectorRegressionGibbsDraw performs Gibbs step for vector linear regression model with known variance
-
-% iVa0   is inverse prior variance
-% iVa0a0 is product of inverse prior variance and prior mean
+%
+% [PAI, residDraw]  = bayesVectorRegressionGibbsDraws(Y, X, iSigmaResid, iVpai0pai0, iVpai0, Ndraws, rndStream)
+%
+% iVpai0   is inverse prior variance
+% iVpai0pai0 is product of inverse prior variance times prior mean
+% rndStream can be stream or a set of standard-normal random numbers
 
 %   Coded by  Elmar Mertens, em@elmarmertens.com
 
@@ -14,43 +17,39 @@ if nargin < 7 || isempty(rndStream)
     rndStream = getDefaultStream;
 end
 
-[T, Ny]     = size(Y);
-[~, Nx]     = size(X);
-Na          = length(iVa0a0);
-Ia          = eye(Na);
+Ny     = size(Y,2);
+Nx     = size(X,2);
+Npai   = length(iVpai0pai0);
+Ipai   = eye(Npai);
 
 %% draw random numbers as needed
 if isnumeric(rndStream)
     z = rndStream;
 else
-    z = randn(rndStream, Na, Ndraws);
+    z = randn(rndStream, Npai, Ndraws);
 end
 
 
 %% posterior for coefficients
 
 % posterior variance
-iVa            = iVa0 + kron(iSigmaResid, X' * X);
-sqrt_aSigma    = chol(iVa) \ Ia;            % notice: Matlab's choleski delivers UPPER triangular matrix
+iVpai          = iVpai0 + kron(iSigmaResid, X' * X);
+sqrt_paiSigma  = chol(iVpai) \ Ipai;            % notice: Matlab's choleski delivers UPPER triangular matrix
 
 % posterior mean
 XYiSig   = X' * Y * iSigmaResid;
 
-aTilde   = sqrt_aSigma' * (iVa0a0 + XYiSig(:));
+paiTilde  = sqrt_paiSigma' * (iVpai0pai0 + XYiSig(:));
+paiDraw   = sqrt_paiSigma * (paiTilde + z); % chol_aSigma is the UPPER triangular factorization of aSigma, but this is OK for drawing RV
 
-% draw from posterior
-aDraw   = sqrt_aSigma * (aTilde + z); % chol_aSigma is the UPPER triangular factorization of aSigma, but this is OK for drawing RV
-
-% check:
-% aSigma  = sqrt_aSigma * sqrt_aSigma';       % checkdiff(aSigma, inv(inv_aSigma));
-% a       = aSigma * (iVa0a0 + XYiSig(:));
-% checkdiff(aDraw, a + sqrt_aSigma * z);
-
-A       = reshape(aDraw, Nx, Ny, Ndraws);
+PAI       = reshape(paiDraw, Nx, Ny, Ndraws);
 
 if nargout > 1
-    residDraw   = NaN(T,Ny,Ndraws);
-    for n = 1 : Ndraws % todo: use pagemetimes
-        residDraw(:,:,n) = Y - X * A(:,:,n);
-    end
+    % residDraw   = NaN(T,Ny,Ndraws);
+    % for n = 1 : Ndraws % todo: use pagemetimes
+    %     residDraw(:,:,n) = Y - X * PAI(:,:,n);
+    % end
+
+    residDraw = Y - pagemtimes(X, PAI);
+
 end

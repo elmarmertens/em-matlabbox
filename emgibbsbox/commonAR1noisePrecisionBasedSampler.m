@@ -47,7 +47,7 @@ sqrtOMEGA    = sparse(1:NyT, 1:NyT, volNOISE(:)');
 
 
 AAtilde            = sqrtSIGMA \ AA;
-XX0tilde           = XX0; % sqrtSIGMA \ XX0; since XX0=0
+% XX0tilde           = sqrtSIGMA \ XX0; % note: could exploit XX0=XX0tilde=0
 
 CCtilde            = sqrtOMEGA \ CC;
 Ytilde             = sqrtOMEGA \ Y;
@@ -65,21 +65,24 @@ if flag > 0
     % checkdiff(sqrtP * sqrtP', sqrtP2 * sqrtP2');
 end
 
-sqrtPXhat   = sqrtP \ (AAtilde' * XX0tilde + CCtilde' * Ytilde); 
+% sqrtPXhat   = sqrtP \ (AAtilde' * XX0tilde + CCtilde' * Ytilde); % note: could exploit XX0=XX0tilde=0
+sqrtPXhat   = sqrtP \ (CCtilde' * Ytilde); % note: exploiting XX0=XX0tilde=0
 
 Zdraw        = randn(rndStream, T+1, Ndraws);
 XXdraw       = (sqrtP') \ (sqrtPXhat + Zdraw);
-X0draw       = XXdraw(1);
 Xdraw        = XXdraw(2:end);
 
 if nargout > 1
     Xshock = AA * XXdraw;
     Xshock = reshape(Xshock(2:end), Nx, T, Ndraws); % ignore initial value
 end
-
 Xdraw        = reshape(Xdraw, Nx, T, Ndraws);
 
 if nargout > 2
+    X0draw       = XXdraw(1);
+end
+
+if nargout > 3
     Xhat        = (sqrtP') \ sqrtPXhat;
     Xhat        = reshape(Xhat(2:end), Nx, T);
 end

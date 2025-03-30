@@ -23,17 +23,18 @@ if nargin < 2 || isempty(algorithm)
     algorithm = '64';
 end
 if nargin < 3
-    seeds = sum(clock * 1000);
+    seeds = zeros(Nstreams,1);
+elseif isscalar(seeds)
+    seeds = repmat(seeds, Nstreams, 1);
 end
 
 %% prep parameters
-if isscalar(seeds)
-    seeds = repmat(seeds, Nstreams, 1);
-end
 rndStreams  = cell(Nstreams, 1);
 
 switch lower(algorithm)
-    case {'mlfg6331_64', '64'}
+    case '64'
+        algorithm = 'threefry4x64_20';
+    case {'mlfg6331_64'}
         algorithm = 'mlfg6331_64';
 case {'mrg32k3a', '32'}
         algorithm = 'mrg32k3a';

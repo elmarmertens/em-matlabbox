@@ -1,5 +1,5 @@
 function [Ystar, Xstar] = dummyobs4BVAR(Ny, p, Nx, ndxExo, lambda, priorMean, dof0, SIGMA0)
-% BAYESREGDUMMYOBS constructs dummy opbs for Bayesian Regression with Conjugate Prior
+% BAYESREGDUMMYOBS constructs dummy obs for Bayesian Regression with Conjugate Prior
 %
 % usage [Ystar, Xstar] = dummyobs4BVAR(Ny, p, Nx, ndxExo, lambda, priorMean, dof0, SIGMA0)
 %
@@ -18,7 +18,11 @@ function [Ystar, Xstar] = dummyobs4BVAR(Ny, p, Nx, ndxExo, lambda, priorMean, do
 
 %% process arguments
 
-if nargin < 4 || isempty(lambda)
+if nargin < 4
+    ndxExo = [];
+end
+
+if nargin < 5 || isempty(lambda)
     % hyperparameters (in Sims notation)
     lambda0     = 1/10;
     lambda1     = 5; % overall shrinkage, corresponds to 1/lambda1^2 = .2^2 in CCMM or RATS
@@ -28,10 +32,6 @@ else
     lambda0 = lambda(1);
     lambda1 = lambda(2);
     lambda2 = lambda(3);
-end
-
-if nargin < 5 
-    ndxExo = [];
 end
 
 if nargin < 6 || isempty(priorMean)
@@ -90,7 +90,7 @@ thisYstar = zeros(Ny * p, Ny);
 thisXstar = zeros(Ny * p, Nx);
 
 % build thisXstar via kronecker
-LAMBDA               = lambda1 .* (1:p) .^ lambda2;
+LAMBDA               = lambda1 .* ((1:p) .^ lambda2);
 thisXstar(:,ndxLags) = kron(diag(LAMBDA), sqrtSIGMA0);
 
 
