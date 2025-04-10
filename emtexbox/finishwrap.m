@@ -5,6 +5,8 @@ if exist('wrap', 'var') && ~isempty(wrap)
 
         if ispc
             wrap = latexwrapper(wrap, 'close');
+            latexwrapper(wrap, 'pdflatex');
+            latexwrapper(wrap, 'pdflatex');
         else
             wrap = latexwrapper(wrap, 'compileDVI2PDF');
         end
