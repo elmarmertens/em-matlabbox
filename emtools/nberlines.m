@@ -1,5 +1,5 @@
 function nberlines(dates, YLim, linespec)
-% function nbershades(dates, YLim, shading)
+% function nberlines(dates, YLim, linespec)
 % plots nber shades onto graph
 % note: overplots old stuff! need to replot
 
