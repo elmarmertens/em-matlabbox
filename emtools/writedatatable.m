@@ -1,4 +1,4 @@
-function writedatatable(wrap, filename, dates, data, datalabels, datefmt)
+function writedatatable(wrap, filename, dates, data, datalabels, datefmt, datesheader)
 % WRITEDATATABLE stores times series data in a csv file with column headers
 % and a date column.
 %
@@ -27,6 +27,9 @@ function writedatatable(wrap, filename, dates, data, datalabels, datefmt)
 if nargin < 6
     datefmt = 'yyyyqq';
 end
+if nargin < 7
+    datesheader = 'dates';
+end
 
 filename = strcat(filename, '.csv');
 
@@ -41,8 +44,8 @@ else
 end
 
 fid = fopen(filename, 'wt');
-fprintf(fid, '%15s', 'dates');
-fprintf(fid, ',%30s', datalabels{:});
+fprintf(fid, '%s', datesheader);
+fprintf(fid, ',%s', datalabels{:});
 fprintf(fid, '\n');
 
 for n = 1 : length(dates)
