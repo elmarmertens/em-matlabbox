@@ -73,6 +73,7 @@ nwerr= sqrt(diag(V));
 
 results.Vbeta = V;
 results.tstat = results.beta./nwerr; % Newey-West t-statistics
+results.nwerr = nwerr;
 ym = y - ones(nobs,1)*mean(y);
 rsqr1 = sigu;
 rsqr2 = ym'*ym;

@@ -6,14 +6,15 @@ function nbershades(dates, YLim, shading, tickvec)
 %   Coded by  Elmar Mertens, em@elmarmertens.com
 
 if nargin < 2 || isempty(YLim)
-   YLim = ylim;
+    YLim = ylim;
 end
-if nargin < 3 || isempty(shading) 
-   shading = .8;
+if nargin < 3 || isempty(shading)
+    shading = .8;
 end
 if nargin < 4
     tickvec = [];
 end
+
 
 %% patch figure renderer (to avoid 10^5 showing up)
 % there are three options: painters, zbuffer and opengl
@@ -28,21 +29,28 @@ NBER        = load('NBERdates');
 % RECESSION   = NBER.RECESSION;
 % NBERdates   = NBER.NBERdates;
 
+if isdatetime(dates)
+    NBERdates = datetime(NBER.dates, 'ConvertFrom', 'datenum');
+else
+    NBERdates = NBER.dates;
+end
 hold on
 RECESSION = double(NBER.recession);
 % RECESSION(~RECESSION) = NaN;
 hanni = NaN(2,1);
-hanni(1) = bar(NBER.dates, min(YLim) * 1.1 * RECESSION, 1, 'EdgeColor', shading * [1 1 1], 'FaceColor', shading *[1 1 1]);
-hanni(2) = bar(NBER.dates, max(YLim) * 1.1 * RECESSION, 1, 'EdgeColor', shading * [1 1 1], 'FaceColor', shading *[1 1 1]);
+hanni(1) = bar(NBERdates, min(YLim) * 1.1 * RECESSION, 1, 'EdgeColor', shading * [1 1 1], 'FaceColor', shading *[1 1 1]);
+hanni(2) = bar(NBERdates, max(YLim) * 1.1 * RECESSION, 1, 'EdgeColor', shading * [1 1 1], 'FaceColor', shading *[1 1 1]);
 
 xlim([dates(1) dates(end)])
 plot(xlim, [0 0], 'k-')
 ylim(YLim)
-if isempty(tickvec)
-    datetick('x', 10, 'keeplimits')
-else
-    xticks(tickvec)
-    datetick('x', 10, 'keeplimits', 'keepticks')
+if ~isdatetime(dates)
+    if isempty(tickvec)
+        datetick('x', 10, 'keeplimits')
+    else
+        xticks(tickvec)
+        datetick('x', 10, 'keeplimits', 'keepticks')
+    end
 end
 
 uistack(hanni, 'bottom')
