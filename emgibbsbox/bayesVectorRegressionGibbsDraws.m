@@ -33,14 +33,14 @@ end
 %% posterior for coefficients
 
 % posterior variance
-iVpai          = iVpai0 + kron(iSigmaResid, X' * X);
-sqrt_paiSigma  = chol(iVpai) \ Ipai;            % notice: Matlab's choleski delivers UPPER triangular matrix
+iVpai           = iVpai0 + kron(iSigmaResid, X' * X);
+invsqrtpaiSigma = chol(iVpai);            % notice: Matlab's choleski delivers UPPER triangular matrix
 
 % posterior mean
 XYiSig   = X' * Y * iSigmaResid;
 
-paiTilde  = sqrt_paiSigma' * (iVpai0pai0 + XYiSig(:));
-paiDraw   = sqrt_paiSigma * (paiTilde + z); % chol_aSigma is the UPPER triangular factorization of aSigma, but this is OK for drawing RV
+paiTilde  = transpose(invsqrtpaiSigma) \ (iVpai0pai0 + XYiSig(:));
+paiDraw   = invsqrtpaiSigma \ (paiTilde + z);
 
 PAI       = reshape(paiDraw, Nx, Ny, Ndraws);
 
