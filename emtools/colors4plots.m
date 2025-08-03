@@ -53,6 +53,8 @@ else
             otherwise % black
                 ndx = 8;
         end
+    else
+        ndx = mod(ndx-1, 8) + 1;
     end
     if isscalar(ndx)
         c = clrs{ndx};

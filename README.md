@@ -1,5 +1,7 @@
-# em-matlabbox
-matlab toolboxes
+# dev-matlabbox
+matlab dev toolboxes
+
+maintained at https://github.com/elmarmertens/em-matlabbox
 
 maintained at https://github.com/elmarmertens/em-matlabbox
 
