@@ -17,4 +17,4 @@ function draws = igamdraw(ssr, dof, varargin)
 % if ~isscalar(dof)
 %     error('dof is supposed to be scalar')
 % end
-draws  = 1 ./ gamrnd(dof * .5, 2 ./ ssr, varargin{:});
+draws  = 1 ./ gamrnd(dof .* .5, 2 ./ ssr, varargin{:});
