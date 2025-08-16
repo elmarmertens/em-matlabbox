@@ -1,7 +1,7 @@
 function [A, residDraw, meanA]  = bayesVectorSVregressionGibbsDraw1(Y, X, iSigmaResid, iVa0a0, iVa0, rndStream)
 % bayesVectorRegressionGibbsDraw performs Gibbs step for vector linear regression model with known variance
 %
-% [A, residDraw]  = bayesVectorRegressionGibbsDraw1(Y, X, iSigmaResid, iVa0a0, iVa0, rndStream)
+% [A, residDraw, meanA]  = bayesVectorSVregressionGibbsDraw1(Y, X, iSigmaResid, iVa0a0, iVa0, rndStream)
 %
 % iVa0   is inverse prior variance
 % iVa0a0 is product of inverse prior variance and prior mean
