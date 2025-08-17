@@ -29,17 +29,18 @@ end
 
 % posterior variance
 iVa = iVa0;
+Xprime = transpose(X); % for better memeory management in the next for loop
 for t = 1 : T
-    iVa = iVa + kron(iSigmaResid(:,:,t), X(t,:)' * X(t,:));
+    iVa = iVa + kron(iSigmaResid(:,:,t), Xprime(:,t) * transpose(Xprime(:,t)));
 end
 
 
 % posterior mean
-Ytilde = zeros(size(Y));
+Yprime = transpose(Y); % for better memeory management in the next for loop
 for t = 1 : T
-    Ytilde(t,:) = Y(t,:) * iSigmaResid(:,:,t);
+    Yprime(:,t) = iSigmaResid(:,:,t) * Yprime(:,t);
 end
-XYiSig   = X' * Ytilde;
+XYiSig   = Xprime * transpose(Yprime);
 
 choliVa  = chol(iVa);
 aTilde   = transpose(choliVa) \ (iVa0a0 + XYiSig(:));
