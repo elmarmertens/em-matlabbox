@@ -1,3 +1,3 @@
 function delta = spamaxabs(s)
 
-delta = max(abs(s), [], 'all');
+delta = full(max(abs(s), [], 'all')); % enforcing full output to facilitate subsequent printing routines
