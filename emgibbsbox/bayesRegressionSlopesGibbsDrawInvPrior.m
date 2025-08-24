@@ -23,13 +23,14 @@ end
 
 %% Some prelim preparations
 [T, K]      = size(X); %#ok<ASGLU>
-I           = eye(K);
 
 if nargin < 4 || isempty(iV0b0)
     iV0b0 = zeros(K, 1);
 end
 if nargin < 5 || isempty(iV0) % diffuse prior
     iV0 = zeros(K);
+elseif isvector(iV0)
+    iV0 = diag(iV0);
 end
 if nargin < 6 || isempty(Ndraws)
    Ndraws = 1;
