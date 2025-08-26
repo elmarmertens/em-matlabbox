@@ -25,6 +25,11 @@ NBER        = load('NBERdates');
 % RECESSION   = NBER.RECESSION;
 % NBERdates   = NBER.NBERdates;
 
+if isdatetime(dates)
+    NBERdates = datetime(NBER.dates, 'ConvertFrom', 'datenum');
+else
+    NBERdates = NBER.dates;
+end
 hold on
 % RECESSION = double(NBER.recession);
 % RECESSION(~RECESSION) = NaN;
@@ -33,15 +38,15 @@ YLIM = YLim; % could fine tune by stretching things out
 
 ndx = find(NBER.troughs);
 for n =1 : length(ndx)
-    plot(NBER.dates(ndx([n n])), YLIM, linespec{:})
+    plot(NBERdates(ndx([n n])), YLIM, linespec{:})
 end
 ndx = find(NBER.peaks);
 for n =1 : length(ndx)
-    plot(NBER.dates(ndx([n n])), YLIM, linespec{:})
+    plot(NBERdates(ndx([n n])), YLIM, linespec{:})
 end
 
-% hanni(1) = bar(NBER.dates, min(YLim) * 1.1 * RECESSION, 1, 'EdgeColor', shading * [1 1 1], 'FaceColor', shading *[1 1 1]);
-% hanni(2) = bar(NBER.dates, max(YLim) * 1.1 * RECESSION, 1, 'EdgeColor', shading * [1 1 1], 'FaceColor', shading *[1 1 1]);
+% hanni(1) = bar(NBERdates, min(YLim) * 1.1 * RECESSION, 1, 'EdgeColor', shading * [1 1 1], 'FaceColor', shading *[1 1 1]);
+% hanni(2) = bar(NBERdates, max(YLim) * 1.1 * RECESSION, 1, 'EdgeColor', shading * [1 1 1], 'FaceColor', shading *[1 1 1]);
 
 xlim([dates(1) dates(end)])
 ylim(YLim)
