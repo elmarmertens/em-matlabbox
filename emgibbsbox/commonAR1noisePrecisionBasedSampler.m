@@ -2,11 +2,11 @@ function [Xdraw, Xshock, X0draw, Xhat, P] = commonAR1noisePrecisionBasedSampler(
 % precisionBasedSampler for common AR1 state (plus noise)
 % computes smoothed kalman states using the stacked approach of Chan and Jeliazkov
 % Chan and Jeliazkov
-%  
-%   ... 
+%
+%   ...
 
 % assumes rhoSTATE and volSTATE are scalars, and volNOISE is (Ny x T) x 1 vector (i.e. no correlation within X and Y)
-% X0 is zero but sqrtV0 is non-zero (allowing stochastic initial condition) 
+% X0 is zero but sqrtV0 is non-zero (allowing stochastic initial condition)
 % Note: mean of AR1 is zero (initial condition is free)
 
 if nargin < 7 || isempty(Ndraws)
@@ -33,14 +33,18 @@ AA     = sparse(rowndx, colndx, values);
 % CC
 rowndx = 1 : NyT;
 colndx = repmat(1:T, Ny, 1);
-colndx = colndx(:) + 1; 
+colndx = colndx(:) + 1;
 values = ones(1, NyT);
 CC     = sparse(rowndx, colndx, values);
 
 
-
-sqrtSIGMA    = volSTATE * speye(T+1);
-sqrtSIGMA(1) = 10 * volSTATE; 
+if isscalar(volSTATE)
+    sqrtSIGMA    = volSTATE * speye(T+1);
+    sqrtSIGMA(1) = 10 * volSTATE;
+else
+    volSTATE    = [10 * volSTATE(1); volSTATE(:)]; % inflate initial state variance
+    sqrtSIGMA   = sparse(1:T+1, 1:T+1, volSTATE(:));
+end
 sqrtOMEGA    = sparse(1:NyT, 1:NyT, volNOISE(:)');
 
 %% set up  stacked system
