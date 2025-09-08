@@ -11,11 +11,15 @@ if true || isunix % && ~isdesktop
     else
         latextitle = strrep(titlename, '_', ' ');
         % insert a linebreak if title too long
-        if length(latextitle) > 50
+        if length(latextitle) > 40
             dashes = strfind(latextitle, '-');
-            ndx = find(dashes <= 50, 1, 'last');
-            latextitle = [latextitle(1:dashes(ndx)), '\ldots\linebreak ', ...
-                latextitle(dashes(ndx)+1:end)];
+            ndx = dashes(dashes > 40);
+            offset = 0;
+            for i = 1:length(ndx)
+                pos = ndx(i) + offset;
+                latextitle = [latextitle(1:pos-1), '\ldots\linebreak ', latextitle(pos+1:end)];
+                offset = offset + length('\ldots\linebreak ') - 1;
+            end
         end
         wrap.title = sprintf('\\titlecaveat{%s}', latextitle);
         
