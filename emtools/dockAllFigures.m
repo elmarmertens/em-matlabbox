@@ -19,6 +19,4 @@ if usejava('desktop') || force  % && (ispc || ismac))
       set(f,'WindowStyle','docked');
    end
    
-   % drawnow
-   
 end
