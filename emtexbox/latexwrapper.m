@@ -211,7 +211,7 @@ switch lower(command)
 %       fprintf(file.id, '%s\n', '\newcommand*{\linkELMARmail}{mailto:em@elmarmertens.ch}');
 %       fprintf(file.id, '%s\n', '\newcommand*{\linkELMARmailRE}[1]{mailto:em@elmarmertens.ch?subject=#1}');
 %       fprintf(file.id, '%s\n', '\newcommand*{\linkELMARmailDOC}{\linkELMARmailRE{Your\%20latexwrapper.m}}');
-      fprintf(file.id, '\\date{%s}\n', datestr(now));
+      fprintf(file.id, '\\date{%s}\n', datestr(now)); %#ok<TNOW1,DATST>
 
       %       if isempty(file.author)
       %          fprintf(file.id, '\\author{RESULTS STORED AT:\\thanks{Compiled with \\texttt{latexwrapper.m} from Elmar Mertens, email \\href{\\linkELMARmail}{\\tttELMARmail}. Download the program at \\href{http://www.elmarmertens.ch}{\\texttt{www.elmarmertens.ch}}.}\\\\ %s \\\\ %s}\n', ...
@@ -231,7 +231,7 @@ switch lower(command)
       if ~isempty(file.title)
          fprintf(file.id, '%s\n', '\maketitle');
       else
-         fprintf(file.id, '%s\n', '%s', datestr(now));
+         fprintf(file.id, '%s\n', '%s', datestr(now)); %#ok<TNOW1,DATST>
       end
 
       fprintf(file.id, '%s\n', '\tableofcontents');
@@ -241,6 +241,7 @@ switch lower(command)
          fprintf(file.id, '\\pagestyle{%s}\n', file.pagestyle);
       end
       fprintf(file.id, '%s\n', '\clearpage');
+      fprintf(file.id, '%s\n', '\section{Figures and Tables}');
 
    case 'add'
       type2add = varargin{1};
