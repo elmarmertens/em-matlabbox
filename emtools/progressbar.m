@@ -80,6 +80,7 @@ function progressbar(fractiondone, message, position)
 % 2004-Apr-01   Cleaner process of enforcing minimum time interval
 % 2004-Oct-08   Seperate function for timeleftstr, expand to include days
 % 2004-Oct-20   Efficient if-else structure for sec2timestr
+% 2025-Mar-08   Switch to pixel-based figure sizing for MATLAB 2025b compatibility
 %
 
 persistent progfig progpatch starttime lastupdate
@@ -125,15 +126,16 @@ end
 % Create new progress bar if needed
 if isempty(progfig)
     
-    % Calculate position of progress bar in normalized units
-    scrsz = [0 0 1 1];
-    width = scrsz(3)/4;
-    height = scrsz(4)/50;
-    if (isscalar(position))
-        hpad = scrsz(3)/64; % Padding from left or right edge of screen
-        vpad = scrsz(4)/24; % Padding from top or bottom edge of screen
-        left   = scrsz(3)/2 - width/2; % Default
-        bottom = scrsz(4)/2 - height/2; % Default
+    % Calculate position of progress bar in pixels
+    scrsz = get(groot, 'ScreenSize'); % [1 1 width height] in pixels
+    width  = 400;  % pixels
+    height = 35;   % pixels
+    hpad   = 20;   % pixels from screen edge
+    vpad   = 50;   % pixels from screen edge
+    
+    if isscalar(position)
+        left   = scrsz(3)/2 - width/2;   % Default: centered
+        bottom = scrsz(4)/2 - height/2;   % Default: centered
         switch position
             case 0 % Center
                 % Do nothing (default)
@@ -150,29 +152,26 @@ if isempty(progfig)
                 left   = scrsz(3) - width  - hpad;
                 bottom = vpad;
             case 5 % Random
-                left   = rand * (scrsz(3)-width);
-                bottom = rand * (scrsz(4)-height);
+                left   = rand * (scrsz(3) - width);
+                bottom = rand * (scrsz(4) - height);
             otherwise
                 warning('position must be (0-5). Reset to 0.') %#ok<*WNTAG>
         end
         position = [left bottom];
     elseif length(position) == 2
-        % Error checking on position
-        if (position(1) < 0) || (scrsz(3)-width < position(1))
-            position(1) = max(min(position(1),scrsz(3)-width),0);
-            warning('Horizontal position adjusted to fit on screen.')
-        end
-        if (position(2) < 0) || (scrsz(4)-height < position(2))
-            position(2) = max(min(position(2),scrsz(4)-height),0);
-            warning('Vertical position adjusted to fit on screen.')
-        end
+        % Interpret [x, y] as normalized (0-1) and convert to pixels
+        position(1) = position(1) * scrsz(3);
+        position(2) = position(2) * scrsz(4);
+        % Clamp to screen
+        position(1) = max(min(position(1), scrsz(3) - width), 0);
+        position(2) = max(min(position(2), scrsz(4) - height), 0);
     else
         error('position is not formatted correctly')
     end
     
     % Initialize progress bar
     progfig = figure(...
-        'Units',            'normalized',...
+        'Units',            'pixels',...
         'Position',         [position width height],...
         'NumberTitle',      'off',...
         'Resize',           'off',...
@@ -185,12 +184,7 @@ if isempty(progfig)
         'Box',              'on',...
         'ytick',            [],...
         'xtick',            [] );
-    %     progpatch = patch(...
-    %         'XData',            [0 0 0 0],...
-    %         'YData',            [0 0 1 1],...
-    %         'EraseMode',        'none' );
     
-    % matlab 2015 asks to remove EraseMode:
     progpatch = patch(...
         'XData',            [0 0 0 0],...
         'YData',            [0 0 1 1]);
