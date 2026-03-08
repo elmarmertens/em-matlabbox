@@ -129,7 +129,7 @@ if isempty(progfig)
     scrsz = [0 0 1 1];
     width = scrsz(3)/4;
     height = scrsz(4)/50;
-    if (length(position) == 1)
+    if (isscalar(position))
         hpad = scrsz(3)/64; % Padding from left or right edge of screen
         vpad = scrsz(4)/24; % Padding from top or bottom edge of screen
         left   = scrsz(3)/2 - width/2; % Default
