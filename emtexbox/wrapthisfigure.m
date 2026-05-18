@@ -68,6 +68,8 @@ drawnow
 switch lower(fmt)
     case {'jpg', 'jpeg'}
         print(this, '-djpeg', '-r500', figurename);
+    case {'png'}
+        print(this, '-dpng', '-r500', figurename);
     case {'pdf'}
         print(this, '-dpdf', '-r300', '-fillpage', figurename);
     case {'eps', 'epsc'}
