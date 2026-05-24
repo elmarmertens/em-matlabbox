@@ -11,21 +11,21 @@ if onesided
     % Note: keeping the abs to allow for answering whether difference is
     % significantly negative or positive
     if  abs(Z) > norminv(0.99, 0, 1)
-        stars = '^{\ast\ast\ast}';
+        stars = '\ensuremath{^{\ast\ast\ast}}';
     elseif abs(Z) > norminv(0.95, 0, 1)
-        stars = '^{\ast\ast}';
+        stars = '\ensuremath{^{\ast\ast}}';
     elseif abs(Z) > norminv(0.9, 0, 1)
-        stars = '^{\ast}';
+        stars = '\ensuremath{^{\ast}}';
     else
         stars = '';
     end
 else
     if  abs(Z) > norminv(0.995, 0, 1)
-        stars = '^{\ast\ast\ast}';
+        stars = '\ensuremath{^{\ast\ast\ast}}';
     elseif abs(Z) > norminv(0.975, 0, 1)
-        stars = '^{\ast\ast}';
+        stars = '\ensuremath{^{\ast\ast}}';
     elseif abs(Z) > norminv(0.95, 0, 1)
-        stars = '^{\ast}';
+        stars = '\ensuremath{^{\ast}}';
     else
         stars = '';
     end

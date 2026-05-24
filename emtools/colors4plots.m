@@ -9,6 +9,9 @@ function c = colors4plots(ndx)
 % [0.3010 0.7450 0.9330]; % 6: light blue
 % [0.6350 0.0780 0.1840]  % 7: dark red
 % [0      0      0     ]  % 8: black
+% [.25 0.25 0.25]         % 9: dark gray
+% [.5 0.5 0.5]            % 10: medium gray
+% [0.75 0.75 0.75]        % 11: light gray
 % }
 %
 % c = clrs(ndx);
@@ -26,7 +29,10 @@ clrs = {
     [0.4660 0.6740 0.1880]; % medium green
     [0.3010 0.7450 0.9330]; % light blue
     [0.6350 0.0780 0.1840]; % dark red
-    [0      0      0     ]  % black
+    [0      0      0     ];  % black
+    [0.25 0.25 0.25];       % dark gray
+    [0.5 0.5 0.5];          % medium gray
+    [0.75 0.75 0.75]        % light gray
     };
 
 
@@ -50,11 +56,19 @@ else
                 ndx = 6;
             case {'dark red', 'darkred', 'red'}
                 ndx = 7;
-            otherwise % black
+            case {'black'}
                 ndx = 8;
+            case {'dark gray', 'darkgray'}
+                ndx = 9;
+            case {'medium gray', 'mediumgray'}
+                ndx = 10;
+            case {'light gray', 'lightgray'}
+                ndx = 11;
+            otherwise
+                error('Unknown color name: %s', s)
         end
     else
-        ndx = mod(ndx-1, 8) + 1;
+        ndx = mod(ndx-1, numel(clrs)) + 1;
     end
     if isscalar(ndx)
         c = clrs{ndx};

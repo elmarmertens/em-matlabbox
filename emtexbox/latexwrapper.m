@@ -43,7 +43,7 @@ else
 end
 
 if ~isfield(file, 'pagestyle')
-   file.pagestyle = 'headings';
+   file.pagestyle = 'plain';
 end
 if ~isfield(file, 'dvidriver')
    file.dvidriver = 'dvips';
