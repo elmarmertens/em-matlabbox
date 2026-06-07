@@ -1,5 +1,5 @@
-function c = colors4plots(ndx)
-% function c = colors4plots(ndx)
+function c = mycolorset(ndx)
+% function c = mycolorset(ndx)
 % clrs = {
 % [0      0.4470 0.7410]; % 1: dark blue
 % [0.8500 0.3250 0.0980]; % 2: orange
