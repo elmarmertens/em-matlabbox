@@ -9,7 +9,7 @@ M(Ny+(1:Nx), Ny+(1:Nx))    = A * sqrtSigmaLag;
 M(Ny+(1:Nx), Ny+Nx+(1:Nw)) = B;
 M(1:Ny,Ny+1:end)          = C * M(Ny+1:end,Ny+1:end);
 
-[~,R] = qr(M');
+R = qr(M','econ'); % single output skips forming Q
 
 R = R';
 

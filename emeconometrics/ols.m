@@ -66,8 +66,8 @@ results.X = X;
 results.nobs = nobs;
 results.nvar = nvar;
 
-[~, r] = qr(X,0);
-XpXi = (r'*r)\eye(nvar);
+r    = qr(X,'econ'); % single output skips forming Q
+XpXi = r \ (r' \ eye(nvar)); % two triangular solves, avoids forming r'*r
 
 
 results.beta = XpXi*(X'*y);

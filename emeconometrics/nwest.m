@@ -54,8 +54,8 @@ results.nvar    = nvar;
 results.nlag    = nlag;
 
 % xpxi            = inv(X'*X);
-[~, r] = qr(X,0);
-xpxi   = (r'*r)\eye(nvar);
+r      = qr(X,'econ'); % single output skips forming Q
+xpxi   = r \ (r' \ eye(nvar)); % two triangular solves, avoids forming r'*r
 
 results.beta    = xpxi*(X'*y);
 results.yhat    = X*results.beta;

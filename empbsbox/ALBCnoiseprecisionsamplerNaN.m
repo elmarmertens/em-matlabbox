@@ -150,7 +150,7 @@ if flag > 0
     % via qr -- much slower
     M = [AAtilde; CCtilde];
     m = size(M,2);
-    [~, R] = qr(M);
+    R     = qr(M); % single output skips forming Q
     sqrtP = R(1:m,1:m)';
 
     % checkdiff(sqrtP * sqrtP', P);

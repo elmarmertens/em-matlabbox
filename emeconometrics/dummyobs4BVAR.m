@@ -66,20 +66,21 @@ end
 Xstar = [];
 Ystar = [];
 
-sqrtSIGMA0 = chol(SIGMA0)';
+sqrtSIGMA0 = chol(SIGMA0); % upper factor: sqrtSIGMA0' * sqrtSIGMA0 = SIGMA0
+% note: dummy obs enter Gram matrices as block' * block, hence the upper factor
 
 if dof0 > 0
     if dof0 < Ny
         error('IW prior must have at least Ny dof')
     end
     thisYstar         = zeros(dof0, Ny);
-    thisYstar(1:Ny,:) = sqrtSIGMA0 * dof0; 
-    % note: 
-    % - the above is numerically equivalent to stacking sqrtSIGMA0 dof0 / Ny times, 
-    % - but can also handle cases where dof0 is not a multiple of Ny
+    thisYstar(1:Ny,:) = sqrt(dof0) * sqrtSIGMA0;
+    % note:
+    % - encodes IW prior with scale S0 = dof0 * SIGMA0 (thisYstar' * thisYstar = dof0 * SIGMA0)
+    %   so that the prior mean of SIGMA is dof0 / (dof0 - Ny - 1) * SIGMA0
     % - with dof0>=Ny there are potentially rows padded with zeros at bottom of thisYstar (needed to compute correct dof = Tstar-k)
-    
-    
+
+
     Ystar             = cat(1, Ystar, thisYstar);
     Xstar             = cat(1, Xstar, zeros(dof0, Nx));
 end
@@ -95,7 +96,7 @@ thisXstar(:,ndxLags) = kron(diag(LAMBDA), sqrtSIGMA0);
 
 
 % unit root on own persistence
-thisYstar(1:Ny,:) = lambda1 * sqrtSIGMA0 .* diag(priorMean);
+thisYstar(1:Ny,:) = lambda1 * sqrtSIGMA0 * diag(priorMean); % implied prior mean on first own lag is diag(priorMean)
 
 Ystar = cat(1, Ystar, thisYstar);
 Xstar = cat(1, Xstar, thisXstar);

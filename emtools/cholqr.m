@@ -20,7 +20,7 @@ end
 
 
 n = size(C,1);
-[~, R] = qr(C');
+R = qr(C','econ'); % single output skips forming Q
 sqrtCC = R(1:n,1:n)';
 
 if nnd % enforce non-negative diagonals

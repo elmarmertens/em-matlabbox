@@ -59,8 +59,8 @@ else
    if condi < sqrt(eps)
       warning('em:VARls', 'Badly Conditioned System: rcond(XX) = %e', condi)
    end
-   [~, r]  = qr(Xdev,0);
-   XXidev   = (r'*r) \ eye(k - 1);
+   r        = qr(Xdev,'econ'); % single output skips forming Q
+   XXidev   = r \ (r' \ eye(k - 1)); % two triangular solves, avoids forming r'*r
 end
 
 

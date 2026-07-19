@@ -10,7 +10,7 @@ function results = VARls(Y, p, dfFlag, quickFlag)
 % The inverse of X' * X is computed from partioned matrix formulas, 
 % which avoids ill-conditioning due to large mean values of the data
 %
-% Note: aVar pertains to vec(PI')
+% Note: aVar pertains to vec(PI)
 %
 % See also lag4VAR, ndxVARvec2Constant
 
@@ -50,7 +50,7 @@ end
 Y0    = Y(1 : p, :);
 Y     = Y(1 + p : end, :);
 Xbar  = mean(X(:,1:end-1))';
-Xdev  = bsxfun(@minus, X(:,1:end-1), Xbar');
+Xdev  = X(:,1:end-1) - Xbar';
 
 XXdev       = Xdev' * Xdev;
 % condi       = cond(XXdev);
@@ -67,8 +67,8 @@ end
 if quickFlag
    XXidev   = XXdev \ eye(k - 1); % for small data (ca 100) faster by factor 2-3.5 than qr, for ca 1000 factor 1.5-2, see JPL manual. Accuracy is worse  for ill-conditioned problems though
 else 
-   [~, r]   = qr(Xdev,0);
-   XXidev   = (r'*r) \ eye(k - 1);
+   r        = qr(Xdev,'econ'); % single output skips forming Q
+   XXidev   = r \ (r' \ eye(k - 1)); % two triangular solves, avoids forming r'*r
 end
 
 XXidevXbar  = -XXidev * Xbar;
@@ -81,7 +81,7 @@ PI    = XXi * X' * Y; % compute coefficients
 Yhat  = X * PI;
 e     = Y - Yhat;
 
-% Note: aVar of vec(PI')
+% Note: aVar of vec(PI)
 
 if dfFlag
    Omega = (e' * e) / (T - k);
@@ -95,7 +95,7 @@ if ~quickFlag
    else
       SE    = sqrt(diag(aVar) / T);
    end
-   SE = reshape(SE, size(PI'))';
+   SE = reshape(SE, size(PI));
 else
    aVar = NaN;
    SE   = NaN;
@@ -131,7 +131,7 @@ results.hCompanion = eye(N, N * p + 1);
 results.G          = eye(N * p, N);
 % results.Omega   = G * Omega * G';
 
-results.llf = - (T * N / 2) * (1 + log(2 * pi)) - T / 2 * log(det(Omega));
+results.llf = - (T * N / 2) * (1 + log(2 * pi)) - T * sum(log(diag(chol(Omega))));
 results.dfFlag = dfFlag;
 
 [results.AIC, results.SIC, results.HQIC] = IC(results.llf, results.T, results.K);
