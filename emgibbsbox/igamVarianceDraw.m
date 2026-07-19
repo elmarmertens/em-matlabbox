@@ -1,5 +1,5 @@
 function draw = igamVarianceDraw(resid, ssr0, dof0, dim)
-% IGAMVARIANCEDRAW draw = igamVarianceDraw(resid, ssr0, dof0);
+% IGAMVARIANCEDRAW draw = igamVarianceDraw(resid, ssr0, dof0, dim);
 %  
 %   ... 
 

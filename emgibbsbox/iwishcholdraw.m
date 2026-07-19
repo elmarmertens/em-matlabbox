@@ -7,6 +7,8 @@ function iwishchols = iwishcholdraw(cholSigmaT, dof, Ndraw, rndStream)
 %
 % Notice, for a proper draw (with first moment defined) , need dof > N + 1.
 %   ...
+%
+% See also iwishcholdrawbartlett, iwishdraw
 
 %   Coded by  Elmar Mertens, em@elmarmertens.com
 
