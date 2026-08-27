@@ -35,6 +35,14 @@ RR      = RR';
 % select output
 sqrtXX    = RR(1:K,1:K);
 
+% check for rank deficiency of X via diagonal of triangular factor
+% (cheap proxy for the singular values; tolerance styled after rank())
+absdiagXX = abs(diag(sqrtXX));
+if min(absdiagXX) < T * eps(max(absdiagXX))
+    error('em:BVARjeffries', 'X appears rank deficient: min |diag(R)| = %.2e (max = %.2e)', ...
+        min(absdiagXX), max(absdiagXX))
+end
+
 sqrtYX    = RR(K+(1:N),1:K);
 sqrtSSR   = RR(K+(1:N),K+(1:N));
 

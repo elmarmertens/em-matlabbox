@@ -8,10 +8,10 @@ function X = dlyapdoubling(A,B,Q,tolerance,maxiter)
 %
 % Optional parameters: tolerance and maxiter
 % which can be specified via dlyap(A,Q,tolerance) and dlyap(A,Q,tol,maxiter) 
-% (or dlyap(A,B,Q,tolerance) and dlyap(A,B,Q,tolerance,maxiter)). 
+% (or dlyap(A,B,Q,tolerance) and dlyap(A,B,Q,tolerance,maxiter)).
 % The default values are tolerance = 1e-12 and maxiter = 1e4
 %
-% See also dlyapvec
+% See also dlyapvec, dlyapdoublingpages
 
 %   Coded by  Elmar Mertens, em@elmarmertens.com
 
@@ -55,25 +55,32 @@ X0 = Q;
 AA = A;
 BB = B;
 
+puredlyap = isequal(A, B); % pure Lyapunov: AA and BB stay equal, skip the duplicate squaring
+
 converged   = false;
 iter        = 0;
 
-while ~converged && iter < maxiter 
-    
+while ~converged && iter < maxiter
+
     iter = iter + 1;
-    
-    X  = X0 + AA * X0 * BB';
-    AA = AA * AA;           % this is the doubling step
-    BB = BB * BB;           % this is the doubling step
+
+    if puredlyap
+        X  = X0 + AA * X0 * AA';
+        AA = AA * AA;       % this is the doubling step
+    else
+        X  = X0 + AA * X0 * BB';
+        AA = AA * AA;       % this is the doubling step
+        BB = BB * BB;       % this is the doubling step
+    end
 
     dX          = X - X0;
-    converged   = max(abs(dX(:))) < tolerance; 
+    converged   = max(abs(dX(:))) < tolerance;
     X0          = X;
 
     if any(isnan(X0(:)))
         break
     end
-    
+
 end
 
 if ~converged

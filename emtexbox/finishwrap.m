@@ -7,8 +7,10 @@ if exist('wrap', 'var') && ~isempty(wrap)
             wrap = latexwrapper(wrap, 'close');
             latexwrapper(wrap, 'pdflatex');
             latexwrapper(wrap, 'pdflatex');
-        else
+        elseif ismac
             wrap = latexwrapper(wrap, 'compileDVI2PDF');
+        else
+            wrap = latexwrapper(wrap, 'close');
         end
 
     % if compilation fails on your system, simply replace the line above with the following:

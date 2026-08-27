@@ -25,6 +25,14 @@ end
 RR      = qr([X Z Y],'econ'); % single output skips forming Q
 RR      = RR';
 
+% check for rank deficiency of [X Z] via diagonal of triangular factor
+% (cheap proxy for the singular values; tolerance styled after rank())
+absdiagXZ = abs(diag(RR(1:K,1:K)));
+if min(absdiagXZ) < T * eps(max(absdiagXZ))
+    error('em:BVARZjeffries', '[X Z] appears rank deficient: min |diag(R)| = %.2e (max = %.2e)', ...
+        min(absdiagXZ), max(absdiagXZ))
+end
+
 Xndx = 1:Nx;
 Zndx = Nx+(1:Nz);
 Yndx = Nx+Nz+(1:Ny);

@@ -22,18 +22,18 @@ nw = size(B, 2);
 ny = size(C, 1);
 
 acfx = zeros(nx, nx, lags + 1, nw);
-acfy = zeros(ny, ny, lags + 1, nw);
+
+% lag-0 covariances per shock: joint Lyapunov solves with shared doubling
+Q = zeros(nx, nx, nw);
 for w = 1 : nw
-    %    Js = diag(1:nw == w);
-    %    acfx(:,:,1, w)   = disclyap(A, B(:,w) * B(:,w)');
-    acfx(:,:,1, w)   = dlyapdoubling(A, B(:,w) * B(:,w)');
-    % checkdiff(disclyap(A, B * Js * B'), dlyap(A, B * Js * B'))
-    acfy(:,:,1, w)   = C * acfx(:,:,1,w) * C';
-    for k = 1 : lags
-        acfx(:,:,k + 1, w)   = A * acfx(:,:,k,w);
-        acfy(:,:,k + 1, w)   = C * acfx(:,:,k + 1,w) * C';
-    end
+    Q(:,:,w) = B(:,w) * B(:,w)';
 end
+acfx(:,:,1,:) = reshape(dlyapdoublingpages(A, Q), nx, nx, 1, nw);
+
+for k = 1 : lags
+    acfx(:,:,k + 1, :) = pagemtimes(A, acfx(:,:,k,:));
+end
+acfy = pagemtimes(pagemtimes(C, acfx), 'none', C, 'ctranspose');
 
 if doacc
     acfy = acf2acc(acfy);

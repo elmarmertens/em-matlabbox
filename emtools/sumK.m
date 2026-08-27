@@ -7,6 +7,11 @@ function Sk = sumK(x, horizons, exante)
 % and h is the number of elements in the vector horizons
 %
 % optional argument exante [=false]: stores the cumulated sum at the *beginning* of the summation period in Sk
+%
+% legacy function, for scalar horizon "h", (and exante=false), consider instead: 
+%      movmean(x, [h-1, 0], 1, 'endpoints', 'fill')
+%
+% See also movmean
 
 %   Coded by  Elmar Mertens, em@elmarmertens.com
 

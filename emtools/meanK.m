@@ -11,14 +11,14 @@ if nargin < 3
    dim = 1;
 end
 
-mk0 = movmean(x, [k 0], dim, 'omitnan', 'endpoints', 'discard');
+mk0 = movmean(x, [k-1 0], dim, 'omitnan', 'endpoints', 'discard');
 
 % pad with NaN
 
 % prepare call to subsref (to operate along arbitrary dimension dim)
 s.type = '()';
 s.subs = repmat({':'}, 1, ndims(x));
-s.subs{dim} = k+1 : size(x,dim);
+s.subs{dim} = k : size(x,dim);
 
 mk = NaN(size(x));
 mk = subsasgn(mk,s,mk0);
