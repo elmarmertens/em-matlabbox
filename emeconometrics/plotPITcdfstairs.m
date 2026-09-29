@@ -16,7 +16,7 @@ for m = 1 : Nmodels
     thispit   = thesepits(:,m);
     if ~all(isnan(thispit))
         [f,x]     = ecdf(thispit);
-        this      = stairs(x,f, 'LineWidth', 2, 'Color', colors4plots(m));
+        this      = stairs(x,f, 'LineWidth', 2, 'Color', mycolorset(m));
         thishalfband = thesehalfbands(m);
         legHandles = cat(1, legHandles, this);
         legLabels  = cat(1, legLabels, theselabels(m));

@@ -1,6 +1,6 @@
 function [globalStatePREV, globalScalePREV, localStatePREV, localScalePREV] = ...
-    horseshoePosteriorDraw2(shocks2, globalStatePREV, globalScalePREV, ~, localScalePREV, dim, s)
-% HORSESHOEPOSTERIORDRAW2
+    horseshoePosteriorDraw(shocks2, globalStatePREV, globalScalePREV, ~, localScalePREV, dim, s)
+% HORSESHOEPOSTERIORDRAW
 % Gibbs updates for a horseshoe block using the Makalic-Schmidt
 % inverse-gamma augmentation, with an additional fixed scale parameter s.
 %
