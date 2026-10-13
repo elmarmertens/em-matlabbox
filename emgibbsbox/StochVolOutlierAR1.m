@@ -43,7 +43,7 @@ kai2States  = sum(rand(rndStream, Nsv, T) > cdf, 3) + 1;
 
 
 %% KSC State Space
-obs       = logy2 - KSC.mean(kai2States);
+obs       = logy2 - KSC.mean(kai2States) - outlierlog2Draws;
 zerosNsv  = zeros(Nsv);
 Insv      = eye(Nsv);
 A     = [diag(rho) zerosNsv; zerosNsv Insv];
